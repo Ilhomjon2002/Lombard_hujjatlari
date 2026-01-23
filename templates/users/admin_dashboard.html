@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - HAT{% endblock %}
+{% block header_title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Stats Cards -->
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="display-4">{{ document_stats.total }}</h1>
+                <p class="text-muted">Jami Buyruqlar</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-warning">{{ document_stats.pending }}</h1>
+                <p class="text-muted">Kutilayotgan</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-success">{{ document_stats.signed }}</h1>
+                <p class="text-muted">Imzolangan</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="display-4 text-primary">{{ branches.count }}</h1>
+                <p class="text-muted">Lombardlar</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Branches List -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Lombardlar</h5>
+                <a href="#" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Yangi Buyruq
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nomi</th>
+                                <th>Manzil</th>
+                                <th>Hujjatlar</th>
+                                <th>Telefon</th>
+                                <th>Harakatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for branch in branches %}
+                            <tr>
+                                <td>{{ branch.name }}</td>
+                                <td>{{ branch.address|truncatechars:30 }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ branch.document_count }}</span>
+                                </td>
+                                <td>{{ branch.phone }}</td>
+                                <td>
+                                    <a href="{% url 'branch_documents' branch.id %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">Filiallar mavjud emas</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Documents -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">So'nggi Buyruqlar</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for document in recent_documents %}
+                    <a href="{% url 'document_detail' document.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ document.title|truncatechars:30 }}</h6>
+                            <small class="text-muted">{{ document.created_at|date:"d.m.Y" }}</small>
+                        </div>
+                        <p class="mb-1">
+                            <span class="badge {% if document.status == 'pending' %}status-pending
+                                {% elif document.status == 'partially_signed' %}status-partial
+                                {% elif document.status == 'fully_signed' %}status-signed
+                                {% else %}status-rejected{% endif %}">
+                                {{ document.get_status_display }}
+                            </span>
+                        </p>
+                        <small class="text-muted">{{ document.branch.name }}</small>
+                    </a>
+                    {% empty %}
+                    <div class="text-center text-muted py-3">
+                        Hujjatlar mavjud emas
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin dashboardga foydalanuvchilar boshqarish linkini qo'shamiz -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-users-cog"></i>
+                Foydalanuvchilar Boshqarish
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Jami foydalanuvchilar</h6>
+                            <h3>{{ total_users }}</h3>
+                            <a href="{% url 'manage_users' %}" class="btn btn-sm btn-outline-primary">
+                                Barchasini ko'rish
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Administratorlar</h6>
+                            <h3>{{ admin_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Ishchilar</h6>
+                            <h3>{{ employee_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-grid">
+                        <a href="{% url 'create_user' %}" class="btn btn-success">
+                            <i class="fas fa-user-plus"></i> Yangi foydalanuvchi qo'shish
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

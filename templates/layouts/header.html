@@ -1,0 +1,55 @@
+<div class="header">
+  <div>
+    <button class="menu-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h4 class="mb-0">{% block header_title %}Dashboard{% endblock %}</h4>
+  </div>
+
+  {% if user.is_authenticated %}
+  <div class="user-info">
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+        {% if user.profile_image %}
+        <img src="{{ user.profile_image.url }}" alt="Profile" class="user-avatar">
+        {% else %}
+        <div class="user-avatar bg-secondary d-flex align-items-center justify-content-center text-white">
+          {{ user.first_name|first }}{{ user.last_name|first }}
+        </div>
+        {% endif %}
+        <div class="ms-2">
+          <strong>{{ user.get_full_name }}</strong>
+          <small class="text-muted d-block">{{ user.get_role_display }}</small>
+        </div>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="{% url 'profile' %}">
+            <i class="fas fa-user me-2"></i>Profil
+          </a></li>
+        <li><a class="dropdown-item" href="{% url 'notifications' %}">
+            <i class="fas fa-bell me-2"></i>Bildirishnomalar
+            {% with 0 as unread_count %}
+            {% for n in user.notifications.all %}
+            {% if not n.read %}
+            {% with unread_count|add:1 as unread_count %}
+            {% endwith %}
+            {% endif %}
+            {% endfor %}
+
+            {% if unread_count > 0 %}
+            <span class="notification-badge">{{ unread_count }}</span>
+            {% endif %}
+            {% endwith %}
+
+          </a></li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt me-2"></i>Chiqish
+          </a></li>
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+</div>

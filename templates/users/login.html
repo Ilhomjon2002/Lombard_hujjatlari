@@ -1,0 +1,129 @@
+{% extends 'base_login.html' %}
+{% load static %}
+
+{% block title %}Kirish - Tizimga kirish{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center mt-5 pt-5">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0 fw-bold">Tizimga kirish</h3>
+                    <p class="mb-0 mt-2 opacity-75">Hisobingizga kirib, buyruqlar bilan ishlang</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="username" class="form-label fw-semibold">Login / Foydalanuvchi nomi</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-0">
+                                    <i class="fa fa-user text-muted"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control border-start-0 rounded-end" 
+                                       id="username" 
+                                       name="username" 
+                                       placeholder="login yoki email" 
+                                       required 
+                                       autofocus>
+                            </div>
+                            <div class="invalid-feedback">
+                                Foydalanuvchi nomini kiriting
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold">Parol</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-0">
+                                    <i class="fa fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" 
+                                       class="form-control border-start-0 rounded-end" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="Parolingiz" 
+                                       required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">
+                                Parolni kiriting
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                                Kirish
+                            </button>
+                        </div>
+
+                        <!-- Qo'shimcha havolalar (agar kerak bo'lsa) -->
+                        <div class="text-center small text-muted">
+                            <a href="#" class="text-decoration-none">Parolni unutdingizmi?</a>
+                            <!-- Agar ro'yxatdan o'tish sahifasi bo'lsa: -->
+                            <!-- <span class="mx-2">•</span> -->
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4 text-muted small">
+                © {{ current_year }} — Elektron imzo tizimi
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Parolni ko'rsatish/yashirish
+const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#password');
+
+if (togglePassword && password) {
+    togglePassword.addEventListener('click', function () {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye');
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+}
+
+// Bootstrap form validation
+(() => {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}

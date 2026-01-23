@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} {{ branch.name }} - Hujjatlar {% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Header + Filter -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h2 class="mb-1">{{ branch.name }} filiali hujjatlari</h2>
+            <p class="text-muted mb-0">Jami: {{ documents.count }} ta hujjat</p>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <!-- Document Type Filter -->
+            <form method="get" class="d-flex align-items-center gap-2">
+                <label for="type" class="form-label mb-0 fw-medium">Hujjat turi:</label>
+                <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
+                    <option value="">— Barchasi —</option>
+                    {% for dt in document_types %}
+                        <option value="{{ dt.name }}"
+                            {% if selected_type == dt.name %}selected{% endif %}>
+                            {{ dt.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+
+            <!-- Yangi hujjat qo'shish tugmasi (agar kerak bo'lsa) -->
+            <a href="{% url 'create_order' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Yangi hujjat
+            </a>
+        </div>
+    </div>
+
+    <!-- Hujjatlar jadvali -->
+    {% if documents %}
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Nomi / Raqami</th>
+                            <th>Tur</th>
+                            <th>Yaratgan</th>
+                            <th>Sana</th>
+                            <th>Imzolar</th>
+                            <th>Holati</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documents %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <div class="fw-medium">{{ doc.title }}</div>
+                                <small class="text-muted">{{ doc.number|default:"—" }}</small>
+                            </td>
+                            <td>{{ doc.document_type.name }}</td>
+                            <td>{{ doc.created_by.get_full_name|default:doc.created_by.username }}</td>
+                            <td>
+                                <small>{{ doc.created_at|date:"d.m.Y H:i" }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    {{ doc.signatures.count }} / {{ doc.required_signatures|default:"—" }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if doc.is_fully_signed %}
+                                    <span class="badge bg-success">Imzolangan</span>
+                                {% elif doc.signatures.count > 0 %}
+                                    <span class="badge bg-warning">Jarayonda</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Yangi</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'document_detail' doc.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if request.user == doc.created_by or request.user.role == 'admin' %}
+                                <!-- <a href="{% url 'document_detail' doc.id %}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil">document_update</i>
+                                </a> -->
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                Hozircha hujjatlar yo‘q
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center py-5">
+        <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+        Ushbu filial uchun hali hujjatlar mavjud emas.
+        {% if request.user.role == 'admin' %}
+            <br><a href="{% url 'create_order' %}" class="btn btn-primary mt-3">
+                Birinchi hujjatni yaratish
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table th, .table td {
+        vertical-align: middle;
+    }
+    .badge {
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Agar kerak bo'lsa qo'shimcha JS logikasi
+document.addEventListener('DOMContentLoaded', function() {
+    // masalan: filter o'zgarganda loading ko'rsatish mumkin
+});
+</script>
+{% endblock %}

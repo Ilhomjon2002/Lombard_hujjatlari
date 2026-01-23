@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Imzo Chizish</h2>
+    <canvas id="signatureCanvas" width="400" height="200" style="border:1px solid #000;"></canvas>
+    <button id="clearBtn" class="btn btn-secondary">Tozalash</button>
+    <button id="saveBtn" class="btn btn-primary">Saqlash</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mousemove', (e) => {
+        if (drawing) {
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        }
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+        const dataURL = canvas.toDataURL('image/png');
+        // Formaga yuborish
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "users:save_signature" %}';
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'signature';
+        input.value = dataURL;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    });
+</script>
+{% endblock %}

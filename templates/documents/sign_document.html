@@ -1,0 +1,49 @@
+{% extends 'users/base.html' %}
+{% block title %}Imzo qo‘yish — {{ signature.order.title }}{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0">Imzo qo‘yish: {{ signature.order.number }} — {{ signature.order.title }}</h4>
+    </div>
+    <div class="card-body">
+        {% if signature.order.file %}
+        <p>
+            <a href="{{ signature.order.file.url }}" target="_blank" class="btn btn-outline-primary mb-3">
+                <i class="bi bi-file-earmark-pdf me-2"></i> Hujjatni ko‘rish / yuklab olish
+            </a>
+        </p>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Imzo rasmi (agar mavjud bo‘lmasa yuklang)</label>
+                <input type="file" name="signature_image" class="form-control" accept="image/*">
+                {% if user.signature_image %}
+                <small class="text-muted mt-2 d-block">
+                    Oldin yuklangan imzo ishlatiladi, agar yangisini yuklamasangiz
+                </small>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Izoh / qo‘shimcha ma’lumot</label>
+                <textarea name="comment" class="form-control" rows="4" placeholder="Zarur bo‘lsa izoh yozing..."></textarea>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-lg btn-success">
+                    <i class="bi bi-pencil-square me-2"></i> Imzoni tasdiqlash va qo‘yish
+                </button>
+            </div>
+        </form>
+
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle me-2"></i>
+            Imzo qo‘yilgandan so‘ng bu buyruq holati avtomatik yangilanadi va tegishli xodimlarga bildirishnoma yuboriladi.
+        </div>
+    </div>
+</div>
+{% endblock %}

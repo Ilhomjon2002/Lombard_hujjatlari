@@ -1,0 +1,119 @@
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h4 class="mb-0">
+            <i class="fas fa-file-contract"></i>
+            HAT
+        </h4>
+        <small class="text-muted">Hujjat Aylanish Tizimi</small>
+    </div>
+
+    <div class="sidebar-menu">
+        {% if user.is_authenticated %}
+        {% if user.role == 'admin' %}
+        <a href="{% url 'dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </a>
+        <a role="button" data-bs-toggle="collapse" data-bs-target="#branchesMenu">
+            <i class="fas fa-building"></i>
+            Lombardlar
+            <i class="fas fa-angle-down ms-auto"></i>
+        </a>
+        <div class="collapse" id="branchesMenu">
+
+            {% for branch in sidebar_branches %}
+            {% if not branch.parent_branch %}
+
+            <!-- KATTA FILIAL -->
+            <a class="ps-3 d-block fw-bold" data-bs-toggle="collapse" href="#branch-{{ branch.id }}" role="button"
+                aria-expanded="false">
+                {{ branch.name }}
+            </a>
+
+            <!-- ICHKI FILIALLAR -->
+            <div class="collapse ps-4" id="branch-{{ branch.id }}">
+
+                <a href="{% url 'branch_documents' branch.id %}" class="d-block text-decoration-none">
+                    📁 {{ branch.name }} (asosiy)
+                </a>
+
+                {% for sub in branch.sub_branches.all %}
+                <a href="{% url 'branch_documents' sub.id %}" class="d-block ps-3 text-decoration-none">
+                    └ {{ sub.name }}
+                </a>
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+            {% endfor %}
+
+
+        </div>
+        <a href="{% url 'create_order' %}">
+            <i class="fas fa-plus-circle"></i>
+            Yangi Buyruq
+        </a>
+        {% else %}
+        <a href="{% url 'dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+        </a>
+        <a href="{% url 'notifications' %}">
+            <i class="fas fa-bell"></i>
+            Bildirishnomalar
+            {% with 0 as unread_count %}
+            {% for n in user.notifications.all %}
+            {% if not n.read %}
+            {% with unread_count|add:1 as unread_count %}
+            {% endwith %}
+            {% endif %}
+            {% endfor %}
+
+            {% if unread_count > 0 %}
+            <span class="notification-badge">{{ unread_count }}</span>
+            {% endif %}
+            {% endwith %}
+
+        </a>
+        {% endif %}
+
+        {% if user.is_admin %}
+        <!-- User Management Section -->
+        <li class="nav-item mt-3">
+            <small class="text-muted px-3">Foydalanuvchilar</small>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'manage_users' in request.resolver_match.url_name or 'create_user' in request.resolver_match.url_name or 'edit_user' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'manage_users' %}">
+                <i class="fas fa-users-cog"></i>
+                Foydalanuvchilarni boshqarish
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'create_user' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'create_user' %}">
+                <i class="fas fa-user-plus"></i>
+                Yangi foydalanuvchi
+            </a>
+        </li>
+        {% endif %}
+
+        <a href="{% url 'profile' %}">
+            <i class="fas fa-user-circle"></i>
+            Profil
+        </a>
+        <a href="{% url 'logout' %}" onclick="return confirm('Chiqishni istaysizmi?')">
+            <i class="fas fa-sign-out-alt"></i>
+            Chiqish
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}">
+            <i class="fas fa-sign-in-alt"></i>
+            Kirish
+        </a>
+        {% endif %}
+    </div>
+</div>

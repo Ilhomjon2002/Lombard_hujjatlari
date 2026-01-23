@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Ishchi Dashboard - HAT{% endblock %}
+{% block header_title %}Ishchi Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Pending Signatures -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Imzolash Kerak Bo'lgan Buyruqlar</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_signatures %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Sarlavha</th>
+                                <th>Filial</th>
+                                <th>Yaratilgan</th>
+                                <th>Imzo Tartibi</th>
+                                <th>Muddati</th>
+                                <th>Harakatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for signature in pending_signatures %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ signature.document.title }}</td>
+                                <td>{{ signature.document.branch.name }}</td>
+                                <td>{{ signature.document.created_at|date:"d.m.Y" }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ signature.order }}</span>
+                                </td>
+                                <td>
+                                    {% if signature.document.deadline %}
+                                        {{ signature.document.deadline|date:"d.m.Y H:i" }}
+                                    {% else %}
+                                        <span class="text-muted">Muddat yo'q</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'sign_document' signature.id %}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-signature"></i> Imzolash
+                                    </a>
+                                    <a href="{% url 'document_detail' signature.document.id %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <h4>Barcha buyruqlar imzolandi</h4>
+                    <p class="text-muted">Sizda imzolash kerak bo'lgan buyruqlar yo'q</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-md-4">
+        <!-- Notifications -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Bildirishnomalar</h5>
+                <a href="{% url 'notifications' %}" class="btn btn-sm btn-primary">Barchasi</a>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for notification in notifications %}
+                    <div class="list-group-item {% if not notification.read %}bg-light{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <small class="text-primary">{{ notification.get_notification_type_display }}</small>
+                            <small>{{ notification.created_at|timesince }} oldin</small>
+                        </div>
+                        <p class="mb-1">{{ notification.message|truncatechars:50 }}</p>
+                        {% if notification.document %}
+                        <a href="{% url 'document_detail' notification.document.id %}" class="btn btn-sm btn-outline-primary btn-sm">
+                            Ko'rish
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted py-3">
+                        Bildirishnomalar yo'q
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Signed Documents -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Oxirgi Imzolanganlar</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for signature in signed_documents %}
+                    <a href="{% url 'document_detail' signature.document.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ signature.document.title|truncatechars:25 }}</h6>
+                            <small class="text-muted">{{ signature.signed_at|date:"d.m" }}</small>
+                        </div>
+                        <small class="text-muted">{{ signature.document.branch.name }}</small>
+                    </a>
+                    {% empty %}
+                    <div class="text-center text-muted py-3">
+                        Imzolangan hujjatlar yo'q
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

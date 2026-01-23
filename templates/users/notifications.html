@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bildirishnomalar{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-0">Bildirishnomalar</h2>
+            <p class="text-muted">
+                {% if unread_count > 0 %}
+                    Sizda <strong>{{ unread_count }}</strong> ta o‘qilmagan xabar bor
+                {% else %}
+                    Barcha bildirishnomalar o‘qilgan
+                {% endif %}
+            </p>
+        </div>
+        <div class="col-auto">
+            {% if unread_count > 0 %}
+                <form method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="mark_all_read" value="1">
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-check2-all"></i> Barchasini o‘qilgan deb belgilash
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if notifications %}
+        <div class="list-group">
+            {% for notification in notifications %}
+                <div class="list-group-item list-group-item-action {% if not notification.read %}list-group-item-primary bg-opacity-10{% endif %}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">
+                            {% if notification.notification_type == 'signature_request' %}
+                                <i class="bi bi-pen-fill text-primary me-2"></i>Imzolash so‘rovi
+                            {% elif notification.notification_type == 'document_completed' %}
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>Buyruq yakunlandi
+                            {% elif notification.notification_type == 'document_rejected' %}
+                                <i class="bi bi-x-circle-fill text-danger me-2"></i>Buyruq rad etildi
+                            {% else %}
+                                <i class="bi bi-bell-fill text-secondary me-2"></i>Bildirishnoma
+                            {% endif %}
+                            {{ notification.get_notification_type_display|default:notification.notification_type }}
+                        </h6>
+                        <small class="text-muted">
+                            {{ notification.created_at|timesince }} oldin
+                        </small>
+                    </div>
+                    
+                    <p class="mb-1">{{ notification.message }}</p>
+                    
+                    {% if notification.document %}
+                        <small>
+                            <a href="{% url 'document_detail' notification.document.id %}" class="text-primary">
+                                <i class="bi bi-file-earmark-text"></i> {{ notification.document.title|truncatechars:60 }}
+                            </a>
+                        </small>
+                    {% endif %}
+                    
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            {{ notification.created_at|date:"d.m.Y H:i" }}
+                            {% if not notification.read %}
+                                <span class="badge bg-primary ms-2">Yangi</span>
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-info text-center py-5 my-4">
+                    <i class="bi bi-bell-slash display-4 d-block mb-3 text-muted"></i>
+                    <h5>Hozircha bildirishnomalar yo‘q</h5>
+                    <p class="text-muted">Yangi xabarlar paydo bo‘lganda bu yerda ko‘rinadi</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Agar pagination qo‘shmoqchi bo‘lsangiz -->
+        {% if is_paginated %}
+            <nav aria-label="Notifications pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Oldingi</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Keyingi</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="alert alert-light text-center py-5 my-5 border">
+            <i class="bi bi-bell-slash display-1 text-muted d-block mb-3"></i>
+            <h4>Hozircha hech qanday bildirishnoma mavjud emas</h4>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

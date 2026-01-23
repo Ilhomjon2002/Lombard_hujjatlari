@@ -1,0 +1,96 @@
+{% extends 'users/base.html' %}
+{% block title %}{{ document.number }} - {{ document.title }}{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-0">{{ document.number }} — {{ document.title }}</h4>
+            <small class="text-muted">
+                Yaratgan: {{ document.created_by.get_full_name }} • 
+                {{ document.created_at|date:"d.m.Y H:i" }}
+            </small>
+        </div>
+        <div>
+            {% if document.status == 'completed' %}
+                <span class="badge bg-success fs-6">To‘liq imzolangan</span>
+            {% elif document.status == 'partial' %}
+                <span class="badge bg-warning fs-6">Qisman imzolangan</span>
+            {% else %}
+                <span class="badge bg-secondary fs-6">{{ document.get_status_display }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card-body">
+        {% if document.file %}
+        <p>
+            <a href="{{ document.file.url }}" target="_blank" class="btn btn-outline-primary">
+                <i class="bi bi-file-earmark-arrow-down me-2"></i> Faylni yuklab olish
+            </a>
+        </p>
+        {% endif %}
+
+        {% if document.content %}
+        <div class="border p-3 bg-light rounded mb-4">
+            <strong>Mazmun / matn:</strong><br>
+            {{ document.content|linebreaks }}
+        </div>
+        {% endif %}
+
+        <h5>Imzolash jarayoni</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tartib</th>
+                        <th>Xodim</th>
+                        <th>Holati</th>
+                        <th>Imzolangan vaqti</th>
+                        <th>Izoh</th>
+                        <th>Imzo</th>
+                        <th>QR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sig in signature_status %}
+                    <tr {% if sig.signed %}class="table-success"{% endif %}>
+                        <td>{{ sig.position }}</td>
+                        <td>{{ sig.employee }}</td>
+                        <td>
+                            {% if sig.signed %}
+                                <span class="badge bg-success">Imzolangan</span>
+                            {% else %}
+                                <span class="badge bg-warning">Kutilmoqda</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ sig.signed_at|default:"—" }}</td>
+                        <td>{{ sig.comment|default:"—" }}</td>
+                        <td>
+                            {% if sig.has_signature_image %}
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                            {% else %}
+                                <i class="bi bi-dash-circle text-muted"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if sig.has_qr_code %}
+                                <i class="bi bi-qr-code-scan text-primary"></i>
+                            {% else %}
+                                <i class="bi bi-dash-circle text-muted"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'documents:order_tracking' document.id %}" class="btn btn-info">
+                <i class="bi bi-diagram-3 me-2"></i> Imzolash tarixi (tracking)
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

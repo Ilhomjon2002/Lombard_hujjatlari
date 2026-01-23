@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Foydalanuvchilarni boshqarish{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Foydalanuvchilar</h4>
+        <a href="{% url 'create_user' %}" class="btn btn-light btn-sm">
+            <i class="bi bi-plus-lg"></i> Yangi qo‘shish
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- Filter formasi -->
+        <form method="get" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Qidiruv..." value="{{ search_query }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="branch" class="form-select">
+                        <option value="">Barcha filiallar</option>
+                        {% for branch in branches %}
+                            <option value="{{ branch.id }}" {% if branch_filter == branch.id|stringformat:"s" %}selected{% endif %}>
+                                {{ branch.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="role" class="form-select">
+                        <option value="">Barcha rollar</option>
+                        <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Administrator</option>
+                        <option value="employee" {% if role_filter == 'employee' %}selected{% endif %}>Xodim</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">Barcha holatlar</option>
+                        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Faol</option>
+                        <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Faol emas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filtrlash</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>F.I.O</th>
+                        <th>Login</th>
+                        <th>Rol</th>
+                        <th>Filiallar</th>
+                        <th>Holati</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in page_obj %}
+                    <tr>
+                        <td>{{ user.get_full_name }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.get_role_display }}</td>
+                        <td>
+                            {% for b in user.branch.all %}
+                                {{ b.name }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                —
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="badge bg-success">Faol</span>
+                            {% else %}
+                                <span class="badge bg-danger">Faol emas</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'user_detail' user.id %}" class="btn btn-sm btn-info">Ma’lumot</a>
+                            <a href="{% url 'edit_user' user.id %}" class="btn btn-sm btn-warning">Tahrirlash</a>
+                            <a href="{% url 'reset_password' user.id %}" class="btn btn-sm btn-secondary">Parol</a>
+                            {% if user != request.user %}
+                                <a href="{% url 'toggle_status' user.id %}" class="btn btn-sm {% if user.is_active %}btn-danger{% else %}btn-success{% endif %}">
+                                    {% if user.is_active %}Faolsizlantirish{% else %}Faollashtirish{% endif %}
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="text-center py-4">Foydalanuvchi topilmadi</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav>
+            <ul class="pagination justify-content-center mt-4">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Oldingi</a></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Keyingi</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
