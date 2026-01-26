@@ -1,16 +1,8 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import DocumentType, Order, OrderSigner, OrderSignature
+from .models import Order, OrderSigner, OrderSignature
 from users.models import Branch, CustomUser
 
-
-class DocumentTypeForm(forms.ModelForm):
-    class Meta:
-        model = DocumentType
-        fields = ['name', 'branch', 'description']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
-        }
 
 
 class EditSignatureForm(forms.ModelForm):

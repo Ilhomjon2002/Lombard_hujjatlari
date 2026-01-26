@@ -69,9 +69,16 @@ def dashboard(request):
         admin_count = CustomUser.objects.filter(role='admin').count()
         employee_count = CustomUser.objects.filter(role='employee').count()
 
+        document_pending = Order.objects.filter(status='pending').count()
+        document_signed = Order.objects.filter(status='signed').count()
+        document_total = Order.objects.count()
+
         main_branches = Branch.objects.filter(parent_branch__isnull=True)
         
         context = {
+            'document_pending': document_pending,
+            'document_signed' : document_signed,
+            'document_total'  : document_total,
             'branches': branches,
             'recent_orders': recent_orders,
             'unread_notifications': unread_notifications,
@@ -184,6 +191,25 @@ def manage_users(request):
         'page_obj': page_obj,
     }
     return render(request, 'users/manage_users.html', context)
+
+
+
+@login_required
+def branch_employees(request, branch_id):
+    if not request.user.role == 'admin':
+        messages.error(request, "Sizda bu sahifaga kirish huquqi yo'q")
+        return redirect('dashboard')
+    
+    branch = get_object_or_404(Branch, id=branch_id)
+    employees = CustomUser.objects.filter(branch=branch).order_by('last_name', 'first_name')
+    
+    context = {
+        'branch': branch,
+        'employees': employees,
+        'title': f"{branch.name} filialidagi xodimlar",
+    }
+    return render(request, 'users/branch_employees.html', context)
+
 
 @login_required
 def create_user(request):
@@ -314,8 +340,6 @@ def create_branch(request):
     
     if request.method == 'POST':
         name = request.POST.get('name')
-        address = request.POST.get('address')
-        phone = request.POST.get('phone')
         parent_id = request.POST.get('parent_branch')
         
         parent = None
@@ -324,12 +348,10 @@ def create_branch(request):
         
         branch = Branch.objects.create(
             name=name,
-            address=address,
-            phone=phone,
             parent_branch=parent
         )
         messages.success(request, f"Filial {branch.name} muvaffaqiyatli yaratildi")
-        return redirect('manage_branches')  # Yangi view qo'shish kerak bo'lsa
+        return redirect('dashboard')  # Yangi view qo'shish kerak bo'lsa
     
     branches = Branch.objects.all()
     main_branches = Branch.objects.filter(parent_branch__isnull=True)

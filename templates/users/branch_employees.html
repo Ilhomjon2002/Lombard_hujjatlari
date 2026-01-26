@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ title }} — {{ branch.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Sarlavha + navigatsiya -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-people-fill text-primary me-2"></i>
+                {{ branch.name }} filialidagi xodimlar
+            </h2>
+            <p class="text-muted mb-0">
+                Jami: <strong>{{ employees.count }}</strong> nafar xodim
+            </p>
+        </div>
+
+        <!-- <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'branch_documents' branch.id %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Hujjatlarga qaytish
+            </a>
+            {% if request.user.role == 'admin' %}
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                <i class="bi bi-person-plus-fill me-1"></i> Yangi xodim qo‘shish
+            </a>
+            {% endif %}
+        </div> -->
+    </div>
+
+    <ul class="nav nav-tabs nav-fill mb-4 flex-nowrap" id="branchTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link  {% if active_tab == 'employees' %}active{% endif %}"
+               href="{% url 'branch_documents' branch.id %}?tab=documents"
+               role="tab">
+                <i class="bi bi-people me-1"></i> Hujjatlar
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {% if active_tab == 'documents' or not active_tab %}active{% endif %}"
+               href="{% url 'branch_employees' branch.id %}?tab=employees"
+               role="tab">
+                <i class="bi bi-file-earmark-text me-1"></i> Ishchilar
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link disabled" href="#" tabindex="-1">
+                <i class="bi bi-graph-up me-1"></i> Statistika
+            </a>
+        </li>
+        <!-- <li class="nav-item ms-auto">
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2"
+                        type="button" id="newDocumentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-plus-lg"></i>
+                    Yangi hujjat
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="newDocumentDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{% url 'create_order' %}?type=buyruq">
+                            <i class="bi bi-file-earmark-check me-2 text-primary"></i> Buyruq
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'create_order' %}?type=ich">
+                            <i class="bi bi-arrow-left-right me-2 text-success"></i> Ichki / Chiqim (I/CH)
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'create_order' %}?type=sht">
+                            <i class="bi bi-arrow-right-square me-2 text-info"></i> SH/T (Shartnoma/Talab)
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-muted" href="#">
+                            <i class="bi bi-file-earmark-plus me-2"></i> Boshqa tur...
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li> -->
+    </ul>
+
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Xodimlar ro‘yxati -->
+    {% if employees %}
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 28%">F.I.O</th>
+                            <th style="width: 20%">Lavozim</th>
+                            <th style="width: 18%">Telefon</th>
+                            <th style="width: 22%">Email</th>
+                            <th style="width: 7%">Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in employees %}
+                        <tr>
+                            <td class="text-muted">{{ forloop.counter }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle bg-light me-3">
+                                        {% if emp.profile_picture %}
+                                        <img src="{{ emp.profile_picture.url }}" alt="{{ emp.get_full_name }}" class="rounded-circle" width="40" height="40">
+                                        {% else %}
+                                        <span class="initials">{{ emp.first_name|slice:":1" }}{{ emp.last_name|slice:":1" }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium">{{ emp.get_full_name }}</div>
+                                        <small class="text-muted">{{ emp.username }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{ emp.position|default:"—" }}
+                            </td>
+                            <td>
+                                {% if emp.phone %}
+                                <a href="tel:{{ emp.phone }}" class="text-decoration-none">
+                                    {{ emp.phone }}
+                                </a>
+                                {% else %}
+                                —
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if emp.email %}
+                                <a href="mailto:{{ emp.email }}" class="text-decoration-none">
+                                    {{ emp.email }}
+                                </a>
+                                {% else %}
+                                —
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                        <i class="fa fa-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'user_detail' emp.id %}">
+                                                <i class="fa fa-eye me-2"></i> Batafsil
+                                            </a>
+                                        </li>
+                                        {% if request.user.role == 'admin' %}
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'edit_user' emp.id %}">
+                                                <i class="fa fa-pencil me-2"></i> Tahrirlash
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" href="#" 
+                                               onclick="confirmDelete('#', '{{ emp.get_full_name }}')">
+                                                <i class="fa fa-trash me-2"></i> O‘chirish
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                Ushbu filialda hali xodimlar ro‘yxatdan o‘tmagan
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center py-5">
+        <i class="bi bi-people fs-1 d-block mb-3"></i>
+        Hozircha {{ branch.name }} filialida xodimlar mavjud emas.
+        {% if request.user.role == 'admin' %}
+        <br><br>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+            Birinchi xodimni qo‘shish
+        </button>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #495057;
+        background-color: #e9ecef;
+        font-size: 1.1rem;
+    }
+    .initials {
+        text-transform: uppercase;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+</style>
+<style>
+    .nav-tabs .nav-link {
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+    }
+    .nav-tabs .nav-link.active {
+        border-bottom: 3px solid #0d6efd;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+    .badge {
+        font-weight: 500;
+    }
+    @media (max-width: 576px) {
+        .nav-tabs {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Oddiy tasdiqlash funksiyasi
+function confirmDelete(url, name) {
+    if (confirm(`"${name}" ni o‘chirishni xohlaysizmi?\nBu amalni qaytarib bo‘lmaydi.`)) {
+        window.location.href = url;
+    }
+}
+</script>
+{% endblock %}

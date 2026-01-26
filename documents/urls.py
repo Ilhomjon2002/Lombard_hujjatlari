@@ -16,6 +16,6 @@ urlpatterns = [
     path('api/branch-employees/',       views.get_branch_employees, name='api_branch_employees'),
 
     # Qo‘shimcha imkoniyatlar (agar kerak bo‘lsa keyinchalik qo‘shiladi)
-    # path('<int:order_id>/edit/',      views.edit_order,           name='edit_order'),
+    path('<int:order_id>/edit/',      views.edit_order,           name='order_update'),
     # path('<int:order_id>/cancel/',    views.cancel_order,         name='cancel_order'),
 ]

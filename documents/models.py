@@ -7,7 +7,7 @@ from io import BytesIO
 from django.core.files import File
 
 
-
+# kerakmas
 class DocumentType(models.Model):
     DOCUMENT_TYPES = (
         ('internal', 'I/CH - Ichki hujjat'),
@@ -41,6 +41,12 @@ class Order(models.Model):
         ('parallel', 'Parallel'),
     )
     
+    DOCUMENT_TYPES = (
+        ('internal', 'Buyruq I/CH - Ichki hujjat'),
+        ('external', 'Buyruq SH/T - Shartnoma/Tashqi hujjat'),
+        ('official', 'Buyruq')
+    )
+
     title = models.CharField(max_length=255, verbose_name="Buyruq nomi/sarlavhasi")
     number = models.CharField(
         max_length=50,
@@ -64,6 +70,13 @@ class Order(models.Model):
         blank=True,
         related_name='orders',
         verbose_name="Filial"
+    )
+
+    document_type = models.CharField(
+        max_length=20,
+        choices=DOCUMENT_TYPES,
+        default='internal',
+        verbose_name="Turi"
     )
     
     status = models.CharField(

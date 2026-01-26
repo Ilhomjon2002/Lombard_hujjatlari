@@ -15,6 +15,7 @@ urlpatterns = [
 
     # Admin / User management
     path('manage-users/',   views.manage_users,         name='manage_users'),
+    path('branch-employees/<int:branch_id>/', views.branch_employees,     name='branch_employees'),
     path('create-user/',    views.create_user,          name='create_user'),
     path('edit-user/<int:user_id>/',    views.edit_user,            name='edit_user'),
     path('user/<int:user_id>/',         views.user_detail,          name='user_detail'),
@@ -22,7 +23,7 @@ urlpatterns = [
     path('toggle-status/<int:user_id>/',  views.toggle_user_status,   name='toggle_status'),
 
     # Qo‘shimcha (oldingi taklifda qo‘shilganlar, agar ishlatilsa)
-    # path('branches/create/',         views.create_branch,        name='create_branch'),
+    path('branches/create/',         views.create_branch,        name='create_branch'),
     # path('holidays/',                views.manage_holidays,      name='manage_holidays'),
     # path('holidays/create/',         views.create_holiday,       name='create_holiday'),
 ]

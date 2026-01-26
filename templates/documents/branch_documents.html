@@ -1,23 +1,85 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %} {{ branch.name }} - Hujjatlar {% endblock %}
+{% block title %}
+{{ branch.name }} - Hujjatlar
+{% endblock %}
 
 {% block content %}
 
 <div class="container-fluid py-4">
 
-    <!-- Header + Filter -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <div>
-            <h2 class="mb-1">{{ branch.name }} filiali hujjatlari</h2>
-            <p class="text-muted mb-0">Jami: {{ documents.count }} ta hujjat</p>
-        </div>
+    <!-- Asosiy sarlavha -->
+    <div class="mb-4">
+        <h2 class="mb-1">{{ branch.name }} filiali hujjatlari</h2>
+        <p class="text-muted mb-0">Jami: {{ documents.count }} ta hujjat (filtrlangan: {{ documents|length }})</p>
+    </div>
 
-        <div class="d-flex align-items-center gap-3">
-            <!-- Document Type Filter -->
+    <!-- Tabs (Menyu) -->
+    <ul class="nav nav-tabs nav-fill mb-4 flex-nowrap" id="branchTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {% if active_tab == 'documents' or not active_tab %}active{% endif %}"
+               href="{% url 'branch_documents' branch.id %}?tab=documents"
+               role="tab">
+                <i class="bi bi-file-earmark-text me-1"></i> Hujjatlar
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {% if active_tab == 'employees' %}active{% endif %}"
+               href="{% url 'branch_employees' branch.id %}?tab=employees"
+               role="tab">
+                <i class="bi bi-people me-1"></i> Ishchilar
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link disabled" href="#" tabindex="-1">
+                <i class="bi bi-graph-up me-1"></i> Statistika
+            </a>
+        </li>
+        <li class="nav-item ms-auto">
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2"
+                        type="button" id="newDocumentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-plus-lg"></i>
+                    Yangi hujjat
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="newDocumentDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{% url 'create_order' %}?type=buyruq">
+                            <i class="bi bi-file-earmark-check me-2 text-primary"></i> Buyruq
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'create_order' %}?type=ich">
+                            <i class="bi bi-arrow-left-right me-2 text-success"></i> Ichki / Chiqim (I/CH)
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'create_order' %}?type=sht">
+                            <i class="bi bi-arrow-right-square me-2 text-info"></i> SH/T (Shartnoma/Talab)
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-muted" href="#">
+                            <i class="bi bi-file-earmark-plus me-2"></i> Boshqa tur...
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+
+    <!-- Hujjatlar bo'limi (faqat documents tab faol bo'lganda ko'rinadi) -->
+    {% if active_tab == 'documents' or not active_tab %}
+
+    <!-- Filtrlar qatori -->
+    <div class="row g-3 mb-4 align-items-end">
+
+        <!-- Hujjat turi -->
+        <div class="col-auto">
             <form method="get" class="d-flex align-items-center gap-2">
-                <label for="type" class="form-label mb-0 fw-medium">Hujjat turi:</label>
+                <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
                 <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Barchasi —</option>
                     {% for dt in document_types %}
@@ -27,16 +89,38 @@
                         </option>
                     {% endfor %}
                 </select>
+                {% if request.GET.tab %}<input type="hidden" name="tab" value="{{ request.GET.tab }}">{% endif %}
             </form>
+        </div>
 
-            <!-- Yangi hujjat qo'shish tugmasi (agar kerak bo'lsa) -->
+        <!-- Holat filtri -->
+        <div class="col-auto">
+            <form method="get" class="d-flex align-items-center gap-2">
+                <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
+                <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
+                    <option value="">— Hammasi —</option>
+                    <option value="yangi"    {% if selected_status == 'yangi'    %}selected{% endif %}>Yangi</option>
+                    <option value="jarayonda"{% if selected_status == 'jarayonda' %}selected{% endif %}>Jarayonda</option>
+                    <option value="imzolangan"{% if selected_status == 'imzolangan' %}selected{% endif %}>Imzolangan (faol)</option>
+                    <option value="tugatilgan"{% if selected_status == 'tugatilgan' %}selected{% endif %}>Tugatilgan (faol emas)</option>
+                </select>
+                {% if request.GET.type   %}<input type="hidden" name="type"   value="{{ request.GET.type }}">{% endif %}
+                {% if request.GET.tab    %}<input type="hidden" name="tab"    value="{{ request.GET.tab }}">{% endif %}
+            </form>
+        </div>
+
+        <!-- Qo'shimcha joy (masalan qidiruv yoki sana oralig'i keyinchalik qo'shilishi mumkin) -->
+        <div class="col"></div>
+
+        <!-- Yangi hujjat tugmasi (mobil uchun) -->
+        <div class="col-auto d-lg-none">
             <a href="{% url 'create_order' %}" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Yangi hujjat
+                <i class="bi bi-plus-lg"></i> Yangi
             </a>
         </div>
     </div>
 
-    <!-- Hujjatlar jadvali -->
+    <!-- Jadval -->
     {% if documents %}
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
@@ -51,7 +135,8 @@
                             <th>Sana</th>
                             <th>Imzolar</th>
                             <th>Holati</th>
-                            <th></th>
+                            <th class="text-end">Amallar</th>
+                            <!-- <th></th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -64,9 +149,7 @@
                             </td>
                             <td>{{ doc.document_type.name }}</td>
                             <td>{{ doc.created_by.get_full_name|default:doc.created_by.username }}</td>
-                            <td>
-                                <small>{{ doc.created_at|date:"d.m.Y H:i" }}</small>
-                            </td>
+                            <td><small>{{ doc.created_at|date:"d.m.Y H:i" }}</small></td>
                             <td>
                                 <span class="badge bg-light text-dark border">
                                     {{ doc.signatures.count }} / {{ doc.required_signatures|default:"—" }}
@@ -82,12 +165,12 @@
                                 {% endif %}
                             </td>
                             <td class="text-end">
-                                <a href="{% url 'document_detail' doc.id %}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-eye"></i>
+                                <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-eye"></i>
                                 </a>
                                 {% if request.user == doc.created_by or request.user.role == 'admin' %}
-                                <!-- <a href="{% url 'document_detail' doc.id %}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-pencil">document_update</i>
+                                <!-- <a href="{% url 'order_update' doc.id %}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
                                 </a> -->
                                 {% endif %}
                             </td>
@@ -95,7 +178,7 @@
                         {% empty %}
                         <tr>
                             <td colspan="8" class="text-center py-5 text-muted">
-                                Hozircha hujjatlar yo‘q
+                                Tanlangan filtrlar bo‘yicha hujjat topilmadi
                             </td>
                         </tr>
                         {% endfor %}
@@ -107,13 +190,22 @@
     {% else %}
     <div class="alert alert-info text-center py-5">
         <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
-        Ushbu filial uchun hali hujjatlar mavjud emas.
-        {% if request.user.role == 'admin' %}
-            <br><a href="{% url 'create_order' %}" class="btn btn-primary mt-3">
-                Birinchi hujjatni yaratish
-            </a>
-        {% endif %}
+        Ushbu filial uchun hali hujjatlar mavjud emas yoki tanlangan filtrlar bo‘yicha mos keladigan hujjat yo‘q.
+        <br><a href="{% url 'create_order' %}" class="btn btn-primary mt-3">
+            Birinchi hujjatni yaratish
+        </a>
     </div>
+    {% endif %}
+
+    {% endif %} <!-- documents tab tugashi -->
+
+    <!-- Ishchilar bo'limi (faqat employees tab faol bo'lganda) -->
+    {% if active_tab == 'employees' %}
+    <div class="alert alert-secondary text-center py-5">
+        <h4 class="mb-3">Ishchilar ro‘yxati tez orada qo‘shiladi</h4>
+        <p class="text-muted">Bu yerda filialga biriktirilgan xodimlar, lavozimlari va kontaktlari ko‘rinadi.</p>
+    </div>
+    <!-- Keyinchalik employees jadvali yoki cards qo'shishingiz mumkin -->
     {% endif %}
 
 </div>
@@ -122,20 +214,35 @@
 
 {% block extra_css %}
 <style>
+    .nav-tabs .nav-link {
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+    }
+    .nav-tabs .nav-link.active {
+        border-bottom: 3px solid #0d6efd;
+    }
     .table th, .table td {
         vertical-align: middle;
     }
     .badge {
         font-weight: 500;
     }
+    @media (max-width: 576px) {
+        .nav-tabs {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Agar kerak bo'lsa qo'shimcha JS logikasi
-document.addEventListener('DOMContentLoaded', function() {
-    // masalan: filter o'zgarganda loading ko'rsatish mumkin
+// Tablar o'zgarganda URLni toza saqlash uchun (ixtiyoriy)
+document.querySelectorAll('.nav-tabs a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        // Agar server tarafda tabni qayta ishlash kerak bo'lmasa, bu qismni o'chirib qo'yish mumkin
+    });
 });
 </script>
 {% endblock %}

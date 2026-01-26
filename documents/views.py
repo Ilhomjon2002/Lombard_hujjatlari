@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
 from datetime import datetime
-from .models import DocumentType, OrderSignature, Notification, Order, OrderSigner
+from .models import  OrderSignature, Notification, Order, OrderSigner
 from users.models import CustomUser, Branch
 from .forms import EditSignatureForm  # Yangi form qo'shish kerak (forms.py da)
 
@@ -18,7 +18,7 @@ def branch_documents(request, branch_id):
         return redirect('dashboard')
 
     branch = get_object_or_404(Branch, id=branch_id)
-    document_types = DocumentType.objects.filter(branch=branch)
+    # document_types = DocumentType.objects.filter(branch=branch)
 
     # Hujjat turlari bo'yicha filter
     selected_type = request.GET.get('type')
@@ -32,7 +32,7 @@ def branch_documents(request, branch_id):
     ).prefetch_related('signatures__user')
     context = {
         'branch': branch,
-        'document_types': document_types,
+        # 'document_types': document_types,
         'documents': orders,  # orders ga o'zgartirildi
         'selected_type': selected_type,
     }
@@ -108,8 +108,8 @@ def create_document(request):
         except Exception as e:
             messages.error(request, f'Xatolik yuz berdi: {str(e)}')
 
-    branches = Branch.objects.all()
-    employees = CustomUser.objects.filter(role='employee').values('id', 'first_name', 'last_name', 'role')  # Rol qo'shildi
+    branches = Branch.objects.filter(parent_branch__isnull=True)
+    employees = CustomUser.objects.values('id', 'first_name', 'last_name', 'role')  # Rol qo'shildi
     context = {
         'branches': branches,
         'employees': employees,
@@ -253,6 +253,38 @@ def document_tracking(request, document_id):
         'signature_history': signature_history,
     }
     return render(request, 'documents/document_tracking.html', context)
+
+
+@login_required
+def edit_order(request, order_id):
+    if request.user.role != 'admin':
+        messages.error(request, 'Ruxsat yo\'q')
+        return redirect('dashboard')
+
+    order = get_object_or_404(Order, id=order_id)
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        deadline_str = request.POST.get('deadline')
+
+        order.title = title
+
+        if deadline_str:
+            try:
+                order.deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date()
+            except ValueError:
+                messages.warning(request, "Muddati noto'g'ri formatda kiritildi, saqlanmadi")
+        else:
+            order.deadline = None
+
+        order.save()
+        messages.success(request, 'Hujjat muvaffaqiyatli yangilandi')
+        return redirect('document_detail', document_id=order.id)
+
+    context = {
+        'order': order,
+    }
+    return render(request, 'documents/edit_order.html', context)
 
 @login_required
 def edit_signature_time(request, signature_id):

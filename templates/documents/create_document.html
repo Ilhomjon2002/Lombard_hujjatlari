@@ -1,19 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Yangi Buyruq - HAT{% endblock %}
-{% block header_title %}Yangi Buyruq Yaratish{% endblock %}
+{% block title %}Yangi Hujjat - HAT{% endblock %}
+{% block header_title %}Yangi Hujjat Yaratish{% endblock %}
 
 {% block extra_css %}
 <style>
-    .signature-preview {
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        padding: 10px;
-        background: white;
-        max-width: 300px;
-        margin: 0 auto;
-    }
-    
     .selected-employee {
         background: #e8f4ff;
         border: 1px solid #c2e0ff;
@@ -29,6 +20,28 @@
         margin-left: 10px;
         color: #dc3545;
     }
+    
+    .order-badge {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #007bff;
+        color: white;
+        margin-right: 10px;
+    }
+    
+    .employee-item {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        background: white;
+    }
 </style>
 {% endblock %}
 
@@ -37,7 +50,7 @@
     <div class="col-md-10">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Buyruq ma'lumotlari</h5>
+                <h5 class="mb-0">Hujjat ma'lumotlari</h5>
             </div>
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data" id="documentForm">
@@ -51,7 +64,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="branch" class="form-label">Filial *</label>
-                            <select class="form-control" id="branch" name="branch" required>
+                            <select class="form-select" id="branch" name="branch" required>
                                 <option value="">Filialni tanlang</option>
                                 {% for branch in branches %}
                                 <option value="{{ branch.id }}">{{ branch.name }}</option>
@@ -60,13 +73,11 @@
                         </div>
                     </div>
                     
-                    <!-- Document Type and File -->
+                    <!-- Document Number and File -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="document_type" class="form-label">Hujjat turi *</label>
-                            <select class="form-control" id="document_type" name="document_type" required disabled>
-                                <option value="">Avval filialni tanlang</option>
-                            </select>
+                            <label for="number" class="form-label">Hujjat raqami *</label>
+                            <input type="text" class="form-control" id="number" name="number" required>
                         </div>
                         <div class="col-md-6">
                             <label for="file" class="form-label">Fayl (PDF yoki DOCX) *</label>
@@ -78,14 +89,15 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="signature_type" class="form-label">Imzolash turi *</label>
-                            <select class="form-control" id="signature_type" name="signature_type" required>
+                            <select class="form-select" id="signature_type" name="signature_type" required>
+                                <option value="">Imzolash turini tanlang</option>
                                 <option value="sequential">Ketma-ket imzolash</option>
                                 <option value="parallel">Parallel imzolash</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label for="deadline" class="form-label">Muddati (ixtiyoriy)</label>
-                            <input type="datetime-local" class="form-control" id="deadline" name="deadline">
+                            <input type="date" class="form-control" id="deadline" name="deadline">
                         </div>
                     </div>
                     
@@ -93,15 +105,32 @@
                     <div class="row mb-3">
                         <div class="col-12">
                             <label class="form-label">Imzolovchi ishchilar *</label>
-                            <div id="selectedEmployees" class="mb-2">
+                            <div id="selectedEmployees" class="mb-3">
                                 <!-- Selected employees will appear here -->
+                                <div class="alert alert-info">
+                                    Ishchilar tanlanmagan. Quyidagi ro'yxatdan tanlang.
+                                </div>
                             </div>
-                            <select class="form-control" id="employeeSelect" disabled>
-                                <option value="">Avval filialni tanlang</option>
-                            </select>
-                            <button type="button" class="btn btn-sm btn-primary mt-2" id="addEmployeeBtn" disabled>
-                                <i class="fas fa-plus"></i> Ishchi qo'shish
-                            </button>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <select class="form-select" id="employeeSelect">
+                                        <option value="">Ishchini tanlang</option>
+                                        {{employees.count}}
+                                        {% for employee in employees %}
+                                        <option value="{{ employee.id }}">
+                                            {{ employee.first_name }} {{ employee.last_name }} ({{ employee.role }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-primary w-100" id="addEmployeeBtn">
+                                        <i class="fas fa-plus"></i> Ishchi qo'shish
+                                    </button>
+                                </div>
+                            </div>
+                            
                             <input type="hidden" name="employees" id="employeesInput">
                         </div>
                     </div>
@@ -109,16 +138,25 @@
                     <!-- Employee Order (for sequential) -->
                     <div class="row mb-3" id="orderSection" style="display: none;">
                         <div class="col-12">
-                            <label class="form-label">Imzolash tartibi</label>
-                            <div id="employeeOrder">
-                                <!-- Ordered list will appear here -->
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">Imzolash tartibi (ketma-ket imzolash uchun)</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="employeeOrder" class="mb-3">
+                                        <!-- Ordered list will appear here -->
+                                    </div>
+                                    <small class="text-muted">
+                                        Yuqoriga va pastga tugmalari bilan tartibni o'zgartirishingiz mumkin
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Saqlash
+                            <i class="fas fa-save"></i> Hujjatni yaratish
                         </button>
                         <a href="{% url 'dashboard' %}" class="btn btn-secondary">Bekor qilish</a>
                     </div>
@@ -135,36 +173,15 @@
         let selectedEmployees = [];
         let availableEmployees = [];
         
-        // Load document types when branch is selected
-        $('#branch').change(function() {
-            const branchId = $(this).val();
-            if (branchId) {
-                // Load document types
-                $.get(`/documents/api/document-types/?branch_id=${branchId}`, function(data) {
-                    $('#document_type').empty().append('<option value="">Hujjat turini tanlang</option>');
-                    data.document_types.forEach(function(type) {
-                        $('#document_type').append(`<option value="${type.id}">${type.name}</option>`);
-                    });
-                    $('#document_type').prop('disabled', false);
-                });
-                
-                // Load employees
-                $.get(`/documents/api/branch-employees/?branch_id=${branchId}`, function(data) {
-                    availableEmployees = data.employees;
-                    $('#employeeSelect').empty().append('<option value="">Ishchini tanlang</option>');
-                    data.employees.forEach(function(employee) {
-                        $('#employeeSelect').append(
-                            `<option value="${employee.id}">${employee.first_name} ${employee.last_name}</option>`
-                        );
-                    });
-                    $('#employeeSelect').prop('disabled', false);
-                    $('#addEmployeeBtn').prop('disabled', false);
-                });
-            } else {
-                $('#document_type, #employeeSelect').prop('disabled', true);
-                $('#addEmployeeBtn').prop('disabled', true);
-            }
+        // Initialize available employees from Django template
+        {% for employee in employees %}
+        availableEmployees.push({
+            id: "{{ employee.id }}",
+            first_name: "{{ employee.first_name }}",
+            last_name: "{{ employee.last_name }}",
+            role: "{{ employee.role }}"
         });
+        {% endfor %}
         
         // Add employee to selected list
         $('#addEmployeeBtn').click(function() {
@@ -176,7 +193,12 @@
                     updateSelectedEmployees();
                     updateOrderSection();
                     updateEmployeesInput();
+                    
+                    // Clear selection
+                    $('#employeeSelect').val('');
                 }
+            } else if (selectedEmployees.includes(employeeId)) {
+                alert('Bu ishchi allaqachon tanlangan!');
             }
         });
         
@@ -215,21 +237,39 @@
         // Functions
         function updateSelectedEmployees() {
             const container = $('#selectedEmployees');
-            container.empty();
+            
+            if (selectedEmployees.length === 0) {
+                container.html(`
+                    <div class="alert alert-info">
+                        Ishchilar tanlanmagan. Quyidagi ro'yxatdan tanlang.
+                    </div>
+                `);
+                return;
+            }
+            
+            let html = '<div class="row">';
             
             selectedEmployees.forEach(employeeId => {
                 const employee = availableEmployees.find(e => e.id == employeeId);
                 if (employee) {
-                    container.append(`
-                        <div class="selected-employee">
-                            ${employee.first_name} ${employee.last_name}
-                            <span class="remove-employee" data-id="${employeeId}">
-                                <i class="fas fa-times"></i>
-                            </span>
+                    html += `
+                        <div class="col-md-6 mb-2">
+                            <div class="selected-employee d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${employee.first_name} ${employee.last_name}</strong>
+                                    <small class="text-muted ms-2">${employee.role}</small>
+                                </div>
+                                <span class="remove-employee" data-id="${employeeId}">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            </div>
                         </div>
-                    `);
+                    `;
                 }
             });
+            
+            html += '</div>';
+            container.html(html);
         }
         
         function updateOrderSection() {
@@ -245,14 +285,20 @@
                     const employee = availableEmployees.find(e => e.id == employeeId);
                     if (employee) {
                         employeeOrder.append(`
-                            <div class="d-flex align-items-center mb-2">
-                                <span class="badge bg-primary me-2">${index + 1}</span>
-                                <span class="flex-grow-1">${employee.first_name} ${employee.last_name}</span>
-                                <div>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary move-up" data-id="${employeeId}" ${index === 0 ? 'disabled' : ''}>
+                            <div class="employee-item">
+                                <div class="order-badge">${index + 1}</div>
+                                <div class="flex-grow-1">
+                                    <strong>${employee.first_name} ${employee.last_name}</strong>
+                                    <br>
+                                    <small class="text-muted">${employee.role}</small>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-primary move-up" 
+                                            data-id="${employeeId}" ${index === 0 ? 'disabled' : ''}>
                                         <i class="fas fa-arrow-up"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary move-down" data-id="${employeeId}" ${index === selectedEmployees.length - 1 ? 'disabled' : ''}>
+                                    <button type="button" class="btn btn-outline-primary move-down" 
+                                            data-id="${employeeId}" ${index === selectedEmployees.length - 1 ? 'disabled' : ''}>
                                         <i class="fas fa-arrow-down"></i>
                                     </button>
                                 </div>
@@ -271,11 +317,41 @@
         
         // Form validation
         $('#documentForm').submit(function(e) {
+            // Required fields validation
+            const requiredFields = ['title', 'branch', 'number', 'file', 'signature_type'];
+            let isValid = true;
+            let errorMessage = '';
+            
+            requiredFields.forEach(field => {
+                const value = $(`[name="${field}"]`).val();
+                if (!value) {
+                    isValid = false;
+                    const fieldName = $(`[name="${field}"]`).siblings('label').text();
+                    errorMessage += `- ${fieldName.replace('*', '').trim()} maydoni to'ldirilmagan\n`;
+                }
+            });
+            
+            // Check if at least one employee is selected
             if (selectedEmployees.length === 0) {
+                isValid = false;
+                errorMessage += "- Kamida bitta ishchini tanlashingiz kerak\n";
+            }
+            
+            if (!isValid) {
                 e.preventDefault();
-                alert('Kamida bitta ishchini tanlashingiz kerak');
+                alert('Quyidagi maydonlarni to\'ldiring:\n\n' + errorMessage);
                 return false;
             }
+            
+            // Prepare employees array for submission
+            const employeesField = $('<input>')
+                .attr('type', 'hidden')
+                .attr('name', 'employees[]');
+            
+            selectedEmployees.forEach(id => {
+                const clone = employeesField.clone().val(id);
+                $('#documentForm').append(clone);
+            });
         });
     });
 </script>

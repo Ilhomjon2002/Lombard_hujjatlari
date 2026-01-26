@@ -21,6 +21,9 @@
             <i class="fas fa-angle-down ms-auto"></i>
         </a>
         <div class="collapse" id="branchesMenu">
+            <a href="{% url 'create_branch' %}" class="d-block ps-3 py-1 text-success fw-semibold text-decoration-none">
+                ➕ Yangi filial qo‘shish
+            </a>
 
             {% for branch in sidebar_branches %}
             {% if not branch.parent_branch %}
