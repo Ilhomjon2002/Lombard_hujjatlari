@@ -537,6 +537,43 @@ def download_pdf(request, order_id):
                 pass
 
 
+@login_required
+def download_docx(request, order_id):
+    """Asl DOCX/DOC faylni yuklab olish (o'zgartirilmagan holda)"""
+    import os
+    
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Ruxsat tekshirish
+    can_view = (
+        request.user.role == 'admin' or
+        request.user.role == 'director' or
+        request.user == order.created_by or
+        order.signatures.filter(user=request.user).exists()
+    )
+    
+    if not can_view:
+        messages.error(request, "Ushbu hujjatni yuklab olishga ruxsat yo'q")
+        return redirect('dashboard')
+    
+    if not order.file:
+        messages.error(request, "Xatolik: Fayl topilmadi.")
+        return redirect('order_detail', order_id=order.id)
+    
+    file_path = order.file.path
+    if not os.path.exists(file_path):
+        messages.error(request, "Xatolik: Fayl topilmadi.")
+        return redirect('order_detail', order_id=order.id)
+    
+    ext = os.path.splitext(file_path)[1]
+    filename = f"hujjat_{order.number}{ext}".replace("/", "_")
+    
+    with open(file_path, 'rb') as f:
+        buffer = BytesIO(f.read())
+    
+    return FileResponse(buffer, as_attachment=True, filename=filename)
+
+
 def _convert_docx_to_pdf(docx_path, temp_files):
     """DOCX faylni PDF ga konvertatsiya qilish.
     
