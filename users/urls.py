@@ -15,7 +15,7 @@ urlpatterns = [
     path('api/auth/fingerprint/capture',                   views.fingerprint_capture,              name='fingerprint_capture'),
     path('api/auth/fingerprint/register/complete',         views.fingerprint_register_complete_scanner, name='fingerprint_register_complete_scanner'),
     path('api/auth/fingerprint/authenticate',              views.fingerprint_authenticate_scanner, name='fingerprint_authenticate_scanner'),
-    path('api/auth/fingerprint/verify',                    views.fingerprint_verify_scanner,       name='fingerprint_verify_scanner'),
+    path('api/auth/fingerprint/auth/confirm',              views.fingerprint_auth_confirm,         name='fingerprint_auth_confirm'),
     path('api/auth/fingerprint/remove',                    views.fingerprint_remove_scanner,       name='fingerprint_remove_scanner'),
     path('api/auth/fingerprint/verify-signing',            views.fingerprint_verify_for_signing,   name='fingerprint_verify_for_signing'),
     

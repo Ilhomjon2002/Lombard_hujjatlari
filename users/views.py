@@ -482,71 +482,38 @@ def create_holiday(request):
 # FINGERPRINT SCANNER AUTHENTICATION (USB ZKTeco)
 # ============================================================================
 
-import requests
 from django.utils import timezone
 
-AGENT_URL = 'http://127.0.0.1:8001'
-AGENT_TIMEOUT = 15
-
-
-def check_agent_health():
-    """Check if fingerprint agent is running and healthy"""
-    try:
-        response = requests.get(f'{AGENT_URL}/api/status', timeout=3)
-        return response.status_code == 200
-    except:
-        return False
+# Agent endi frontend (JavaScript) orqali chaqiriladi
+# Django server agent bilan to'g'ridan-to'g'ri bog'lanmaydi
+AGENT_URL = 'http://127.0.0.1:8001'  # Faqat frontend JS uchun ma'lumot
 
 
 @require_http_methods(["GET"])
 def scanner_status(request):
-    """Check scanner availability and agent health"""
-    try:
-        response = requests.get(f'{AGENT_URL}/api/status', timeout=3)
-        if response.status_code == 200:
-            agent_data = response.json()
-            # Also check scanner detection
-            try:
-                detect_resp = requests.get(f'{AGENT_URL}/api/scanner/detect', timeout=5)
-                detect_data = detect_resp.json() if detect_resp.status_code == 200 else {}
-                scanner_detected = detect_resp.status_code == 200 and (detect_data.get('detected', False) or detect_data.get('success', False))
-            except:
-                scanner_detected = False
-            
-            return JsonResponse({
-                'agent_running': True,
-                'scanner_detected': scanner_detected,
-                'agent_version': agent_data.get('version', 'unknown')
-            })
-        else:
-            return JsonResponse({
-                'agent_running': False,
-                'scanner_detected': False
-            })
-    except:
-        return JsonResponse({
-            'agent_running': False,
-            'scanner_detected': False
-        })
+    """Scanner status — frontend JS agent'ni to'g'ridan-to'g'ri tekshiradi.
+    Bu endpoint faqat fallback sifatida."""
+    return JsonResponse({
+        'agent_url': AGENT_URL,
+        'message': 'Agent statusini JS orqali tekshiring'
+    })
 
 
 @login_required
 def scanner_register_page(request):
     """Render the scanner fingerprint registration page"""
-    return render(request, 'users/scanner_register.html')
+    return render(request, 'users/scanner_register.html', {
+        'agent_url': AGENT_URL
+    })
 
 
 @login_required
 @require_http_methods(["POST"])
 def fingerprint_register_start_scanner(request):
-    """Start fingerprint registration process"""
-    if not check_agent_health():
-        return JsonResponse({
-            'error': 'Agent ishlamayapti'
-        }, status=503)
-    
+    """Start fingerprint registration process — agent JS orqali tekshiriladi"""
     return JsonResponse({
         'status': 'ready',
+        'agent_url': AGENT_URL,
         'message': "Barmog'ingizni skanerga qo'ying"
     })
 
@@ -554,65 +521,30 @@ def fingerprint_register_start_scanner(request):
 @login_required
 @require_http_methods(["GET"])
 def fingerprint_capture(request):
-    """Capture fingerprint from scanner"""
-    try:
-        response = requests.get(
-            f'{AGENT_URL}/api/fingerprint/capture',
-            timeout=AGENT_TIMEOUT
-        )
-        
-        if response.status_code == 200:
-            data = response.json()
-            return JsonResponse({
-                'status': 'captured',
-                'template': data.get('template'),
-                'quality': data.get('quality', 0)
-            })
-        else:
-            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
-            return JsonResponse({
-                'error': error_data.get('error', 'Barmoq izini olishda xatolik')
-            }, status=400)
-    except requests.Timeout:
-        return JsonResponse({
-            'error': 'Skaner javob bermadi. Qayta urinib ko\'ring.'
-        }, status=408)
-    except Exception as e:
-        return JsonResponse({
-            'error': f'Xatolik: {str(e)}'
-        }, status=500)
+    """Capture endpoint — frontend JS agent'dan to'g'ridan-to'g'ri oladi.
+    Bu endpoint faqat fallback/info."""
+    return JsonResponse({
+        'agent_url': AGENT_URL,
+        'capture_endpoint': f'{AGENT_URL}/api/fingerprint/capture',
+        'message': 'JS orqali agent capture endpointiga murojaat qiling'
+    })
 
 
 @login_required
 @require_http_methods(["POST"])
 def fingerprint_register_complete_scanner(request):
-    """Complete fingerprint registration — agent captures 3x and generates reg template"""
+    """Complete fingerprint registration — JS agent'dan template oladi va shu yerga yuboradi"""
     user = request.user
     
     try:
         data = json.loads(request.body)
+        template_b64 = data.get('template')
+        quality = data.get('quality', 0)
         finger_position = data.get('finger_position', 'right_index')
-        
-        # Call agent to do 3x capture and generate registration template
-        response = requests.post(
-            f'{AGENT_URL}/api/fingerprint/register',
-            json={'captures_needed': 3},
-            timeout=30  # longer timeout for 3x capture
-        )
-        
-        if response.status_code != 200:
-            error_data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
-            return JsonResponse({
-                'error': error_data.get('error', "Ro'yxatdan o'tkazish muvaffaqiyatsiz")
-            }, status=400)
-        
-        reg_data = response.json()
-        template_b64 = reg_data.get('template')
-        quality = reg_data.get('quality', 0)
         
         if not template_b64:
             return JsonResponse({
-                'error': 'Agent shablon qaytarmadi'
+                'error': 'Barmoq izi shabloni yuborilmadi'
             }, status=400)
         
         # Decode base64 template and save to DB
@@ -652,10 +584,6 @@ def fingerprint_register_complete_scanner(request):
         return JsonResponse({
             'error': "So'rov formati noto'g'ri"
         }, status=400)
-    except requests.Timeout:
-        return JsonResponse({
-            'error': 'Skaner javob bermadi. Qayta urinib ko\'ring.'
-        }, status=408)
     except Exception as e:
         return JsonResponse({
             'error': f'Xatolik: {str(e)}'
@@ -664,7 +592,14 @@ def fingerprint_register_complete_scanner(request):
 
 @require_http_methods(["POST"])
 def fingerprint_authenticate_scanner(request):
-    """Start fingerprint authentication for login"""
+    """Fingerprint authentication for login.
+    
+    Flow:
+    1. JS bu endpoint'ga username yuboradi
+    2. Django stored_template qaytaradi
+    3. JS agent'da capture + verify qiladi
+    4. JS natijani /fingerprint/auth/confirm/ ga yuboradi
+    """
     try:
         data = json.loads(request.body)
         username = data.get('username', '').strip()
@@ -684,57 +619,8 @@ def fingerprint_authenticate_scanner(request):
         
         if not user.fingerprint_enabled:
             return JsonResponse({
-                'error': "Bu foydalanuvchida barmoq izi ro'yxatdan o'tkazilmagan"
-            }, status=400)
-        
-        from .models import ScannerFingerprintTemplate
-        try:
-            fp_template = user.scanner_fingerprint
-            if not fp_template.is_registered:
-                return JsonResponse({
-                    'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
-                }, status=400)
-        except ScannerFingerprintTemplate.DoesNotExist:
-            return JsonResponse({
                 'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
             }, status=400)
-        
-        # Check agent health
-        if not check_agent_health():
-            return JsonResponse({
-                'error': 'Agent ishlamayapti'
-            }, status=503)
-        
-        return JsonResponse({
-            'status': 'ready',
-            'message': "Barmog'ingizni skanerga qo'ying"
-        })
-    
-    except json.JSONDecodeError:
-        return JsonResponse({
-            'error': "So'rov formati noto'g'ri"
-        }, status=400)
-
-
-@require_http_methods(["POST"])
-def fingerprint_verify_scanner(request):
-    """Verify fingerprint and log user in"""
-    try:
-        data = json.loads(request.body)
-        username = data.get('username', '').strip()
-        
-        if not username:
-            return JsonResponse({
-                'error': 'Foydalanuvchi nomi kerak'
-            }, status=400)
-        
-        # Get user and stored template
-        try:
-            user = CustomUser.objects.get(username=username)
-        except CustomUser.DoesNotExist:
-            return JsonResponse({
-                'error': 'Foydalanuvchi topilmadi'
-            }, status=404)
         
         try:
             fp_template = user.scanner_fingerprint
@@ -747,74 +633,152 @@ def fingerprint_verify_scanner(request):
                 'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
             }, status=400)
         
-        # Get stored template as base64
+        # Return stored template for JS verification via agent
         stored_template_b64 = base64.b64encode(bytes(fp_template.template_data)).decode()
         
-        # Capture and verify via agent
-        try:
-            # First capture
-            capture_resp = requests.get(
-                f'{AGENT_URL}/api/fingerprint/capture',
-                timeout=AGENT_TIMEOUT
-            )
-            
-            if capture_resp.status_code != 200:
-                return JsonResponse({
-                    'error': 'Barmoq izini olishda xatolik'
-                }, status=400)
-            
-            captured_data = capture_resp.json()
-            captured_template = captured_data.get('template')
-            
-            # Verify with agent
-            verify_response = requests.post(
-                f'{AGENT_URL}/api/fingerprint/verify',
-                json={
-                    'stored_template': stored_template_b64,
-                    'current_template': captured_template,
-                    'threshold': 50
-                },
-                timeout=10
-            )
-            
-            if verify_response.status_code == 200:
-                verify_data = verify_response.json()
-                if verify_data.get('match'):
-                    # Log user in
-                    login(request, user)
-                    
-                    # Update verification stats
-                    fp_template.last_verified = timezone.now()
-                    fp_template.verification_count = (fp_template.verification_count or 0) + 1
-                    fp_template.save()
-                    
-                    return JsonResponse({
-                        'status': 'success',
-                        'message': "Muvaffaqiyatli kirdingiz!",
-                        'redirect': '/dashboard/'
-                    })
-                else:
-                    return JsonResponse({
-                        'error': 'Barmoq izi mos kelmadi'
-                    }, status=401)
-            else:
-                return JsonResponse({
-                    'error': 'Tekshirishda xatolik'
-                }, status=400)
-        
-        except requests.Timeout:
-            return JsonResponse({
-                'error': 'Skaner javob bermadi'
-            }, status=408)
-        except Exception as e:
-            return JsonResponse({
-                'error': f'Tekshirish xatoligi: {str(e)}'
-            }, status=500)
+        return JsonResponse({
+            'status': 'ready',
+            'stored_template': stored_template_b64,
+            'agent_url': AGENT_URL,
+            'message': "Barmog'ingizni skanerga qo'ying"
+        })
     
     except json.JSONDecodeError:
         return JsonResponse({
             'error': "So'rov formati noto'g'ri"
         }, status=400)
+
+
+@require_http_methods(["POST"])
+def fingerprint_auth_confirm(request):
+    """Confirm fingerprint authentication after JS verified via agent.
+    
+    JS agent'da verify qilgandan keyin natijani shu yerga yuboradi.
+    """
+    try:
+        data = json.loads(request.body)
+        username = data.get('username', '').strip()
+        match = data.get('match', False)
+        score = data.get('score', 0)
+        
+        if not username or not match:
+            return JsonResponse({
+                'error': 'Barmoq izi mos kelmadi'
+            }, status=401)
+        
+        try:
+            user = CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({
+                'error': 'Foydalanuvchi topilmadi'
+            }, status=404)
+        
+        # Verify the user has fingerprint enabled
+        if not user.fingerprint_enabled:
+            return JsonResponse({
+                'error': 'Barmoq izi faol emas'
+            }, status=400)
+        
+        # Log user in
+        login(request, user)
+        
+        # Update verification stats
+        try:
+            fp_template = user.scanner_fingerprint
+            fp_template.last_verified = timezone.now()
+            fp_template.verification_count = (fp_template.verification_count or 0) + 1
+            fp_template.save()
+        except:
+            pass
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': "Muvaffaqiyatli kirdingiz!",
+            'redirect': '/dashboard/'
+        })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'error': "So'rov formati noto'g'ri"
+        }, status=400)
+
+
+@login_required
+@require_http_methods(["POST"])
+def fingerprint_verify_for_signing(request):
+    """Verify fingerprint before document signing.
+    
+    Flow:
+    1. JS bu endpoint'ga so'rov yuboradi (action='get_template')
+    2. Django stored_template qaytaradi
+    3. JS agent'da capture + verify qiladi
+    4. JS natijani shu endpoint'ga qaytaradi (action='confirm')
+    """
+    user = request.user
+    
+    if not user.fingerprint_enabled:
+        return JsonResponse({
+            'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
+        }, status=400)
+    
+    try:
+        fp_template = user.scanner_fingerprint
+        if not fp_template.is_registered:
+            return JsonResponse({
+                'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
+            }, status=400)
+    except:
+        return JsonResponse({
+            'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
+        }, status=400)
+    
+    try:
+        data = json.loads(request.body)
+        action = data.get('action', 'get_template')
+        
+        if action == 'get_template':
+            # Step 1: Return stored template for JS to verify via agent
+            stored_template_b64 = base64.b64encode(bytes(fp_template.template_data)).decode()
+            return JsonResponse({
+                'status': 'ready',
+                'stored_template': stored_template_b64,
+                'agent_url': AGENT_URL,
+                'message': "Barmog'ingizni skanerga qo'ying"
+            })
+        
+        elif action == 'confirm':
+            # Step 2: JS verified via agent, confirm the result
+            match = data.get('match', False)
+            score = data.get('score', 0)
+            
+            if not match:
+                return JsonResponse({
+                    'verified': False,
+                    'error': 'Barmoq izi mos kelmadi'
+                }, status=401)
+            
+            fp_template.last_verified = timezone.now()
+            fp_template.verification_count = (fp_template.verification_count or 0) + 1
+            fp_template.save()
+            
+            return JsonResponse({
+                'verified': True,
+                'message': 'Barmoq izi tasdiqlandi'
+            })
+        
+        else:
+            return JsonResponse({
+                'error': "Noto'g'ri amal"
+            }, status=400)
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'error': "So'rov formati noto'g'ri"
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'error': f'Xatolik: {str(e)}'
+        }, status=500)
 
 
 @login_required
@@ -845,85 +809,8 @@ def fingerprint_remove_scanner(request):
         }, status=500)
 
 
-@login_required
-@require_http_methods(["POST"])
-def fingerprint_verify_for_signing(request):
-    """Verify fingerprint before document signing"""
-    user = request.user
-    
-    if not user.fingerprint_enabled:
-        return JsonResponse({
-            'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
-        }, status=400)
-    
-    try:
-        fp_template = user.scanner_fingerprint
-        if not fp_template.is_registered:
-            return JsonResponse({
-                'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
-            }, status=400)
-    except:
-        return JsonResponse({
-            'error': "Barmoq izi ro'yxatdan o'tkazilmagan"
-        }, status=400)
-    
-    stored_template_b64 = base64.b64encode(bytes(fp_template.template_data)).decode()
-    
-    try:
-        # Capture fingerprint
-        capture_resp = requests.get(
-            f'{AGENT_URL}/api/fingerprint/capture',
-            timeout=AGENT_TIMEOUT
-        )
-        
-        if capture_resp.status_code != 200:
-            return JsonResponse({
-                'error': 'Barmoq izini olishda xatolik'
-            }, status=400)
-        
-        captured_data = capture_resp.json()
-        captured_template = captured_data.get('template')
-        
-        # Verify with agent
-        verify_resp = requests.post(
-            f'{AGENT_URL}/api/fingerprint/verify',
-            json={
-                'stored_template': stored_template_b64,
-                'current_template': captured_template,
-                'threshold': 50
-            },
-            timeout=10
-        )
-        
-        if verify_resp.status_code == 200:
-            verify_data = verify_resp.json()
-            if verify_data.get('match'):
-                fp_template.last_verified = timezone.now()
-                fp_template.verification_count = (fp_template.verification_count or 0) + 1
-                fp_template.save()
-                
-                return JsonResponse({
-                    'verified': True,
-                    'message': 'Barmoq izi tasdiqlandi'
-                })
-            else:
-                return JsonResponse({
-                    'verified': False,
-                    'error': 'Barmoq izi mos kelmadi'
-                }, status=401)
-        else:
-            return JsonResponse({
-                'error': 'Tekshirishda xatolik'
-            }, status=400)
-    
-    except requests.Timeout:
-        return JsonResponse({
-            'error': 'Skaner javob bermadi'
-        }, status=408)
-    except Exception as e:
-        return JsonResponse({
-            'error': f'Xatolik: {str(e)}'
-        }, status=500)
+# fingerprint_verify_scanner endi fingerprint_auth_confirm va
+# fingerprint_verify_for_signing ichiga birlashtirildi (yuqorida)
 
 
 @login_required

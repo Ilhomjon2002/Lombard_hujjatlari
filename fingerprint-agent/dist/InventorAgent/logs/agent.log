@@ -27,3 +27,27 @@
 2026-02-24 20:26:14,811 - agent - INFO - Detected 1 fingerprint device(s)
 2026-02-24 20:26:14,811 - agent - INFO - Fingerprint scanner opened successfully
 2026-02-24 20:26:14,812 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:26:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 21:18:57,894 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-02-24 21:18:57,899 - agent - INFO - Scanner closed
+2026-02-24 21:20:19,997 - agent - INFO - ZKFPScanner created
+2026-02-24 21:20:19,999 - agent - INFO - Initializing Agent via Webview Launcher...
+2026-02-24 21:20:20,555 - agent - INFO - ZKFP2 SDK initialized successfully
+2026-02-24 21:20:20,556 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 21:20:21,843 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 21:20:21,844 - agent - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-24 21:20:21,852 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-24 21:20:21,852 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 21:21:01,037 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-02-24 21:21:01,040 - agent - INFO - Scanner closed
+2026-02-24 21:21:06,541 - agent - INFO - ZKFPScanner created
+2026-02-24 21:21:06,542 - agent - INFO - Initializing Agent via Webview Launcher...
+2026-02-24 21:21:07,093 - agent - INFO - ZKFP2 SDK initialized successfully
+2026-02-24 21:21:07,093 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 21:21:08,242 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 21:21:08,243 - agent - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-24 21:21:08,251 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-24 21:21:08,251 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 21:21:18,787 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-02-24 21:21:18,789 - agent - INFO - Scanner closed
