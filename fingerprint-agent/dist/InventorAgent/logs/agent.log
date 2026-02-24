@@ -2,3 +2,28 @@
 2026-02-24 20:21:56,413 - agent - INFO - Initializing Agent via Webview Launcher...
 2026-02-24 20:21:56,832 - agent - INFO - ZKFP2 SDK initialized successfully
 2026-02-24 20:21:56,832 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 20:21:57,854 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 20:21:57,855 - agent - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-24 20:21:57,862 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-24 20:21:57,862 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 20:22:21,995 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:22:21] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 20:22:22,001 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 20:22:22,001 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 20:22:22,002 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:22:22] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 20:23:46,814 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:23:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 20:23:46,819 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 20:23:46,820 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 20:23:46,820 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:23:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 20:23:59,924 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:23:59] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 20:23:59,949 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 20:23:59,949 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 20:23:59,950 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:23:59] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 20:24:18,302 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:24:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 20:24:18,307 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 20:24:18,307 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 20:24:18,307 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:24:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 20:26:14,806 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:26:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 20:26:14,811 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 20:26:14,811 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 20:26:14,812 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 20:26:14] "GET /api/scanner/detect HTTP/1.1" 200 -
