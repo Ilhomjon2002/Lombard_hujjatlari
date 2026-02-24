@@ -144,34 +144,14 @@
 {% endblock %}
 
 {% block extra_js %}
+{% load static %}
+<script src="{% static 'js/fingerprint-scanner.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const signBtn = document.getElementById('sign-btn');
         const fpArea = document.getElementById('fingerprint-area');
-        const fpIcon = document.getElementById('fp-icon');
         const fpInstruction = document.getElementById('fp-instruction');
         const fpHint = document.getElementById('fp-hint');
-        const errorDiv = document.getElementById('fp-error');
-        const errorText = document.getElementById('fp-error-text');
-        const statusDiv = document.getElementById('fp-status');
-        const statusText = document.getElementById('fp-status-text');
-
-        function showError(msg) {
-            errorDiv.classList.remove('d-none');
-            errorText.textContent = msg;
-            statusDiv.classList.add('d-none');
-        }
-
-        function showStatus(msg) {
-            statusDiv.classList.remove('d-none');
-            statusText.textContent = msg;
-            errorDiv.classList.add('d-none');
-        }
-
-        function hideMessages() {
-            errorDiv.classList.add('d-none');
-            statusDiv.classList.add('d-none');
-        }
 
         function setAreaState(state) {
             fpArea.className = 'fingerprint-area mb-4';
@@ -180,43 +160,33 @@
 
         signBtn.addEventListener('click', async function () {
             signBtn.disabled = true;
-            hideMessages();
+            fingerprintScanner.clearError();
             setAreaState('scanning');
             fpInstruction.textContent = "Barmog'ingizni skanerga qo'ying...";
             fpHint.textContent = "Barmoq izi o'qilmoqda...";
-            showStatus("Barmoq izi tekshirilmoqda... Barmog'ingizni skanerga qo'ying");
 
             try {
-                // 1. Barmoq izini tekshirish (capture + verify)
-                const verifyResp = await fetch('/api/auth/fingerprint/verify-signing', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                });
+                // 1. Barmoq izini tekshirish (agent orqali)
+                const verified = await fingerprintScanner.verifyForSigning();
 
-                const verifyData = await verifyResp.json();
-
-                if (!verifyResp.ok || !verifyData.verified) {
+                if (!verified) {
                     setAreaState('error');
                     fpInstruction.textContent = "Barmoq izi tasdiqlanmadi!";
                     fpHint.textContent = "Qayta urinib ko'ring";
-                    showError(verifyData.error || "Barmoq izi mos kelmadi");
                     signBtn.disabled = false;
                     return;
                 }
 
                 // 2. Barmoq izi tasdiqlandi - approve
-                showStatus("Barmoq izi tasdiqlandi! Hujjat tasdiqlanmoqda...");
                 setAreaState('success');
                 fpInstruction.textContent = "Barmoq izi tasdiqlandi!";
+                fingerprintScanner.setStatus("Hujjat tasdiqlanmoqda...", 'info');
 
                 const signResp = await fetch('/documents/api/approve-fingerprint/{{ order.id }}/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
+                        'X-CSRFToken': fingerprintScanner.csrfToken
                     },
                     body: JSON.stringify({})
                 });
@@ -227,13 +197,12 @@
                     setAreaState('error');
                     fpInstruction.textContent = "Tasdiqlashda xatolik!";
                     fpHint.textContent = "";
-                    showError(signData.error || "Tasdiqlashda xatolik yuz berdi");
+                    fingerprintScanner.setError(signData.error || "Tasdiqlashda xatolik yuz berdi");
                     signBtn.disabled = false;
                     return;
                 }
 
                 // 3. Muvaffaqiyat!
-                hideMessages();
                 document.getElementById('fingerprint-section').style.display = 'none';
                 document.getElementById('success-section').style.display = 'block';
 
@@ -247,7 +216,7 @@
                 setAreaState('error');
                 fpInstruction.textContent = "Xatolik yuz berdi";
                 fpHint.textContent = "";
-                showError("Xatolik: " + error.message);
+                fingerprintScanner.setError("Xatolik: " + error.message);
                 signBtn.disabled = false;
             }
         });

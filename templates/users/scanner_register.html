@@ -191,128 +191,45 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/fingerprint-scanner.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const errorDiv = document.getElementById('fp-error');
-        const errorText = document.getElementById('fp-error-text');
-        const statusDiv = document.getElementById('fp-status');
-        const statusText = document.getElementById('fp-status-text');
-
-        function showError(msg) {
-            errorDiv.classList.remove('d-none');
-            errorText.textContent = msg;
-            statusDiv.classList.add('d-none');
-        }
-
-        function showStatus(msg) {
-            statusDiv.classList.remove('d-none');
-            statusText.textContent = msg;
-            errorDiv.classList.add('d-none');
-        }
-
-        function hideAll() {
-            errorDiv.classList.add('d-none');
-            statusDiv.classList.add('d-none');
-        }
-
-        // Step 1: Start registration — check agent and scanner
+        // Step 1: Tayyorlash — agent va skanerni tekshirish
         document.getElementById('start-register-btn').addEventListener('click', async function () {
             const btn = this;
             btn.disabled = true;
-            hideAll();
-            showStatus("Agent va skaner tekshirilmoqda...");
+            fingerprintScanner.clearError();
 
-            try {
-                // Check agent health
-                const statusResp = await fetch('/api/auth/scanner/status');
-                const statusData = await statusResp.json();
+            const success = await fingerprintScanner.startRegistration();
 
-                if (!statusData.agent_running) {
-                    showError("Barmoq izi agenti ishlamayapti. Uni ishga tushiring.");
-                    btn.disabled = false;
-                    return;
-                }
-
-                if (!statusData.scanner_detected) {
-                    showError("Skaner topilmadi. USB skanerni ulang.");
-                    btn.disabled = false;
-                    return;
-                }
-
-                // Start registration on server
-                const startResp = await fetch('/api/auth/fingerprint/register/start', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                });
-
-                const startData = await startResp.json();
-
-                if (!startResp.ok) {
-                    showError(startData.error || "Ro'yxatdan o'tkazishni boshlashda xatolik");
-                    btn.disabled = false;
-                    return;
-                }
-
+            if (success) {
                 // Move to step 2
-                hideAll();
                 document.getElementById('step-1').classList.remove('active');
                 document.getElementById('step-1').classList.add('completed');
                 document.getElementById('step-2').classList.add('active');
                 document.getElementById('preparation-phase').style.display = 'none';
                 document.getElementById('register-phase').style.display = 'block';
-
-            } catch (error) {
-                showError("Xatolik: " + error.message);
+            } else {
                 btn.disabled = false;
             }
         });
 
-        // Step 2: Register fingerprint (agent does 3x capture internally)
+        // Step 2: Barmoq izini ro'yxatdan o'tkazish (agent'da 3x capture, keyin Django'ga yuborish)
         document.getElementById('register-fingerprint-btn').addEventListener('click', async function () {
             const btn = this;
             btn.disabled = true;
-            hideAll();
+            fingerprintScanner.clearError();
 
             const fingerPosition = document.getElementById('finger-position').value;
+            const success = await fingerprintScanner.completeRegistration(fingerPosition);
 
-            showStatus("Barmog'ingizni skanerga 3 marta qo'ying... Kutilmoqda...");
-
-            try {
-                const resp = await fetch('/api/auth/fingerprint/register/complete', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        finger_position: fingerPosition
-                    })
-                });
-
-                const data = await resp.json();
-
-                if (!resp.ok) {
-                    showError(data.error || "Ro'yxatdan o'tkazish muvaffaqiyatsiz");
-                    btn.disabled = false;
-                    return;
-                }
-
+            if (success) {
                 // Success!
-                hideAll();
                 document.getElementById('step-2').classList.remove('active');
                 document.getElementById('step-2').classList.add('completed');
                 document.getElementById('register-phase').style.display = 'none';
                 document.getElementById('success-phase').style.display = 'block';
-
-                setTimeout(function () {
-                    window.location.href = data.redirect || '/profile/';
-                }, 2000);
-
-            } catch (error) {
-                showError("Xatolik: " + error.message);
+            } else {
                 btn.disabled = false;
             }
         });
