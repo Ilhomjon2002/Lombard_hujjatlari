@@ -79,6 +79,9 @@ if __name__ == '__main__':
         except:
             pass
 
+    # Enable file downloads in pywebview
+    webview.settings['ALLOW_DOWNLOADS'] = True
+
     # Create native window embedding the website
     window = webview.create_window(
         title='Inventor System',

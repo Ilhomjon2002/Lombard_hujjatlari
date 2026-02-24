@@ -70,7 +70,7 @@
  [],
  False,
  False,
- 1771944431,
+ 1771946486,
  [('runw.exe',
    'C:\\Users\\jayson\\Downloads\\inventor\\inventor\\fingerprint-agent\\venv\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\runw.exe',
    'EXECUTABLE')],

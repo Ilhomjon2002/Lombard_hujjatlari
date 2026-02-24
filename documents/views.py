@@ -526,204 +526,92 @@ def download_pdf(request, order_id):
         return redirect('order_detail', order_id=order.id)
     finally:
         # Vaqtinchalik fayllarni tozalash
+        import shutil
         for tmp in temp_files:
             try:
-                if os.path.exists(tmp):
+                if os.path.isdir(tmp):
+                    shutil.rmtree(tmp, ignore_errors=True)
+                elif os.path.exists(tmp):
                     os.remove(tmp)
             except Exception:
                 pass
 
 
 def _convert_docx_to_pdf(docx_path, temp_files):
-    """DOCX faylni PDF ga konvertatsiya qilish (python-docx + reportlab)"""
+    """DOCX faylni PDF ga konvertatsiya qilish — LibreOffice headless orqali (pixel-perfect)"""
     import tempfile
     import os
-    from docx import Document
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import A4
-    from reportlab.lib.units import mm
-    from reportlab.pdfbase import pdfmetrics
-    from reportlab.pdfbase.ttfonts import TTFont
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
-    from reportlab.lib import colors
-    from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
+    import subprocess
+    import shutil
     
-    # Shrift o'rnatish — Windows Arial (Cyrillic qo'llab-quvvatlaydi)
-    font_registered = False
-    font_name = 'Helvetica'
-    font_name_bold = 'Helvetica-Bold'
-    
-    # Windows system fontlarni izlash
-    font_paths = [
-        ('C:/Windows/Fonts/arial.ttf', 'Arial', 'C:/Windows/Fonts/arialbd.ttf', 'Arial-Bold'),
-        ('C:/Windows/Fonts/times.ttf', 'TimesRu', 'C:/Windows/Fonts/timesbd.ttf', 'TimesRu-Bold'),
-        ('C:/Windows/Fonts/calibri.ttf', 'Calibri', 'C:/Windows/Fonts/calibrib.ttf', 'Calibri-Bold'),
+    # LibreOffice yo'lini topish
+    soffice_paths = [
+        r'C:\Program Files\LibreOffice\program\soffice.exe',
+        r'C:\Program Files (x86)\LibreOffice\program\soffice.exe',
     ]
     
-    for regular, reg_name, bold, bold_name in font_paths:
-        if os.path.exists(regular):
-            try:
-                pdfmetrics.registerFont(TTFont(reg_name, regular))
-                font_name = reg_name
-                if os.path.exists(bold):
-                    pdfmetrics.registerFont(TTFont(bold_name, bold))
-                    font_name_bold = bold_name
-                else:
-                    font_name_bold = reg_name
-                font_registered = True
-                break
-            except Exception:
-                continue
+    soffice = None
+    for path in soffice_paths:
+        if os.path.exists(path):
+            soffice = path
+            break
     
-    # DOCX faylni o'qish
-    doc = Document(docx_path)
+    if not soffice:
+        # PATH dan izlash
+        soffice = shutil.which('soffice')
     
-    # PDF yaratish
-    fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
+    if not soffice:
+        raise FileNotFoundError("LibreOffice topilmadi. PDF konvertatsiya uchun LibreOffice o'rnatilishi kerak.")
+    
+    # Vaqtinchalik papka yaratish (LibreOffice output uchun)
+    temp_dir = tempfile.mkdtemp()
+    temp_files.append(temp_dir)  # tozalash uchun
+    
+    # DOCX faylni vaqtinchalik papkaga nusxalash (fayl nomi bilan ishlash uchun)
+    docx_basename = os.path.basename(docx_path)
+    temp_docx = os.path.join(temp_dir, docx_basename)
+    shutil.copy2(docx_path, temp_docx)
+    
+    # LibreOffice headless mode bilan konvertatsiya
+    try:
+        result = subprocess.run(
+            [
+                soffice,
+                '--headless',
+                '--norestore',
+                '--convert-to', 'pdf',
+                '--outdir', temp_dir,
+                temp_docx
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,  # 60 soniya kutish
+            cwd=temp_dir,
+        )
+        
+        if result.returncode != 0:
+            print(f"LibreOffice error: {result.stderr}")
+    except subprocess.TimeoutExpired:
+        print("LibreOffice conversion timed out after 60 seconds")
+        raise
+    except Exception as e:
+        print(f"LibreOffice conversion error: {e}")
+        raise
+    
+    # PDF fayl nomini aniqlash
+    pdf_basename = os.path.splitext(docx_basename)[0] + '.pdf'
+    output_pdf = os.path.join(temp_dir, pdf_basename)
+    
+    if not os.path.exists(output_pdf) or os.path.getsize(output_pdf) == 0:
+        raise FileNotFoundError(f"LibreOffice PDF yaratmadi: {output_pdf}")
+    
+    # PDF ni doimiy temp faylga ko'chirish
+    fd, final_pdf = tempfile.mkstemp(suffix='.pdf')
     os.close(fd)
-    temp_files.append(temp_pdf)
+    temp_files.append(final_pdf)
+    shutil.copy2(output_pdf, final_pdf)
     
-    pdf_doc = SimpleDocTemplate(
-        temp_pdf,
-        pagesize=A4,
-        leftMargin=25*mm,
-        rightMargin=25*mm,
-        topMargin=20*mm,
-        bottomMargin=25*mm,
-    )
-    
-    # Stillar
-    styles = getSampleStyleSheet()
-    
-    style_normal = ParagraphStyle(
-        'DocNormal',
-        parent=styles['Normal'],
-        fontName=font_name,
-        fontSize=11,
-        leading=15,
-        spaceAfter=4,
-    )
-    
-    style_bold = ParagraphStyle(
-        'DocBold',
-        parent=style_normal,
-        fontName=font_name_bold,
-        fontSize=11,
-    )
-    
-    style_heading1 = ParagraphStyle(
-        'DocH1',
-        parent=style_normal,
-        fontName=font_name_bold,
-        fontSize=16,
-        spaceAfter=10,
-        spaceBefore=12,
-        alignment=TA_CENTER,
-    )
-    
-    style_heading2 = ParagraphStyle(
-        'DocH2',
-        parent=style_normal,
-        fontName=font_name_bold,
-        fontSize=13,
-        spaceAfter=8,
-        spaceBefore=8,
-    )
-    
-    style_center = ParagraphStyle(
-        'DocCenter',
-        parent=style_normal,
-        alignment=TA_CENTER,
-    )
-    
-    elements = []
-    
-    def clean_text(text):
-        """Maxsus belgilarni almashtirish"""
-        if not text:
-            return ''
-        text = text.replace('&', '&amp;')
-        text = text.replace('<', '&lt;')
-        text = text.replace('>', '&gt;')
-        return text
-    
-    # Paragraflarni qayta ishlash
-    for para in doc.paragraphs:
-        text = para.text.strip()
-        if not text:
-            elements.append(Spacer(1, 6))
-            continue
-        
-        safe_text = clean_text(text)
-        
-        # Heading stilini aniqlash
-        style_name = para.style.name.lower() if para.style else ''
-        
-        if 'heading 1' in style_name or 'title' in style_name:
-            elements.append(Paragraph(safe_text, style_heading1))
-        elif 'heading 2' in style_name or 'subtitle' in style_name:
-            elements.append(Paragraph(safe_text, style_heading2))
-        elif para.alignment is not None and para.alignment == 1:  # CENTER
-            elements.append(Paragraph(safe_text, style_center))
-        else:
-            # Qalin tekst bo'lsa
-            has_bold = any(run.bold for run in para.runs if run.bold)
-            if has_bold and len(para.runs) > 0:
-                # Mixed formatting — run-by-run
-                parts = []
-                for run in para.runs:
-                    run_text = clean_text(run.text)
-                    if not run_text:
-                        continue
-                    if run.bold:
-                        parts.append(f'<b>{run_text}</b>')
-                    elif run.italic:
-                        parts.append(f'<i>{run_text}</i>')
-                    else:
-                        parts.append(run_text)
-                rich_text = ''.join(parts)
-                elements.append(Paragraph(rich_text, style_normal))
-            else:
-                elements.append(Paragraph(safe_text, style_normal))
-    
-    # Jadvallarni qayta ishlash
-    for table in doc.tables:
-        table_data = []
-        for row in table.rows:
-            row_data = []
-            for cell in row.cells:
-                cell_text = clean_text(cell.text.strip())
-                row_data.append(Paragraph(cell_text, style_normal))
-            table_data.append(row_data)
-        
-        if table_data:
-            col_count = max(len(row) for row in table_data) if table_data else 1
-            available_width = A4[0] - 50*mm
-            col_width = available_width / col_count
-            
-            pdf_table = Table(table_data, colWidths=[col_width] * col_count)
-            pdf_table.setStyle(TableStyle([
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-                ('BACKGROUND', (0, 0), (-1, 0), colors.Color(0.92, 0.92, 0.92)),
-                ('FONTNAME', (0, 0), (-1, 0), font_name_bold),
-                ('FONTNAME', (0, 1), (-1, -1), font_name),
-                ('FONTSIZE', (0, 0), (-1, -1), 9),
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('TOPPADDING', (0, 0), (-1, -1), 4),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-                ('LEFTPADDING', (0, 0), (-1, -1), 6),
-                ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-            ]))
-            elements.append(Spacer(1, 8))
-            elements.append(pdf_table)
-            elements.append(Spacer(1, 8))
-    
-    if not elements:
-        elements.append(Paragraph("(Bo'sh hujjat)", style_normal))
-    
-    pdf_doc.build(elements)
-    return temp_pdf
+    return final_pdf
 
 
 def _add_qr_overlay(request, order, pdf_path, temp_files):
