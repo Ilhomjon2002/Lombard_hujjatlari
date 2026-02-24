@@ -160,25 +160,37 @@
 
 {% block extra_js %}
 <script>
-    // Check agent health on page load
+    // Check agent health on page load — to'g'ridan-to'g'ri agentga murojaat
     async function checkAgentHealth() {
         const dot = document.getElementById('agent-status-dot');
+        const AGENT_URL = 'http://127.0.0.1:8001';
         try {
-            const resp = await fetch('/api/auth/scanner/status');
-            const data = await resp.json();
-            if (data.agent_running && data.scanner_detected) {
-                dot.style.backgroundColor = '#198754';  // green
-                dot.title = 'Agent va skaner ishlayapti';
-            } else if (data.agent_running) {
-                dot.style.backgroundColor = '#ffc107';  // yellow
-                dot.title = 'Agent ishlayapti, skaner topilmadi';
+            const resp = await fetch(AGENT_URL + '/api/status');
+            if (resp.ok) {
+                // Agent ishlayapti, skanerni tekshiramiz
+                let scannerDetected = false;
+                try {
+                    const detectResp = await fetch(AGENT_URL + '/api/scanner/detect');
+                    if (detectResp.ok) {
+                        const detectData = await detectResp.json();
+                        scannerDetected = detectData.detected || detectData.success;
+                    }
+                } catch(e) {}
+                
+                if (scannerDetected) {
+                    dot.style.backgroundColor = '#198754';  // green
+                    dot.title = 'Agent va skaner ishlayapti';
+                } else {
+                    dot.style.backgroundColor = '#ffc107';  // yellow
+                    dot.title = 'Agent ishlayapti, skaner topilmadi';
+                }
             } else {
                 dot.style.backgroundColor = '#dc3545';  // red
                 dot.title = 'Agent ishlamayapti';
             }
         } catch {
             dot.style.backgroundColor = '#dc3545';
-            dot.title = 'Agent ishlamayapti';
+            dot.title = 'Agent ishlamayapti — InventorAgent.exe ni ishga tushiring';
         }
     }
     checkAgentHealth();

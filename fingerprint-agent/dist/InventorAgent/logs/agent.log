@@ -93,3 +93,34 @@
 2026-02-24 21:41:03,223 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:41:03] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
 2026-02-24 21:46:24,896 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:46:24] "GET /api/status HTTP/1.1" 200 -
 2026-02-24 21:46:25,260 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:46:25] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-02-24 21:53:14,627 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-02-24 21:53:14,629 - agent - INFO - Scanner closed
+2026-02-24 21:53:18,935 - agent - INFO - ZKFPScanner created
+2026-02-24 21:53:18,936 - agent - INFO - Initializing Agent via Webview Launcher...
+2026-02-24 21:53:19,279 - agent - INFO - ZKFP2 SDK initialized successfully
+2026-02-24 21:53:19,280 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 21:53:20,306 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 21:53:20,307 - agent - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-24 21:53:20,315 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-24 21:53:20,315 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 21:54:00,652 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:54:00] "OPTIONS /api/status HTTP/1.1" 200 -
+2026-02-24 21:54:00,658 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:54:00] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 21:54:00,663 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:54:00] "OPTIONS /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 21:54:00,667 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 21:54:00,667 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 21:54:00,667 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:54:00] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 21:54:01,291 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:54:01] "OPTIONS /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-24 21:54:01,296 - agent - INFO - Waiting for capture 1/3...
+2026-02-24 21:54:16,374 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:54:16] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-24 21:55:18,148 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:55:18] "OPTIONS /api/status HTTP/1.1" 200 -
+2026-02-24 21:55:18,152 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:55:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 21:55:18,158 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:55:18] "OPTIONS /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 21:55:18,162 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 21:55:18,162 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 21:55:18,163 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:55:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 21:55:20,890 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:55:20] "OPTIONS /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-24 21:55:20,894 - agent - INFO - Waiting for capture 1/3...
+2026-02-24 21:55:35,973 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:55:35] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-24 21:57:28,599 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-02-24 21:57:28,600 - agent - INFO - Scanner closed
