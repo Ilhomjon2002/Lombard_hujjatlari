@@ -548,6 +548,8 @@ def _convert_docx_to_pdf(docx_path, temp_files):
     soffice_paths = [
         r'C:\Program Files\LibreOffice\program\soffice.exe',
         r'C:\Program Files (x86)\LibreOffice\program\soffice.exe',
+        '/usr/bin/soffice',
+        '/usr/lib/libreoffice/program/soffice',
     ]
     
     soffice = None
