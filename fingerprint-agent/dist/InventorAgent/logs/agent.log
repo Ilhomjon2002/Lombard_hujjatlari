@@ -71,3 +71,25 @@
 2026-02-24 21:28:36,091 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:8001
 2026-02-24 21:28:36,092 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 21:40:01,500 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-02-24 21:40:01,502 - agent - INFO - Scanner closed
+2026-02-24 21:40:06,718 - agent - INFO - ZKFPScanner created
+2026-02-24 21:40:06,719 - agent - INFO - Initializing Agent via Webview Launcher...
+2026-02-24 21:40:07,062 - agent - INFO - ZKFP2 SDK initialized successfully
+2026-02-24 21:40:07,062 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 21:40:08,350 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 21:40:08,350 - agent - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-24 21:40:08,359 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-24 21:40:08,359 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-24 21:40:46,563 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:40:46] "OPTIONS /api/status HTTP/1.1" 200 -
+2026-02-24 21:40:46,569 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:40:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 21:40:46,574 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:40:46] "OPTIONS /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 21:40:46,578 - agent - INFO - Detected 1 fingerprint device(s)
+2026-02-24 21:40:46,578 - agent - INFO - Fingerprint scanner opened successfully
+2026-02-24 21:40:46,579 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:40:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-24 21:40:48,023 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:40:48] "OPTIONS /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-24 21:40:48,028 - agent - INFO - Waiting for capture 1/3...
+2026-02-24 21:41:03,223 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:41:03] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-24 21:46:24,896 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:46:24] "GET /api/status HTTP/1.1" 200 -
+2026-02-24 21:46:25,260 - werkzeug - INFO - 127.0.0.1 - - [24/Feb/2026 21:46:25] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
