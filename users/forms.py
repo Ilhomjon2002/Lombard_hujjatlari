@@ -8,21 +8,21 @@ class CustomUserForm(UserCreationForm):
         queryset=Branch.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        label="Filial(lar)",
-        help_text="Bir yoki bir nechta filial tanlang (Ctrl yoki Shift bilan)"
+        label="Branch(es)",
+        help_text="Select one or more branches (use Ctrl or Shift to select multiple)"
     )
 
     class Meta:
         model = CustomUser
         fields = [
-            'username', 'first_name', 'last_name', 'email',
+            'username', 'first_name', 'last_name', 'middle_name',
             'role', 'branch', 'profile_image', 'signature_image'
         ]
         widgets = {
-            'username': forms.TextInput(attrs={'placeholder': 'login (masalan: john_doe)'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'email@company.uz'}),
+            'username': forms.TextInput(attrs={'placeholder': 'username (e.g., john_doe)'}),
             'first_name': forms.TextInput(attrs={'placeholder': 'Ism'}),
             'last_name': forms.TextInput(attrs={'placeholder': 'Familiya'}),
+            'middle_name': forms.TextInput(attrs={'placeholder': 'Otasining ismi'}),
             'role': forms.Select(attrs={'class': 'form-select'}),
             'profile_image': forms.FileInput(),
             'signature_image': forms.FileInput(),
@@ -30,20 +30,16 @@ class CustomUserForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['password1'].widget.attrs.update({'placeholder': 'Parol kiriting (min 8 belgi)'})
-        self.fields['password2'].widget.attrs.update({'placeholder': 'Parolni takrorlang'})
+        self.fields['password1'].widget.attrs.update({'placeholder': 'Password (minimum 8 characters)'})
+        self.fields['password2'].widget.attrs.update({'placeholder': 'Confirm Password'})
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
         if username and CustomUser.objects.filter(username__iexact=username).exists():
-            raise forms.ValidationError("Bu login allaqachon band.")
+            raise forms.ValidationError("This username is already taken.")
         return username.lower().strip()
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if email and CustomUser.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError("Bu email allaqachon ro‘yxatdan o‘tgan.")
-        return email.lower().strip() if email else email
+        return username.lower().strip()
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -51,7 +47,7 @@ class UserUpdateForm(forms.ModelForm):
         queryset=Branch.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        label="Filial(lar)"
+        label="Branch(es)"
     )
 
     class Meta:
@@ -76,13 +72,13 @@ class UserUpdateForm(forms.ModelForm):
 
 class UserPasswordResetForm(forms.Form):
     new_password1 = forms.CharField(
-        label="Yangi parol",
+        label="New Password",
         min_length=8,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Yangi parol'}),
+        widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}),
     )
     new_password2 = forms.CharField(
-        label="Tasdiqlash",
-        widget=forms.PasswordInput(attrs={'placeholder': 'Yangi parolni takrorlang'}),
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm New Password'}),
     )
 
     def clean(self):
@@ -90,7 +86,7 @@ class UserPasswordResetForm(forms.Form):
         p1 = cleaned_data.get("new_password1")
         p2 = cleaned_data.get("new_password2")
         if p1 and p2 and p1 != p2:
-            raise forms.ValidationError("Parollar mos kelmadi.")
+            raise forms.ValidationError("Passwords do not match.")
         return cleaned_data
 
 
@@ -104,10 +100,9 @@ class UserProfileForm(forms.ModelForm):
         }
 
 
-
 class CustomPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['old_password'].widget.attrs.update({'placeholder': 'Joriy parol'})
-        self.fields['new_password1'].widget.attrs.update({'placeholder': 'Yangi parol'})
-        self.fields['new_password2'].widget.attrs.update({'placeholder': 'Yangi parolni takrorlang'})
+        self.fields['old_password'].widget.attrs.update({'placeholder': 'Current Password'})
+        self.fields['new_password1'].widget.attrs.update({'placeholder': 'New Password'})
+        self.fields['new_password2'].widget.attrs.update({'placeholder': 'Confirm New Password'})

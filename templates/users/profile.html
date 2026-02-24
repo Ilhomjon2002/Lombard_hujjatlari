@@ -3,121 +3,223 @@
 
 {% block content %}
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
+<div class="row g-3" style="max-height: calc(100vh - 80px); overflow-y: auto;">
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Foydalanuvchi Profili</h4>
-                </div>
+    <!-- Left Column: User Info + Fingerprint -->
+    <div class="col-lg-7">
 
-                <div class="card-body">
+        <!-- User Info Card -->
+        <div class="card shadow-sm border-0 mb-2">
+            <div class="card-header bg-white border-bottom-0 py-2">
+                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-id-card text-primary me-2"></i>Profil</h5>
+            </div>
+            <div class="card-body py-2">
 
-                    <!-- Muvaffaqiyat / xato xabarlari -->
-                    {% if messages %}
-                        <div class="mb-4">
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    <div class="row">
-                        <!-- Chap taraf: ma'lumotlar -->
-                        <div class="col-md-7">
-
-                            <h5 class="mb-4 border-bottom pb-2">Asosiy ma'lumotlar</h5>
-
-                            <div class="mb-3">
-                                <strong>Foydalanuvchi nomi:</strong>
-                                <p class="text-muted">{{ user.username }}</p>
-                            </div>
-
-                            <div class="mb-3">
-                                <strong>Ism-familya:</strong>
-                                <p class="text-muted">
-                                    {% if user.first_name or user.last_name %}
-                                        {{ user.first_name }} {{ user.last_name }}
-                                    {% else %}
-                                        Belgilanmagan
-                                    {% endif %}
-                                </p>
-                            </div>
-
-                            <div class="mb-3">
-                                <strong>Email:</strong>
-                                <p class="text-muted">{{ user.email|default:"Belgilanmagan" }}</p>
-                            </div>
-
-                            <div class="mb-3">
-                                <strong>Rol:</strong>
-                                <span class="badge bg-info">
-                                    {% if user.role == 'admin' %}Administrator{% else %}Xodim{% endif %}
-                                </span>
-                            </div>
-
-                            <div class="mb-3">
-                                <strong>Filial:</strong>
-                                <p class="text-muted">
-                                    {{ user.branch.name|default:"Biriktirilmagan" }}
-                                </p>
-                            </div>
-
-                        </div>
-
-                        <!-- O'ng taraf: Imzo -->
-                        <div class="col-md-5 text-center">
-
-                            <h5 class="mb-3">Imzo rasmi</h5>
-
-                            {% if user.signature_image  %}
-                                <div class="border p-3 bg-light rounded mb-3" style="max-width: 300px; margin: 0 auto;">
-                                    <img src="{{ user.signature_image.url }}" alt="Sizning imzoingiz" class="img-fluid" style="max-height: 120px;">
-                                </div>
-                                <p class="text-muted small">Joriy imzo</p>
-                            {% else %}
-                                <div class="border p-4 bg-light rounded mb-3" style="max-width: 300px; margin: 0 auto; min-height: 120px; display: flex; align-items: center; justify-content: center;">
-                                    <p class="text-muted">Imzo hali yuklanmagan</p>
-                                </div>
-                            {% endif %}
-
-                        </div>
+                {% if messages %}
+                <div class="mb-2">
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show py-1 mb-1"
+                        role="alert" style="font-size:14px;">
+                        {{ message }}
+                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                     </div>
-
-                    <!-- Imzo yangilash formasi -->
-                    <hr class="my-4">
-
-                    <h5 class="mb-3">Imzo rasmini yangilash</h5>
-
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-
-                        <div class="mb-3">
-                            <label for="signature_image" class="form-label">Yangi imzo rasmini tanlang (PNG, JPG)</label>
-                            <input type="file" class="form-control" id="signature_image" name="signature_image" accept="image/*" required>
-                            <div class="form-text text-muted">
-                                Tavsiya: shaffof fonli PNG format eng yaxshi natija beradi
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-upload"></i> Imzoni yangilash
-                        </button>
-                    </form>
-
+                    {% endfor %}
                 </div>
+                {% endif %}
 
-                <div class="card-footer text-muted text-center">
-                    Oxirgi tahrir: {{ user.date_joined|date:"d.m.Y H:i" }} (hisob yaratilgan sana)
+                <div class="row g-1">
+                    <div class="col-6">
+                        <strong class="text-dark" style="font-size:14px;">Foydalanuvchi nomi:</strong>
+                        <p class="text-muted mb-1">{{ user.username }}</p>
+                    </div>
+                    <div class="col-6">
+                        <strong class="text-dark" style="font-size:14px;">To'liq ism:</strong>
+                        <p class="text-muted mb-1">
+                            {% if user.first_name or user.last_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                            Ko'rsatilmagan
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-6">
+                        <strong class="text-dark" style="font-size:14px;">Email:</strong>
+                        <p class="text-muted mb-1">{{ user.email|default:"Ko'rsatilmagan" }}</p>
+                    </div>
+                    <div class="col-6">
+                        <strong class="text-dark" style="font-size:14px;">Lavozim:</strong><br>
+                        <span class="badge bg-primary px-2 py-1 fw-normal" style="font-size:13px;">
+                            {% if user.role == 'admin' %}Administrator{% else %}{{ user.get_role_display }}{% endif %}
+                        </span>
+                    </div>
+                    <div class="col-12 mt-1">
+                        <strong class="text-dark" style="font-size:14px;">Filial:</strong>
+                        {% if user.branch.all %}
+                        {% for branch in user.branch.all %}
+                        <span class="badge bg-secondary fw-normal px-2 py-1 me-1" style="font-size:12px;">{{ branch.name }}</span>
+                        {% endfor %}
+                        {% else %}
+                        <span class="text-muted small">Biriktirilmagan</span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+            <div class="card-footer text-muted text-center py-1" style="font-size:13px;">
+                Hisob yaratilgan: {{ user.date_joined|date:"d.m.Y H:i" }}
+            </div>
+        </div>
 
+        <!-- Fingerprint Card -->
+        <div class="card shadow-sm border-0 mb-2">
+            <div class="card-header bg-white border-bottom-0 py-2">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="fa fa-fingerprint me-2"></i>Barmoq izi skaneri
+                    <span id="agent-status-dot" class="ms-2"
+                        style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #dc3545;"
+                        title="Agent holati"></span>
+                </h5>
+            </div>
+            <div class="card-body py-2">
+                {% if user.fingerprint_enabled %}
+                <div class="alert alert-success py-1 mb-2" role="alert" style="font-size:14px;">
+                    <i class="fa fa-check-circle"></i> Barmoq izi autentifikatsiyasi yoqilgan
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'scanner_register' %}" class="btn btn-warning btn-sm">
+                        <i class="fa fa-sync"></i> Qayta ro'yxatdan o'tkazish
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm" id="removeFingerprintBtn">
+                        <i class="fa fa-trash"></i> O'chirish
+                    </button>
+                </div>
+                {% else %}
+                <div class="alert alert-info py-1 mb-2" role="alert" style="font-size:14px;">
+                    <i class="fa fa-info-circle"></i> Barmoq izi autentifikatsiyasi hali yoqilmagan
+                </div>
+                <a href="{% url 'scanner_register' %}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-fingerprint"></i> Ro'yxatdan o'tkazish
+                </a>
+                {% endif %}
+
+                <div id="fp-status" class="alert alert-info d-none mt-2 py-1 mb-0" role="alert">
+                    <span id="fp-status-text"></span>
+                </div>
+                <div id="fp-error" class="alert alert-danger d-none mt-2 py-1 mb-0" role="alert">
+                    <span id="fp-error-text"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right Column: Profile Image + Upload -->
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0 mb-2">
+            <div class="card-header bg-white border-bottom-0 py-2">
+                <h5 class="mb-0 fw-bold text-secondary">Profil rasmi</h5>
+            </div>
+            <div class="card-body text-center py-3">
+
+                {% if user.profile_image %}
+                <div class="mb-2">
+                    <img src="{{ user.profile_image.url }}" alt="Sizning rasmingiz"
+                        class="rounded-circle object-fit-cover shadow-sm"
+                        style="width: 120px; height: 120px; border: 3px solid white;">
+                </div>
+                <p class="text-muted small mb-2">Joriy rasm</p>
+                {% else %}
+                <div class="border bg-light rounded mx-auto mb-2 d-flex align-items-center justify-content-center flex-column"
+                    style="width: 140px; height: 140px;">
+                    <i class="fas fa-user-circle text-secondary opacity-50" style="font-size: 50px;"></i>
+                    <p class="text-muted mb-0 small">Rasm yuklanmagan</p>
+                </div>
+                {% endif %}
+
+                <hr class="my-2">
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        <label for="profile_image" class="form-label fw-semibold text-dark"
+                            style="font-size:14px;">Yangi rasm tanlang (PNG, JPG)</label>
+                        <input type="file" class="form-control form-control-sm" id="profile_image" name="profile_image"
+                            accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="fa fa-upload me-1"></i> Rasmni yangilash
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
+
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Check agent health on page load
+    async function checkAgentHealth() {
+        const dot = document.getElementById('agent-status-dot');
+        try {
+            const resp = await fetch('/api/auth/scanner/status');
+            const data = await resp.json();
+            if (data.agent_running && data.scanner_detected) {
+                dot.style.backgroundColor = '#198754';  // green
+                dot.title = 'Agent va skaner ishlayapti';
+            } else if (data.agent_running) {
+                dot.style.backgroundColor = '#ffc107';  // yellow
+                dot.title = 'Agent ishlayapti, skaner topilmadi';
+            } else {
+                dot.style.backgroundColor = '#dc3545';  // red
+                dot.title = 'Agent ishlamayapti';
+            }
+        } catch {
+            dot.style.backgroundColor = '#dc3545';
+            dot.title = 'Agent ishlamayapti';
+        }
+    }
+    checkAgentHealth();
+
+    // Remove fingerprint
+    const removeBtn = document.getElementById('removeFingerprintBtn');
+    if (removeBtn) {
+        removeBtn.addEventListener('click', async function () {
+            if (!confirm("Barmoq izini o'chirishni xohlaysizmi?")) return;
+
+            const statusDiv = document.getElementById('fp-status');
+            const errorDiv = document.getElementById('fp-error');
+            errorDiv.classList.add('d-none');
+            statusDiv.classList.remove('d-none');
+            document.getElementById('fp-status-text').textContent = "O'chirilmoqda...";
+
+            try {
+                const resp = await fetch('/api/auth/fingerprint/remove', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await resp.json();
+
+                if (resp.ok) {
+                    statusDiv.classList.remove('alert-info');
+                    statusDiv.classList.add('alert-success');
+                    document.getElementById('fp-status-text').textContent = "Barmoq izi o'chirildi. Sahifa yangilanmoqda...";
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    throw new Error(data.error || "O'chirishda xatolik");
+                }
+            } catch (error) {
+                statusDiv.classList.add('d-none');
+                errorDiv.classList.remove('d-none');
+                document.getElementById('fp-error-text').textContent = error.message;
+            }
+        });
+    }
+</script>
 {% endblock %}

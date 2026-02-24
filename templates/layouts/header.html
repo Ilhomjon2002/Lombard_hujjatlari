@@ -1,28 +1,29 @@
 <div class="header">
-  <div>
+  <div class="d-flex align-items-center">
     <button class="menu-toggle">
       <i class="fas fa-bars"></i>
     </button>
-    <h4 class="mb-0">{% block header_title %}Dashboard{% endblock %}</h4>
+    <h4>{% block header_title %}Hujjat Aylanish Tizimi{% endblock %}</h4>
   </div>
 
   {% if user.is_authenticated %}
   <div class="user-info">
     <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+      <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-white"
+        data-bs-toggle="dropdown">
+        <div class="text-end me-2 d-none d-md-block">
+          <div class="fw-semibold" style="font-size: 13px;">{{ user.get_full_name }}</div>
+          <div class="text-white-50" style="font-size: 11px;">{{ user.get_role_display }}</div>
+        </div>
         {% if user.profile_image %}
         <img src="{{ user.profile_image.url }}" alt="Profile" class="user-avatar">
         {% else %}
-        <div class="user-avatar bg-secondary d-flex align-items-center justify-content-center text-white">
+        <div class="user-avatar bg-white text-primary d-flex align-items-center justify-content-center fw-bold">
           {{ user.first_name|first }}{{ user.last_name|first }}
         </div>
         {% endif %}
-        <div class="ms-2">
-          <strong>{{ user.get_full_name }}</strong>
-          <small class="text-muted d-block">{{ user.get_role_display }}</small>
-        </div>
       </a>
-      <ul class="dropdown-menu dropdown-menu-end">
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: var(--radius-md);">
         <li><a class="dropdown-item" href="{% url 'profile' %}">
             <i class="fas fa-user me-2"></i>Profil
           </a></li>

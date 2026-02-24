@@ -1,49 +1,271 @@
-{% extends 'users/base.html' %}
-{% block title %}Imzo qo‘yish — {{ signature.order.title }}{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Imzo qo'yish — {{ signature.order.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .fingerprint-area {
+        text-align: center;
+        padding: 40px 20px;
+        border: 2px dashed #dee2e6;
+        border-radius: 16px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .fingerprint-area.scanning {
+        border-color: #0d6efd;
+        background: #e7f1ff;
+        animation: pulse 1.5s infinite;
+    }
+
+    .fingerprint-area.success {
+        border-color: #198754;
+        background: #d1e7dd;
+    }
+
+    .fingerprint-area.error {
+        border-color: #dc3545;
+        background: #f8d7da;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .fingerprint-icon {
+        font-size: 80px;
+        color: #6c757d;
+        transition: color 0.3s ease;
+    }
+
+    .scanning .fingerprint-icon {
+        color: #0d6efd;
+    }
+
+    .success .fingerprint-icon {
+        color: #198754;
+    }
+
+    .error .fingerprint-icon {
+        color: #dc3545;
+    }
+
+    .qr-result img {
+        max-width: 200px;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="card shadow">
-    <div class="card-header bg-success text-white">
-        <h4 class="mb-0">Imzo qo‘yish: {{ signature.order.number }} — {{ signature.order.title }}</h4>
-    </div>
-    <div class="card-body">
-        {% if signature.order.file %}
-        <p>
-            <a href="{{ signature.order.file.url }}" target="_blank" class="btn btn-outline-primary mb-3">
-                <i class="bi bi-file-earmark-pdf me-2"></i> Hujjatni ko‘rish / yuklab olish
-            </a>
-        </p>
-        {% endif %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-fingerprint me-2"></i>
+                        Imzo qo'yish: {{ signature.order.number }} — {{ signature.order.title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Hujjat ma'lumotlari -->
+                    <div class="mb-4">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <strong>Buyruq raqami:</strong> {{ signature.order.number }}
+                            </div>
+                            <div class="col-sm-6">
+                                <strong>Yaratilgan:</strong> {{ signature.order.created_at|date:"d.m.Y H:i" }}
+                            </div>
+                        </div>
+                        {% if signature.order.file %}
+                        <div class="mt-2">
+                            <a href="{{ signature.order.file.url }}" target="_blank" class="btn btn-outline-primary">
+                                <i class="bi bi-file-earmark-arrow-down me-2"></i>Hujjatni ko'rish / yuklab olish
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+                    <hr>
 
-            <div class="mb-4">
-                <label class="form-label fw-bold">Imzo rasmi (agar mavjud bo‘lmasa yuklang)</label>
-                <input type="file" name="signature_image" class="form-control" accept="image/*">
-                {% if user.signature_image %}
-                <small class="text-muted mt-2 d-block">
-                    Oldin yuklangan imzo ishlatiladi, agar yangisini yuklamasangiz
-                </small>
-                {% endif %}
+                    <!-- Error / Status -->
+                    <div id="fp-error" class="alert alert-danger d-none">
+                        <i class="fas fa-exclamation-circle me-2"></i><span id="fp-error-text"></span>
+                    </div>
+                    <div id="fp-status" class="alert alert-info d-none">
+                        <i class="fas fa-spinner fa-spin me-2"></i><span id="fp-status-text"></span>
+                    </div>
+
+                    <!-- Barmoq izi skanerlash -->
+                    <div id="fingerprint-section">
+                        <div id="fingerprint-area" class="fingerprint-area mb-4">
+                            <i class="fas fa-fingerprint fingerprint-icon" id="fp-icon"></i>
+                            <h5 class="mt-3" id="fp-instruction">Barmog'ingizni skanerga qo'ying</h5>
+                            <p class="text-muted" id="fp-hint">Imzolash uchun quyidagi tugmani bosing</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="custom_time" class="form-label fw-bold">Imzolash vaqti (Qo'lda kiritish,
+                                ixtiyoriy)</label>
+                            <input type="datetime-local" id="custom_time" class="form-control">
+                            <small class="text-muted">Agar kiritilmasa, hozirgi vaqt olinadi.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="comment" class="form-label fw-bold">Izoh (ixtiyoriy)</label>
+                            <textarea id="comment" class="form-control" rows="3"
+                                placeholder="Zarur bo'lsa izoh yozing..."></textarea>
+                        </div>
+
+                        <button type="button" class="btn btn-lg btn-success w-100" id="sign-btn">
+                            <i class="fas fa-fingerprint me-2"></i>Barmoq izi bilan imzolash
+                        </button>
+                    </div>
+
+                    <!-- Muvaffaqiyat -->
+                    <div id="success-section" style="display: none;">
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle text-success" style="font-size: 64px;"></i>
+                            <h4 class="mt-3 text-success">Hujjat muvaffaqiyatli imzolandi!</h4>
+                            <p class="text-muted">QR kod Word faylga qo'shildi</p>
+                        </div>
+                        <div id="qr-result" class="text-center qr-result mb-3"></div>
+                        <a href="{% url 'order_detail' signature.order.id %}" class="btn btn-primary w-100">
+                            <i class="fas fa-eye me-2"></i>Hujjatni ko'rish
+                        </a>
+                    </div>
+                </div>
             </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-bold">Izoh / qo‘shimcha ma’lumot</label>
-                <textarea name="comment" class="form-control" rows="4" placeholder="Zarur bo‘lsa izoh yozing..."></textarea>
-            </div>
-
-            <div class="d-grid">
-                <button type="submit" class="btn btn-lg btn-success">
-                    <i class="bi bi-pencil-square me-2"></i> Imzoni tasdiqlash va qo‘yish
-                </button>
-            </div>
-        </form>
-
-        <div class="alert alert-info mt-4">
-            <i class="bi bi-info-circle me-2"></i>
-            Imzo qo‘yilgandan so‘ng bu buyruq holati avtomatik yangilanadi va tegishli xodimlarga bildirishnoma yuboriladi.
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const signBtn = document.getElementById('sign-btn');
+        const fpArea = document.getElementById('fingerprint-area');
+        const fpIcon = document.getElementById('fp-icon');
+        const fpInstruction = document.getElementById('fp-instruction');
+        const fpHint = document.getElementById('fp-hint');
+        const errorDiv = document.getElementById('fp-error');
+        const errorText = document.getElementById('fp-error-text');
+        const statusDiv = document.getElementById('fp-status');
+        const statusText = document.getElementById('fp-status-text');
+
+        function showError(msg) {
+            errorDiv.classList.remove('d-none');
+            errorText.textContent = msg;
+            statusDiv.classList.add('d-none');
+        }
+
+        function showStatus(msg) {
+            statusDiv.classList.remove('d-none');
+            statusText.textContent = msg;
+            errorDiv.classList.add('d-none');
+        }
+
+        function hideMessages() {
+            errorDiv.classList.add('d-none');
+            statusDiv.classList.add('d-none');
+        }
+
+        function setAreaState(state) {
+            fpArea.className = 'fingerprint-area mb-4';
+            if (state) fpArea.classList.add(state);
+        }
+
+        signBtn.addEventListener('click', async function () {
+            signBtn.disabled = true;
+            hideMessages();
+            setAreaState('scanning');
+            fpInstruction.textContent = "Barmog'ingizni skanerga qo'ying...";
+            fpHint.textContent = "Barmoq izi o'qilmoqda...";
+            showStatus("Barmoq izi tekshirilmoqda... Barmog'ingizni skanerga qo'ying");
+
+            try {
+                // 1. Barmoq izini tekshirish (capture + verify)
+                const verifyResp = await fetch('/api/auth/fingerprint/verify-signing', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                });
+
+                const verifyData = await verifyResp.json();
+
+                if (!verifyResp.ok || !verifyData.verified) {
+                    setAreaState('error');
+                    fpInstruction.textContent = "Barmoq izi tasdiqlanmadi!";
+                    fpHint.textContent = "Qayta urinib ko'ring";
+                    showError(verifyData.error || "Barmoq izi mos kelmadi");
+                    signBtn.disabled = false;
+                    return;
+                }
+
+                // 2. Barmoq izi tasdiqlandi - imzolash
+                showStatus("Barmoq izi tasdiqlandi! Hujjat imzolanmoqda...");
+                setAreaState('success');
+                fpInstruction.textContent = "Barmoq izi tasdiqlandi!";
+
+                const comment = document.getElementById('comment').value;
+                const customTime = document.getElementById('custom_time').value;
+
+                const signResp = await fetch('/documents/api/sign-fingerprint/{{ signature.id }}/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        comment: comment,
+                        custom_time: customTime
+                    })
+                });
+
+                const signData = await signResp.json();
+
+                if (!signResp.ok) {
+                    setAreaState('error');
+                    fpInstruction.textContent = "Imzolashda xatolik!";
+                    fpHint.textContent = "";
+                    showError(signData.error || "Imzolashda xatolik yuz berdi");
+                    signBtn.disabled = false;
+                    return;
+                }
+
+                // 3. Muvaffaqiyat!
+                hideMessages();
+                document.getElementById('fingerprint-section').style.display = 'none';
+                document.getElementById('success-section').style.display = 'block';
+
+                if (signData.qr_code_url) {
+                    document.getElementById('qr-result').innerHTML =
+                        '<img src="' + signData.qr_code_url + '" alt="QR Code" class="img-fluid">' +
+                        '<p class="text-muted mt-2">Sizning imzo QR kodingiz</p>';
+                }
+
+            } catch (error) {
+                setAreaState('error');
+                fpInstruction.textContent = "Xatolik yuz berdi";
+                fpHint.textContent = "";
+                showError("Xatolik: " + error.message);
+                signBtn.disabled = false;
+            }
+        });
+    });
+</script>
 {% endblock %}

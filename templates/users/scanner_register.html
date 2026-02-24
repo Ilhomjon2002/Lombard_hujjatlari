@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Barmoq izini ro'yxatdan o'tkazish{% endblock %}
+
+{% block extra_css %}
+<style>
+    .steps-timeline {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .step {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #6c757d;
+        flex-shrink: 0;
+    }
+
+    .step.active .step-number {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .step.completed .step-number {
+        background: #198754;
+        color: white;
+    }
+
+    .step-content h5 {
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+
+    .progress-bar {
+        transition: width 0.3s ease, background-color 0.3s ease;
+    }
+
+    .progress-bar.low {
+        background-color: #dc3545 !important;
+    }
+
+    .progress-bar.medium {
+        background-color: #ffc107 !important;
+    }
+
+    .progress-bar.high {
+        background-color: #28a745 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-fingerprint"></i> Barmoq izini ro'yxatdan o'tkazish
+                    </h3>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Error Messages -->
+                    <div id="fp-error" class="alert alert-danger d-none" role="alert">
+                        <i class="fas fa-exclamation-circle"></i> <span id="fp-error-text"></span>
+                    </div>
+
+                    <!-- Status Messages -->
+                    <div id="fp-status" class="alert alert-info d-none" role="alert">
+                        <i class="fas fa-spinner fa-spin me-2"></i> <span id="fp-status-text"></span>
+                    </div>
+
+                    <!-- Registration Steps -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="steps-timeline">
+                                <!-- Step 1 -->
+                                <div class="step active" id="step-1">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h5>Tayyorlash</h5>
+                                        <p class="text-muted mb-0">Skanerni tekshirish</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="step" id="step-2">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h5>Ro'yxatdan o'tkazish</h5>
+                                        <p class="text-muted mb-0">Barmoq izini 3 marta skanerlash</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Phase 1: Preparation -->
+                    <div id="preparation-phase">
+                        <h5 class="mb-3">
+                            <i class="fas fa-check-circle text-success"></i> 1-qadam: Tayyorlash
+                        </h5>
+
+                        <div class="alert alert-info" role="alert">
+                            <strong>Boshlashdan oldin:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>USB barmoq izi skanerini kompyuterga ulang</li>
+                                <li>Barmoq izi agenti ishga tushirilganligini tekshiring</li>
+                                <li>Barmog'ingizni tozalang</li>
+                                <li>Har bir hisob uchun bitta barmoq izi ro'yxatdan o'tkaziladi</li>
+                            </ul>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-lg w-100" id="start-register-btn">
+                            <i class="fas fa-arrow-right"></i> Ro'yxatdan o'tkazishni boshlash
+                        </button>
+                    </div>
+
+                    <!-- Phase 2: Registration (3x capture by agent) -->
+                    <div id="register-phase" style="display: none;">
+                        <h5 class="mb-3">
+                            <i class="fas fa-fingerprint text-primary"></i> 2-qadam: Barmoq izini ro'yxatdan o'tkazish
+                        </h5>
+
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Ko'rsatmalar:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Quyidagi tugmani bosing</li>
+                                <li>Barmog'ingizni skanerga 3 marta qo'ying</li>
+                                <li>Har safar skaner signali tugaguncha kuting</li>
+                            </ul>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="finger-position" class="form-label">
+                                <strong>Barmoq pozitsiyasi:</strong>
+                            </label>
+                            <select id="finger-position" class="form-select form-select-lg">
+                                <option value="right_thumb">O'ng bosh barmoq</option>
+                                <option value="right_index" selected>O'ng ko'rsatkich barmoq</option>
+                                <option value="right_middle">O'ng o'rta barmoq</option>
+                                <option value="left_thumb">Chap bosh barmoq</option>
+                                <option value="left_index">Chap ko'rsatkich barmoq</option>
+                                <option value="left_middle">Chap o'rta barmoq</option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="btn btn-success btn-lg w-100" id="register-fingerprint-btn">
+                            <i class="fas fa-fingerprint"></i> Barmoq izini ro'yxatdan o'tkazish
+                        </button>
+                    </div>
+
+                    <!-- Success Phase -->
+                    <div id="success-phase" style="display: none;">
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle text-success" style="font-size: 64px;"></i>
+                            <h4 class="mt-3 text-success">Barmoq izi muvaffaqiyatli ro'yxatdan o'tkazildi!</h4>
+                            <p class="text-muted">Profilga yo'naltirilmoqda...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <a href="{% url 'profile' %}" class="btn btn-link">
+                        <i class="fas fa-arrow-left"></i> Profilga qaytish
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const errorDiv = document.getElementById('fp-error');
+        const errorText = document.getElementById('fp-error-text');
+        const statusDiv = document.getElementById('fp-status');
+        const statusText = document.getElementById('fp-status-text');
+
+        function showError(msg) {
+            errorDiv.classList.remove('d-none');
+            errorText.textContent = msg;
+            statusDiv.classList.add('d-none');
+        }
+
+        function showStatus(msg) {
+            statusDiv.classList.remove('d-none');
+            statusText.textContent = msg;
+            errorDiv.classList.add('d-none');
+        }
+
+        function hideAll() {
+            errorDiv.classList.add('d-none');
+            statusDiv.classList.add('d-none');
+        }
+
+        // Step 1: Start registration — check agent and scanner
+        document.getElementById('start-register-btn').addEventListener('click', async function () {
+            const btn = this;
+            btn.disabled = true;
+            hideAll();
+            showStatus("Agent va skaner tekshirilmoqda...");
+
+            try {
+                // Check agent health
+                const statusResp = await fetch('/api/auth/scanner/status');
+                const statusData = await statusResp.json();
+
+                if (!statusData.agent_running) {
+                    showError("Barmoq izi agenti ishlamayapti. Uni ishga tushiring.");
+                    btn.disabled = false;
+                    return;
+                }
+
+                if (!statusData.scanner_detected) {
+                    showError("Skaner topilmadi. USB skanerni ulang.");
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Start registration on server
+                const startResp = await fetch('/api/auth/fingerprint/register/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                });
+
+                const startData = await startResp.json();
+
+                if (!startResp.ok) {
+                    showError(startData.error || "Ro'yxatdan o'tkazishni boshlashda xatolik");
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Move to step 2
+                hideAll();
+                document.getElementById('step-1').classList.remove('active');
+                document.getElementById('step-1').classList.add('completed');
+                document.getElementById('step-2').classList.add('active');
+                document.getElementById('preparation-phase').style.display = 'none';
+                document.getElementById('register-phase').style.display = 'block';
+
+            } catch (error) {
+                showError("Xatolik: " + error.message);
+                btn.disabled = false;
+            }
+        });
+
+        // Step 2: Register fingerprint (agent does 3x capture internally)
+        document.getElementById('register-fingerprint-btn').addEventListener('click', async function () {
+            const btn = this;
+            btn.disabled = true;
+            hideAll();
+
+            const fingerPosition = document.getElementById('finger-position').value;
+
+            showStatus("Barmog'ingizni skanerga 3 marta qo'ying... Kutilmoqda...");
+
+            try {
+                const resp = await fetch('/api/auth/fingerprint/register/complete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        finger_position: fingerPosition
+                    })
+                });
+
+                const data = await resp.json();
+
+                if (!resp.ok) {
+                    showError(data.error || "Ro'yxatdan o'tkazish muvaffaqiyatsiz");
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Success!
+                hideAll();
+                document.getElementById('step-2').classList.remove('active');
+                document.getElementById('step-2').classList.add('completed');
+                document.getElementById('register-phase').style.display = 'none';
+                document.getElementById('success-phase').style.display = 'block';
+
+                setTimeout(function () {
+                    window.location.href = data.redirect || '/profile/';
+                }, 2000);
+
+            } catch (error) {
+                showError("Xatolik: " + error.message);
+                btn.disabled = false;
+            }
+        });
+    });
+</script>
+{% endblock %}

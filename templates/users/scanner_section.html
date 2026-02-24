@@ -1,0 +1,196 @@
+{% load static humanize %}
+
+<!-- Fingerprint Scanner Section (to be included in profile.html) -->
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">
+            <i class="fas fa-fingerprint"></i> Barmoq izi orqali avtorizatsiya
+        </h5>
+    </div>
+
+    <div class="card-body">
+        <!-- Status Messages -->
+        <div id="fingerprint-error" class="alert alert-danger d-none" role="alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="error-text"></span>
+        </div>
+
+        <div id="fingerprint-status" class="alert d-none" role="alert">
+            <span id="status-text"></span>
+        </div>
+
+        {% if user.scanner_fingerprint_template.is_registered %}
+        <!-- Fingerprint is Registered -->
+        <div class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle"></i>
+            <strong>Barmoq izi kiritilgan</strong>
+            <p class="mb-0 mt-2">
+                Tizimga kirish uchun quyidagi barmoq izi ma'lumotlaridan foydalanishingiz mumkin:
+            </p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="info-box">
+                    <label class="text-muted">Ro'yxatga olingan sana:</label>
+                    <p class="mb-0 font-weight-bold">
+                        {{ user.scanner_fingerprint_template.registered_at|date:"M d, Y H:i" }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-box">
+                    <label class="text-muted">Barmoq holati:</label>
+                    <p class="mb-0 font-weight-bold">
+                        {{ user.scanner_fingerprint_template.get_finger_position_display }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-box">
+                    <label class="text-muted">Sifat ko'rsatkichi:</label>
+                    <p class="mb-0 font-weight-bold">
+                        <span class="badge badge-success">
+                            {{ user.scanner_fingerprint_template.quality_score|floatformat:0 }}%
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-box">
+                    <label class="text-muted">Muvaffaqiyatli kirishlar:</label>
+                    <p class="mb-0 font-weight-bold">
+                        {{ user.scanner_fingerprint_template.verification_count|default:0 }}
+                    </p>
+                </div>
+            </div>
+
+            {% if user.scanner_fingerprint_template.last_verified %}
+            <div class="col-md-6">
+                <div class="info-box">
+                    <label class="text-muted">Oxirgi marta foydalanilgan:</label>
+                    <p class="mb-0 font-weight-bold">
+                        {{ user.scanner_fingerprint_template.last_verified|naturaltime }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-md-6">
+                <div class="info-box">
+                    <label class="text-muted">Algoritm:</label>
+                    <p class="mb-0 font-weight-bold">
+                        <code>{{ user.scanner_fingerprint_template.algorithm }}</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+            <a href="{% url 'scanner_register' %}" class="btn btn-primary">
+                <i class="fas fa-refresh"></i> Yangi barmoq izi kiritish
+            </a>
+            <button type="button" class="btn btn-danger" id="remove-fingerprint-btn"
+                onclick="fingerprintScanner.removeFingerprint()">
+                <i class="fas fa-trash"></i> Barmoq izini o'chirish
+            </button>
+        </div>
+        {% else %}
+        <!-- No Fingerprint Registered -->
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Barmoq izi kiritilmagan</strong>
+            <p class="mb-0 mt-2">
+                Siz hali barmoq izini ro'yxatdan o'tkazmagansiz. USB skaner orqali tizimga kirish uchun barmoq izini
+                kiritishingiz kerak.
+            </p>
+        </div>
+
+        <div class="bg-light p-4 rounded mb-4">
+            <h6 class="text-muted mb-3">
+                <i class="fas fa-info-circle"></i> Talablar
+            </h6>
+            <ul class="mb-0 text-muted">
+                <li>Kompyuterga ulangan USB barmoq izi skaneri (ZKTeco yoki mos)</li>
+                <li>Windows kompyuterida ishga tushirilgan Barmoq izi lokal agenti</li>
+                <li>Internet aloqasi</li>
+            </ul>
+        </div>
+
+        <a href="{% url 'scanner_register' %}" class="btn btn-success btn-lg w-100">
+            <i class="fas fa-fingerprint"></i> Barmoq izini hozir ro'yxatdan o'tkazish
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Include Fingerprint Scanner Client -->
+<script src="{% static 'js/fingerprint-scanner.js' %}"></script>
+
+<style>
+    .info-box {
+        padding: 12px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .info-box label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-success {
+        background-color: #28a745 !important;
+        font-size: 12px;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .gap-2 {
+        gap: 10px;
+    }
+
+    .fingerprint-status {
+        display: none;
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        animation: slideIn 0.3s ease-in-out;
+    }
+
+    .fingerprint-status.status-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .fingerprint-status.status-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #fingerprint-error {
+        display: none;
+    }
+</style>

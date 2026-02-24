@@ -1,0 +1,1886 @@
+2026-02-17 13:53:07,997 - __main__ - INFO - FingerprintScanner initialized
+2026-02-17 13:53:07,997 - __main__ - INFO - FingerprintProcessor initialized
+2026-02-17 13:53:07,998 - __main__ - INFO - ============================================================
+2026-02-17 13:53:07,999 - __main__ - INFO - Fingerprint Authentication Local Agent v1.0
+2026-02-17 13:53:07,999 - __main__ - INFO - ============================================================
+2026-02-17 13:53:07,999 - __main__ - INFO - Detecting fingerprint scanner...
+2026-02-17 13:53:08,034 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 13:53:08,035 - __main__ - INFO - Scanner ready for use
+2026-02-17 13:53:08,035 - __main__ - INFO - Starting Fingerprint Authentication Agent
+2026-02-17 13:53:08,414 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 13:53:08,415 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 14:22:04,588 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:22:04] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:22:04,599 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:22:04] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:25:53,729 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:25:53] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:25:53,752 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:25:53] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:03,906 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:03] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:03,912 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:03] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:13,435 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:13] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:13,454 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:13] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:14,723 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:14,728 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:14] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:15,185 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:15,191 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:15,370 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:15,392 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:15,687 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:15,713 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:15,884 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:15,905 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:15] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:16,045 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:16,051 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:16,232 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:16,239 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:16,367 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:16,374 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:16,505 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:16,522 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:16,664 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:16,671 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:16] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:23,427 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:23,435 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:23] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:29,178 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:29,186 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:29] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:30,127 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:30,141 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:30,364 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:30,371 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:30,544 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:30,550 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:30,717 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:30,725 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:30,865 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:30,884 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:30] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:31,041 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:31,065 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:31] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:31,336 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:31,356 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:31] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:31,915 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:31,924 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:31] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:32,085 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:32,092 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:32] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:26:32,265 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:26:32,286 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:26:32] "[31m[1mGET /api/scanner/detect HTTP/1.1[0m" 405 -
+2026-02-17 14:28:15,036 - __main__ - INFO - FingerprintScanner initialized
+2026-02-17 14:28:15,037 - __main__ - INFO - FingerprintProcessor initialized
+2026-02-17 14:28:15,038 - __main__ - INFO - ============================================================
+2026-02-17 14:28:15,038 - __main__ - INFO - Fingerprint Authentication Local Agent v1.0
+2026-02-17 14:28:15,039 - __main__ - INFO - ============================================================
+2026-02-17 14:28:15,039 - __main__ - INFO - Detecting fingerprint scanner...
+2026-02-17 14:28:15,051 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:15,051 - __main__ - INFO - Scanner ready for use
+2026-02-17 14:28:15,051 - __main__ - INFO - Starting Fingerprint Authentication Agent
+2026-02-17 14:28:15,101 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 14:28:15,102 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 14:28:25,876 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:25] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:25,888 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:25,890 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:25] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:27,735 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:27] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:27,752 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:27,753 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:27] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:28,201 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:28,213 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:28,214 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:28,425 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:28,439 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:28,441 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:28,585 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:28,601 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:28,603 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:28,800 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:28,813 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:28,814 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:28] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:29,106 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:29,116 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:29,118 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:29,256 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:29,283 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:29,284 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:31,426 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:31,456 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:31,457 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:28:41,716 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:41] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:28:41,738 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:28:41,739 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:28:41] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:17,399 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:17,428 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:17,429 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:18,801 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:18,813 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:18,815 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:19,246 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:19] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:19,275 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:19,276 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:19] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:28,896 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:28] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:28,917 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:28,918 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:28] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:29,718 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:29,733 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:29,733 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:30,076 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:30,090 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:30,091 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:30,255 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:30,267 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:30,268 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:30,441 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:30,468 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:30,469 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:30,605 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:30,629 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:30,630 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:30,737 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:30,752 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:30,753 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:30,902 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:30,930 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:30,932 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:31,055 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:31,086 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:31,087 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:31,228 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:31,242 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:31,243 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:31,387 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:31,412 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:31,413 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:31,515 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:31,529 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:31,531 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:31,665 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:31,677 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:31,678 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:31,836 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:31,849 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:31,850 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:32,010 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:32,024 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:32,025 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:32,157 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:32,172 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:32,173 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:32,339 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:32,374 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:32,376 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:32,686 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:32,718 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:32,720 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:32] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:33,007 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:33,020 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:33,021 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:33,156 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:33,184 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:33,186 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:33,356 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:33,369 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:33,370 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:33,509 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:33,525 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:33,528 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:33,681 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:33,700 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:33,702 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:33] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:41,251 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:41] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:41,268 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:41,270 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:41] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:29:58,608 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:29:58,635 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:29:58,636 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:29:58] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:30:08,122 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:08] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:30:08,135 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:30:08,137 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:08] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:30:08,609 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:08] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:30:08,621 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:30:08,622 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:08] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:30:08,917 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:08] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:30:08,930 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:30:08,931 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:08] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:30:10,497 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:10] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:30:10,538 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:30:10,538 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:10] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 14:30:19,042 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:19] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 14:30:19,054 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 14:30:19,055 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 14:30:19] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:37,841 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:37] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:37,849 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:37,849 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:37] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:41,585 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:41] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:41,596 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:41,597 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:41] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:42,488 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:42] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:42,503 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:42,503 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:42] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:42,985 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:42] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:42,990 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:42,991 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:42] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:43,176 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:43,191 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:43,192 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:43,334 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:43,354 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:43,355 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:43,494 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:43,499 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:43,500 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:43,724 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:43,742 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:43,742 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:43,907 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:43,927 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:43,928 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:43] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:44,074 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:44,079 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:44,080 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:44,254 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:44,281 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:44,282 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:44,447 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:44,477 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:44,478 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:46,408 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:46,434 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:46,435 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:46,584 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:46,605 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:46,606 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:46,764 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:46,769 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:46,769 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:46,950 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:46,968 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:46,968 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:47,094 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:47,098 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:47,098 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:47,298 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:47,303 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:47,303 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:47,484 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:47,490 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:47,490 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:47,637 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:47,646 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:47,647 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:44:47,815 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:44:47,834 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:44:47,835 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:44:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:46:06,330 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:06] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:46:06,362 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:46:06,364 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:06] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:46:07,392 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:07] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:46:07,404 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:46:07,405 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:07] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:46:07,642 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:07] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:46:07,655 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:46:07,657 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:07] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:46:17,024 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:46:17,054 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:46:17,056 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:46:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:12,477 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:12] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:12,492 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:12,495 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:12] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:13,319 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:13] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:13,334 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:13,336 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:13] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:13,804 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:13] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:13,819 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:13,819 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:13] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:14,003 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:14,018 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:14,021 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:14,174 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:14,204 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:14,207 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:14,362 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:14,375 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:14,377 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:14,546 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:14,558 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:14,560 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:14,726 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:14,741 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:14,742 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:16,212 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:16,227 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:16,228 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:16,386 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:16,409 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:16,410 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:16,569 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:16,590 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:16,591 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:16,728 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:16,747 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:16,748 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:16,949 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:16,969 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:16,971 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:16] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:17,132 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:17,158 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:17,159 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:17,293 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:17,316 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:17,317 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:17,556 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:17,573 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:17,574 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:17,767 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:17,791 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:17,793 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:17,944 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:17,967 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:17,968 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:18,140 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:18,170 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:18,172 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:18,371 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:18,401 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:18,402 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:18,561 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:18,596 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:18,597 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:18,762 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:18,776 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:18,777 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:18,975 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:19,008 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:19,009 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:19] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:19,143 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:19] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:19,160 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:19,161 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:19] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:19,291 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:19] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:19,318 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:19,319 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:19] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:29,204 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:29,233 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:29,235 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:30,138 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:30,152 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:30,153 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:30,680 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:30,704 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:30,705 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:30,904 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:30,930 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:30,931 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:31,068 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:31,081 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:31,083 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:31,249 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:31,273 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:31,274 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:31,439 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:31,456 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:31,456 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:31,629 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:31,644 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:31,645 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:31] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:32,753 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:32,775 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:32,775 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:32] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:33,379 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:33,401 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:33,402 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:33] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:43,700 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:43] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:43,726 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:43,727 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:43] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:44,200 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:44,214 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:44,215 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:44,420 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:44,435 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:44,436 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:44,604 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:44,623 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:44,626 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:47:44,813 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:47:44,844 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:47:44,845 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:47:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:42,439 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:42] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:42,463 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:42,464 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:42] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:45,672 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:45] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:45,704 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:45,705 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:45] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:46,180 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:46,191 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:46,192 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:46,414 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:46,431 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:46,432 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:46,620 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:46,631 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:46,632 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:46,840 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:46,856 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:46,858 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:46] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:47,136 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:47,163 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:47,165 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:54,670 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:54] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:54,684 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:54,685 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:54] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:56,344 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:56] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:56,368 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:56,369 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:56] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:56,732 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:56] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:56,746 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:56,747 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:56] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:56,921 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:56] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:56,944 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:56,945 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:56] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:57,120 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:57,143 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:57,144 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:57,261 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:57,295 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:57,296 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:57,450 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:57,487 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:57,494 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:57,623 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:57,638 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:57,639 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:57,805 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:57,820 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:57,822 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:57,961 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:57,982 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:57,983 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:58,148 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:58,170 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:58,172 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:58] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:58,341 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:58,354 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:58,355 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:58] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:59,466 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:59] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:59,494 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:59,495 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:59] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:59,651 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:59] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:59,682 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:59,683 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:59] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:49:59,831 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:59] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:49:59,847 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:49:59,849 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:49:59] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:50:00,049 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:50:00] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:50:00,065 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:50:00,067 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:50:00] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:50:58,888 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:50:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:50:58,903 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:50:58,903 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:50:58] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:50:59,351 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:50:59] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:50:59,364 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:50:59,365 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:50:59] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:51:02,903 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:51:02] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:51:02,930 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:51:02,931 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:51:02] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:52:14,576 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:52:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:52:14,592 - __main__ - INFO - ZKTeco fingerprint scanner detected successfully
+2026-02-17 15:52:14,593 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:52:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 15:52:14,637 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:52:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:52:21,525 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:52:21] "[33mPOST /api/fingerprint/register HTTP/1.1[0m" 404 -
+2026-02-17 15:54:29,953 - __main__ - INFO - ZKFPScanner created
+2026-02-17 15:54:29,955 - __main__ - INFO - ============================================================
+2026-02-17 15:54:29,956 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 15:54:29,956 - __main__ - INFO - ============================================================
+2026-02-17 15:54:29,957 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 15:54:31,506 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:31,506 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-02-17 15:54:31,507 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 15:54:31,528 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 15:54:31,528 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 15:54:48,012 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:48] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:48,025 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:48,027 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:48] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:49,245 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:49,257 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:49,258 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:49] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:49,637 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:49,656 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:49,658 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:49] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:49,836 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:49,867 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:49,869 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:49] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:50,006 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:50,035 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:50,036 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:50,156 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:50,168 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:50,169 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:50,315 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:50,338 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:50,339 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:50,485 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:50,495 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:50,496 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:50,656 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:50,667 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:50,668 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:50] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:52,126 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:52,138 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:52,139 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:52,494 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:52,516 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:52,517 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:52,696 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:52,706 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:52,707 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:52,886 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:52,898 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:52,900 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:52] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:53,045 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:53] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:53,066 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:53,067 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:53] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:53,186 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:53] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:53,207 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:53,209 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:53] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:54:55,997 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:55] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:54:56,008 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:54:56,010 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:54:56] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:55:52,331 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:55:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:55:52,341 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:55:52,343 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:55:52] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:55:53,567 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:55:53] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:55:53,588 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:55:53,589 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:55:53] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:19,988 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:19] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:20,017 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:20,019 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:20] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:21,547 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:21] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:21,559 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:21,560 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:21] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:21,746 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:21] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:21,760 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:21,762 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:21] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:22,119 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:22] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:22,131 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:22,133 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:22] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:22,544 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:22] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:22,578 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:22,581 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:22] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:22,961 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:22] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:22,978 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:22,983 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:22] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:23,129 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:23,145 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:23,147 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:23,312 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:23,324 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:23,325 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:23,489 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:23,511 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:23,513 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:23,660 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:23,672 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:23,674 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:23,837 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:56:23,858 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:56:23,860 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:56:23] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:56:41,096 - __main__ - INFO - Scanner closed
+2026-02-17 15:57:19,836 - __main__ - INFO - ZKFPScanner created
+2026-02-17 15:57:19,839 - __main__ - INFO - ============================================================
+2026-02-17 15:57:19,839 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 15:57:19,840 - __main__ - INFO - ============================================================
+2026-02-17 15:57:19,840 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 15:57:20,347 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:20,347 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-02-17 15:57:20,347 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 15:57:20,383 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 15:57:20,384 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 15:57:32,374 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:32,399 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:32,401 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:32] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:33,286 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:33,306 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:33,307 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:33,487 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:33,507 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:33,508 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:33,658 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:33,668 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:33,669 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:33,807 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:33,816 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:33,818 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:33,958 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:33,972 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:33,973 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:33] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:34,107 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:34] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:34,117 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:34,118 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:34] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:34,240 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:34] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:34,251 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:34,252 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:34] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:35,798 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:35] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:35,809 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:35,812 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:35] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:36,963 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:36] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:36,989 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:36,991 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:36] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:37,276 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:37] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:37,293 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:37,295 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:37] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:37,917 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:37] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:37,934 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:37,936 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:37] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:38,207 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:38] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:38,231 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:38,232 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:38] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:57:38,445 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:38] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:57:38,455 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:57:38,457 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:57:38] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:58:14,748 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:58:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:58:14,759 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:58:14,760 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:58:14] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 15:58:17,608 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:58:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 15:58:17,640 - __main__ - ERROR - Failed to initialize ZKFP2: Unable to load DLL 'libzkfp.dll': The specified module could not be found. (Exception from HRESULT: 0x8007007E)
+   at libzkfpcsharp.zkfp2.ZKFPM_Init()
+   at libzkfpcsharp.zkfp2.Init()
+2026-02-17 15:58:17,642 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 15:58:17] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-17 16:18:43,450 - __main__ - INFO - ZKFPScanner created
+2026-02-17 16:18:43,452 - __main__ - INFO - ============================================================
+2026-02-17 16:18:43,452 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 16:18:43,452 - __main__ - INFO - ============================================================
+2026-02-17 16:18:43,452 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 16:18:45,017 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-17 16:18:45,018 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-17 16:18:45,018 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:18:46,229 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:18:46,229 - __main__ - INFO - Scanner ready!
+2026-02-17 16:18:46,229 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 16:18:46,283 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 16:18:46,283 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 16:20:18,211 - __main__ - INFO - ZKFPScanner created
+2026-02-17 16:20:18,214 - __main__ - INFO - ============================================================
+2026-02-17 16:20:18,214 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 16:20:18,214 - __main__ - INFO - ============================================================
+2026-02-17 16:20:18,215 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 16:20:20,157 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-17 16:20:20,158 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-17 16:20:20,159 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:20:20,164 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:20:20,165 - __main__ - INFO - Scanner ready!
+2026-02-17 16:20:20,165 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 16:20:20,267 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 16:20:20,268 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 16:20:57,958 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:20:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:20:57,967 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:20:57,968 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:20:57,971 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:20:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:21:07,283 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:21:07] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:21:07,291 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:21:07,292 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:21:07,293 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:21:07] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:21:07,351 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:21:07] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:21:12,144 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:21:27,246 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:21:27,246 - __main__ - INFO - Capture 1/3 successful
+2026-02-17 16:21:27,747 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-17 16:21:42,181 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:21:42,869 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:21:42] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:21:57,297 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:21:57] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:22:15,203 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:22:19,998 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:22:19,998 - __main__ - INFO - Capture 1/3 successful
+2026-02-17 16:22:20,499 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-17 16:22:26,098 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:22:26,098 - __main__ - INFO - Capture 2/3 successful
+2026-02-17 16:22:26,600 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-17 16:22:28,163 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:22:28,163 - __main__ - INFO - Capture 3/3 successful
+2026-02-17 16:22:28,163 - __main__ - ERROR - Registration error: 'ZKFP2' object has no attribute 'GenRegTemplate'
+2026-02-17 16:22:28,164 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:22:28] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:22:36,397 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:22:36,752 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:22:36,753 - __main__ - INFO - Capture 1/3 successful
+2026-02-17 16:22:37,253 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-17 16:22:52,367 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:22:52] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:25:09,443 - __main__ - INFO - ZKFPScanner created
+2026-02-17 16:25:09,444 - __main__ - INFO - ============================================================
+2026-02-17 16:25:09,445 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 16:25:09,445 - __main__ - INFO - ============================================================
+2026-02-17 16:25:09,445 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 16:25:09,767 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-17 16:25:09,768 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-17 16:25:09,768 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:25:11,132 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:25:11,133 - __main__ - INFO - Scanner ready!
+2026-02-17 16:25:11,133 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 16:25:11,157 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 16:25:11,157 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 16:25:17,942 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:25:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:25:17,948 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:25:17,949 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:25:17,950 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:25:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:25:18,000 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:25:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:25:21,248 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:25:25,589 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:25:25,591 - __main__ - INFO - Capture 1/3 successful
+2026-02-17 16:25:26,093 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-17 16:25:27,211 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:25:27,213 - __main__ - INFO - Capture 2/3 successful
+2026-02-17 16:25:27,714 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-17 16:25:29,208 - __main__ - INFO - Fingerprint captured successfully
+2026-02-17 16:25:29,210 - __main__ - INFO - Capture 3/3 successful
+2026-02-17 16:25:29,278 - __main__ - ERROR - Registration error: No method matches given arguments for zkfp2.DBMerge: (<class 'System.IntPtr'>, <class 'tuple'>, <class 'tuple'>, <class 'tuple'>, <class 'System.Byte[]'>, <class 'int'>)
+2026-02-17 16:25:29,280 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:25:29] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:27:43,014 - __main__ - INFO - ZKFPScanner created
+2026-02-17 16:27:43,016 - __main__ - INFO - ============================================================
+2026-02-17 16:27:43,016 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 16:27:43,016 - __main__ - INFO - ============================================================
+2026-02-17 16:27:43,017 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 16:27:43,350 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-17 16:27:43,350 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-17 16:27:43,350 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:27:44,433 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:27:44,434 - __main__ - INFO - Scanner ready!
+2026-02-17 16:27:44,434 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 16:27:44,454 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 16:27:44,454 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 16:27:55,068 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:27:55] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:27:55,086 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:27:55,087 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:27:55,088 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:27:55] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:27:55,134 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:27:55] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:27:57,066 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:28:12,233 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:28:12] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:32:51,115 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:32:51] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:32:51,128 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:32:51,129 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:32:51,130 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:32:51] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:32:51,164 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:32:51] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:32:52,650 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:33:07,791 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:33:07] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:34:32,405 - __main__ - INFO - ZKFPScanner created
+2026-02-17 16:34:32,407 - __main__ - INFO - ============================================================
+2026-02-17 16:34:32,407 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 16:34:32,407 - __main__ - INFO - ============================================================
+2026-02-17 16:34:32,407 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 16:34:32,746 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-17 16:34:32,746 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-17 16:34:32,747 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:34:33,879 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:34:33,880 - __main__ - INFO - Scanner ready!
+2026-02-17 16:34:33,880 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 16:34:33,891 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 16:34:33,894 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 16:35:21,088 - __main__ - INFO - ZKFPScanner created
+2026-02-17 16:35:21,089 - __main__ - INFO - ============================================================
+2026-02-17 16:35:21,090 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-17 16:35:21,090 - __main__ - INFO - ============================================================
+2026-02-17 16:35:21,090 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-17 16:35:21,435 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-17 16:35:21,435 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-17 16:35:21,435 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:35:21,439 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:35:21,439 - __main__ - INFO - Scanner ready!
+2026-02-17 16:35:21,439 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-17 16:35:21,454 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-17 16:35:21,454 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-17 16:35:35,269 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:35:35] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:35:35,274 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:35:35,275 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:35:35,275 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:35:35] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:35:35,313 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:35:35] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:35:38,520 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:35:42,609 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:35:42,609 - __main__ - INFO - Capture 1/3 successful
+2026-02-17 16:35:43,111 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-17 16:35:46,803 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:35:46,804 - __main__ - INFO - Capture 2/3 successful
+2026-02-17 16:35:47,305 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-17 16:36:02,425 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:36:02] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:36:17,617 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:36:32,736 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:36:32] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:37:00,880 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:37:15,998 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:37:15] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:37:37,354 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:37:37] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:37:37,358 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:37:37,359 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:37:37,360 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:37:37] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:37:47,727 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:37:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:37:47,741 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:37:47,741 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:37:47,742 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:37:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:37:47,791 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:37:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:40:40,722 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:40:55,851 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:40:55] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:41:00,396 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:41:00] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:41:00,410 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:41:00,411 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:41:00,412 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:41:00] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:41:00,449 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:41:00] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:41:12,730 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:41:27,847 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:41:27] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:41:33,486 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:41:48,610 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:41:48] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-17 16:42:22,527 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:42:25,198 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:42:25,199 - __main__ - INFO - Capture 1/3 successful
+2026-02-17 16:42:25,700 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-17 16:42:29,789 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:42:29,789 - __main__ - INFO - Capture 2/3 successful
+2026-02-17 16:42:30,291 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-17 16:42:33,369 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:42:33,369 - __main__ - INFO - Capture 3/3 successful
+2026-02-17 16:42:33,372 - __main__ - INFO - Registration template generated successfully
+2026-02-17 16:42:33,372 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:42:33] "POST /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-17 16:42:35,509 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:42:35] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:42:35,514 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:42:35,515 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:42:35,515 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:42:35] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:43:07,338 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:07] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:43:09,214 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:43:09,215 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:09] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-17 16:43:09,231 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-17 16:43:09,232 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:09] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-17 16:43:12,809 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:12] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:43:14,902 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:43:14,903 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:14] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-17 16:43:14,922 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-17 16:43:14,923 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:14] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-17 16:43:19,622 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:19] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:43:19,898 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:43:19,899 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:19] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-17 16:43:19,906 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-17 16:43:19,907 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:19] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-17 16:43:41,671 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:41] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:43:41,674 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:43:41,674 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:43:41,675 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:43:41] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:44:25,008 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:44:25] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:44:25,024 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:44:25,025 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:44:25,025 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:44:25] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:46:18,164 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:46:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:46:18,170 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:46:18,171 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:46:18,171 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:46:18] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:46:55,855 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:46:55] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:46:55,859 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:46:55,860 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:46:55,861 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:46:55] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:46:55,890 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:46:55] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:47:09,505 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:09] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:47:09,509 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:47:09,510 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:47:09,510 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:09] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:47:11,075 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:11] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:47:11,081 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:47:11,081 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:47:11,081 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:11] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:47:49,457 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:47:49,473 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:47:49,473 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:47:49,474 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:49] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:47:52,276 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:47:52,281 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:47:52,282 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:47:52,283 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:52] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:47:52,326 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:47:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:47:55,062 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-17 16:47:55,315 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:47:55,315 - __main__ - INFO - Capture 1/3 successful
+2026-02-17 16:47:55,816 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-17 16:47:57,703 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:47:57,703 - __main__ - INFO - Capture 2/3 successful
+2026-02-17 16:47:58,205 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-17 16:48:01,483 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:48:01,483 - __main__ - INFO - Capture 3/3 successful
+2026-02-17 16:48:01,486 - __main__ - INFO - Registration template generated successfully
+2026-02-17 16:48:01,486 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:01] "POST /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-17 16:48:03,578 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:03] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:48:03,589 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:48:03,590 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:48:03,592 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:03] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-17 16:48:14,423 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:48:16,112 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-17 16:48:16,112 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:16] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-17 16:48:16,125 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-17 16:48:16,126 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:16] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-17 16:48:21,153 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:21] "GET /api/status HTTP/1.1" 200 -
+2026-02-17 16:48:21,161 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-17 16:48:21,162 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-17 16:48:21,162 - werkzeug - INFO - 127.0.0.1 - - [17/Feb/2026 16:48:21] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 10:24:57,522 - __main__ - INFO - ZKFPScanner created
+2026-02-18 10:24:57,524 - __main__ - INFO - ============================================================
+2026-02-18 10:24:57,524 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-18 10:24:57,524 - __main__ - INFO - ============================================================
+2026-02-18 10:24:57,524 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-18 10:24:58,247 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:24:58,248 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-02-18 10:24:58,248 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-18 10:24:58,277 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-18 10:24:58,278 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-18 10:30:44,438 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:44,442 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:44] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:45,281 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:45,283 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:45] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:45,813 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:45,814 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:45] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:46,196 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:46,198 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:46] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:46,419 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:46,421 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:46] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:46,603 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:46,604 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:46] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:46,796 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:46,797 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:46] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:47,324 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:47,325 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:47] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 10:30:47,725 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-18 10:30:47,726 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 10:30:47] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 17:50:09,526 - __main__ - INFO - ZKFPScanner created
+2026-02-18 17:50:09,528 - __main__ - INFO - ============================================================
+2026-02-18 17:50:09,528 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-18 17:50:09,528 - __main__ - INFO - ============================================================
+2026-02-18 17:50:09,528 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-18 17:50:09,996 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-18 17:50:09,996 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-18 17:50:09,996 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 17:50:11,042 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 17:50:11,043 - __main__ - INFO - Scanner ready!
+2026-02-18 17:50:11,043 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-18 17:50:11,083 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-18 17:50:11,083 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-18 17:51:50,510 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 17:51:50] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-18 17:53:58,449 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 17:53:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 17:53:58,473 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 17:53:58,474 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 17:53:58,475 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 17:53:58] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 17:55:29,770 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 17:55:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 17:55:29,793 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 17:55:29,795 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 17:55:29,796 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 17:55:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 17:58:05,037 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-18 17:58:05,040 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 17:58:05] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-18 17:58:05,062 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-18 17:58:05,065 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 17:58:05] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-18 18:09:04,694 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-18 18:09:04,696 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:09:04] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-18 18:09:04,711 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-18 18:09:04,712 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:09:04] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-18 18:14:25,747 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:25] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:14:25,771 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:14:25,772 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:14:25,773 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:25] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 18:14:29,156 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:14:29,163 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:14:29,164 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:14:29,165 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 18:14:29,208 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:14:31,187 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-18 18:14:31,548 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-18 18:14:31,549 - __main__ - INFO - Capture 1/3 successful
+2026-02-18 18:14:32,050 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-18 18:14:33,419 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-18 18:14:33,420 - __main__ - INFO - Capture 2/3 successful
+2026-02-18 18:14:33,921 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-18 18:14:35,892 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-18 18:14:35,893 - __main__ - INFO - Capture 3/3 successful
+2026-02-18 18:14:35,903 - __main__ - INFO - Registration template generated successfully
+2026-02-18 18:14:35,904 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:35] "POST /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-18 18:14:38,027 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:38] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:14:38,033 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:14:38,035 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:14:38,038 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:38] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 18:14:44,878 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-18 18:14:44,879 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:44] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-18 18:14:44,892 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-18 18:14:44,894 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:14:44] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-18 18:26:55,919 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:26:55] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:26:55,944 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:26:55,945 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:26:55,946 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:26:55] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 18:27:39,795 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:27:39] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:27:39,816 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:27:39,817 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:27:39,818 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:27:39] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 18:27:47,938 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:27:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:27:47,953 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:27:47,954 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:27:47,955 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:27:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 18:30:00,935 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:30:00] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:30:00,944 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:30:00,945 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:30:00,946 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:30:00] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-18 18:30:36,361 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:30:36] "GET /api/status HTTP/1.1" 200 -
+2026-02-18 18:30:36,366 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-18 18:30:36,368 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-18 18:30:36,369 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 18:30:36] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:07:23,025 - __main__ - INFO - ZKFPScanner created
+2026-02-19 01:07:23,046 - __main__ - INFO - ============================================================
+2026-02-19 01:07:23,075 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-19 01:07:23,112 - __main__ - INFO - ============================================================
+2026-02-19 01:07:23,145 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-19 01:07:28,415 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-19 01:07:28,428 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-02-19 01:07:28,432 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-19 01:07:28,539 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-19 01:07:28,554 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-19 01:08:58,926 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:08:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:08:59,165 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-19 01:08:59,165 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:09:00,721 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:09:02,872 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:02,872 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:02] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:02,913 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:02,913 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:02] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:09:05,505 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:05] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:09:07,638 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:07,638 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:07] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:07,670 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:07,671 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:07] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:09:10,931 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:10] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:09:12,639 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:12,639 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:12] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:12,670 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:12,670 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:12] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:09:14,787 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:09:16,471 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:16,484 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:16] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:16,491 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:16,491 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:16] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:09:18,936 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:18] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:09:20,919 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:20,934 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:20] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:20,942 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:20,951 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:20] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:09:23,036 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:09:24,951 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:24,951 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:24] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:24,972 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:24,972 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:24] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:09:27,785 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:27] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:09:29,501 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:29,501 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:29] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:29,519 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:29,519 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:29] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:09:34,605 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:34] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:09:36,300 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:09:36,300 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:36] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:09:36,316 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:09:36,316 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:09:36] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:24:53,162 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:24:53] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:24:53,172 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:24:53,173 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:24:53,176 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:24:53] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:25:10,232 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:25:10] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:25:10,239 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:25:10,240 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:25:10,243 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:25:10] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:25:10,288 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:25:10] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:25:12,798 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-19 01:25:14,448 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:25:14,448 - __main__ - INFO - Capture 1/3 successful
+2026-02-19 01:25:14,970 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-19 01:25:15,989 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:25:15,989 - __main__ - INFO - Capture 2/3 successful
+2026-02-19 01:25:16,516 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-19 01:25:17,499 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:25:17,499 - __main__ - INFO - Capture 3/3 successful
+2026-02-19 01:25:17,525 - __main__ - INFO - Registration template generated successfully
+2026-02-19 01:25:17,525 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:25:17] "POST /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-19 01:25:19,708 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:25:19] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:25:19,715 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:25:19,716 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:25:19,741 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:25:19] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:41:15,061 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:41:15] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:41:17,440 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:41:17,440 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:41:17] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:41:17,467 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:41:17,467 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:41:17] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:41:21,506 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:41:21] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:41:23,440 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:41:23,456 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:41:23] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:41:23,473 - __main__ - INFO - Verification result: match=True, score=62, threshold=50
+2026-02-19 01:41:23,473 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:41:23] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:46:22,092 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:22] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:46:24,641 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:46:24,641 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:24] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:46:24,675 - __main__ - INFO - Verification result: match=True, score=58, threshold=50
+2026-02-19 01:46:24,675 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:24] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:46:46,288 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:46:46,288 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:46] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:46:46,323 - __main__ - INFO - Verification result: match=False, score=32, threshold=50
+2026-02-19 01:46:46,323 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:46] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:46:50,518 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:46:50,519 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:50] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:46:50,528 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 01:46:50,528 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:50] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:46:54,070 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 01:46:54,070 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:54] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 01:46:54,100 - __main__ - INFO - Verification result: match=True, score=73, threshold=50
+2026-02-19 01:46:54,102 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:46:54] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 01:49:21,432 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:21] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:21,441 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:21,441 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:21,447 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:21] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:43,878 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:43] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:43,896 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:43,899 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:43,900 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:43] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:47,434 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:47,445 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:47,447 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:47,448 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:48,359 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:48] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:48,386 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:48,386 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:48,388 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:48] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:49,196 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:49,202 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:49,203 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:49,212 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:49,331 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:49,339 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:49,339 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:49,339 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:49,596 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:49,625 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:49,637 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:49,640 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:49,730 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:49,759 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:49,759 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:49,760 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:49,961 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:49,982 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:49,982 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:49,982 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:49] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:50,102 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:50,118 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:50,121 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:50,125 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:50] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:50,378 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:50,386 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:50,388 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:50,390 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:50] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:50,582 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:50,588 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:50,589 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:50,591 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:50] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:51,081 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:51] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:51,091 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:51,093 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:51,095 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:51] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:51,277 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:51] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:51,289 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:51,290 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:51,292 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:51] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:49:52,639 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:49:52,649 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 01:49:52,651 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 01:49:52,652 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:49:52] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 01:50:13,636 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:50:13] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:50:25,081 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:50:25] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-19 01:50:36,834 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:50:36] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 01:50:48,257 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 01:50:48] "[31m[1mGET /api/fingerprint/capture HTTP/1.1[0m" 400 -
+2026-02-19 01:51:46,016 - __main__ - INFO - Scanner closed
+2026-02-19 17:27:34,234 - __main__ - INFO - ZKFPScanner created
+2026-02-19 17:27:34,240 - __main__ - INFO - ============================================================
+2026-02-19 17:27:34,242 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-19 17:27:34,242 - __main__ - INFO - ============================================================
+2026-02-19 17:27:34,242 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-19 17:27:38,954 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-19 17:27:38,972 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-19 17:27:38,974 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 17:27:40,592 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 17:27:40,600 - __main__ - INFO - Scanner ready!
+2026-02-19 17:27:40,600 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-19 17:27:40,678 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-19 17:27:40,681 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-19 17:28:03,051 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:28:03] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:28:05,561 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:28:05,561 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:28:05] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:28:05,593 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 17:28:05,594 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:28:05] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:28:20,618 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:28:20] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:28:20,645 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 17:28:20,648 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 17:28:20,650 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:28:20] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-19 17:31:52,536 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:31:52] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:31:55,340 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:31:55,340 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:31:55] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:31:55,374 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 17:31:55,376 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:31:55] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:31:58,123 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:31:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:32:00,057 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:32:00,073 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:32:00] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:32:00,091 - __main__ - INFO - Verification result: match=True, score=90, threshold=50
+2026-02-19 17:32:00,099 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:32:00] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:32:42,199 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:32:42,199 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:32:42] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:32:42,219 - __main__ - INFO - Verification result: match=True, score=81, threshold=50
+2026-02-19 17:32:42,227 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:32:42] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:34:01,743 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:34:01] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:34:05,001 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:34:05,003 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:34:05] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:34:05,016 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 17:34:05,020 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:34:05] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:41:50,282 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:41:50] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:41:52,661 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:41:52,661 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:41:52] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:41:52,691 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 17:41:52,693 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:41:52] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:42:05,048 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:05] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:42:07,643 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:42:07,651 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:07] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:42:07,669 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 17:42:07,673 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:07] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:42:10,150 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:10] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:42:12,324 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:42:12,324 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:12] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:42:12,357 - __main__ - INFO - Verification result: match=True, score=93, threshold=50
+2026-02-19 17:42:12,357 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:12] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:42:31,696 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:42:31,704 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:31] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:42:31,731 - __main__ - INFO - Verification result: match=True, score=89, threshold=50
+2026-02-19 17:42:31,731 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:31] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:42:41,932 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:41] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:42:43,868 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:42:43,868 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:43] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:42:43,895 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 17:42:43,896 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:42:43] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:48:08,949 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:48:08] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:48:11,331 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:48:11,332 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:48:11] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:48:11,351 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 17:48:11,351 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:48:11] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:52:11,284 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:52:11] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:52:13,627 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:52:13,627 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:52:13] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:52:13,657 - __main__ - INFO - Verification result: match=True, score=84, threshold=50
+2026-02-19 17:52:13,658 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:52:13] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:52:47,978 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:52:47,987 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:52:47] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:52:48,012 - __main__ - INFO - Verification result: match=True, score=75, threshold=50
+2026-02-19 17:52:48,012 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:52:48] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 17:53:06,761 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:53:06] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 17:53:09,292 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 17:53:09,300 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:53:09] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 17:53:09,326 - __main__ - INFO - Verification result: match=True, score=97, threshold=50
+2026-02-19 17:53:09,326 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 17:53:09] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:41:16,348 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:41:18,583 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:41:18,584 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:18] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:41:18,599 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 18:41:18,600 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:18] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:41:30,859 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:41:30,859 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:30] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:41:30,881 - __main__ - INFO - Verification result: match=True, score=93, threshold=50
+2026-02-19 18:41:30,882 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:30] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:41:53,592 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:53] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:41:55,356 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:41:55,356 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:55] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:41:55,379 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 18:41:55,379 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:41:55] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:49:46,382 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:49:46] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:49:48,368 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:49:48,369 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:49:48] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:49:48,385 - __main__ - INFO - Verification result: match=True, score=72, threshold=50
+2026-02-19 18:49:48,386 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:49:48] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:49:58,444 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:49:58,460 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:49:58] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:49:58,460 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 18:49:58,460 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:49:58] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:50:13,203 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:50:13] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:50:14,941 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:50:14,941 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:50:14] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:50:14,958 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 18:50:14,975 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:50:14] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:52:32,170 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:52:33,968 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:52:33,968 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:33] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:52:33,995 - __main__ - INFO - Verification result: match=True, score=92, threshold=50
+2026-02-19 18:52:33,996 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:33] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:52:42,650 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:52:42,650 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:42] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:52:42,650 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 18:52:42,662 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:42] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:52:47,247 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:52:47,248 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:47] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:52:47,249 - __main__ - INFO - Verification result: match=True, score=65, threshold=50
+2026-02-19 18:52:47,249 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:47] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:52:58,717 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:52:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:53:00,347 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:53:00,347 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:53:00] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:53:00,347 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 18:53:00,347 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:53:00] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:57:16,075 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:16] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:57:18,055 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:57:18,055 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:18] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:57:18,079 - __main__ - INFO - Verification result: match=True, score=94, threshold=50
+2026-02-19 18:57:18,081 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:18] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:57:26,321 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:57:26,321 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:26] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:57:26,344 - __main__ - INFO - Verification result: match=True, score=96, threshold=50
+2026-02-19 18:57:26,346 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:26] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 18:57:36,148 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:36] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 18:57:37,919 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 18:57:37,919 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:37] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 18:57:37,937 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 18:57:37,938 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 18:57:37] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:01:38,482 - __main__ - INFO - Scanner closed
+2026-02-19 19:01:40,780 - __main__ - INFO - ZKFPScanner created
+2026-02-19 19:01:40,780 - __main__ - INFO - ============================================================
+2026-02-19 19:01:40,780 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-19 19:01:40,780 - __main__ - INFO - ============================================================
+2026-02-19 19:01:40,793 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-19 19:01:41,774 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-19 19:01:41,775 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-19 19:01:41,775 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-19 19:01:43,120 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-19 19:01:43,120 - __main__ - INFO - Scanner ready!
+2026-02-19 19:01:43,120 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-19 19:01:43,137 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-19 19:01:43,138 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-19 19:02:38,390 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:02:38] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:02:40,187 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:02:40,187 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:02:40] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:02:40,211 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:02:40,211 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:02:40] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:02:57,102 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:02:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:02:59,133 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:02:59,133 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:02:59] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:02:59,156 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:02:59,157 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:02:59] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:03:07,132 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:03:07,132 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:03:07] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:03:07,154 - __main__ - INFO - Verification result: match=True, score=81, threshold=50
+2026-02-19 19:03:07,154 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:03:07] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:03:13,299 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:03:13,299 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:03:13] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:03:13,330 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:03:13,335 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:03:13] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:03:57,281 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:03:57,282 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:03:57] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:03:57,289 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 19:03:57,292 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:03:57] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:04:01,940 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:04:01,940 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:04:01] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:04:01,964 - __main__ - INFO - Verification result: match=True, score=94, threshold=50
+2026-02-19 19:04:01,965 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:04:01] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:06:08,419 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:06:08,419 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:06:08] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:06:08,437 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 19:06:08,440 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:06:08] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:06:14,352 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:06:14,352 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:06:14] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:06:14,373 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:06:14,374 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:06:14] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:06:47,841 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:06:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:06:49,663 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:06:49,663 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:06:49] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:06:49,683 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:06:49,684 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:06:49] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:08:54,378 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:08:54] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:08:56,342 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:08:56,342 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:08:56] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:08:56,359 - __main__ - INFO - Verification result: match=True, score=73, threshold=50
+2026-02-19 19:08:56,359 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:08:56] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:09:03,441 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:09:03,441 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:09:03] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:09:03,477 - __main__ - INFO - Verification result: match=True, score=87, threshold=50
+2026-02-19 19:09:03,479 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:09:03] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:10:13,098 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:10:13] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:10:14,897 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:10:14,897 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:10:14] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:10:14,917 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:10:14,918 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:10:14] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:12:42,806 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:12:42] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:12:44,571 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:12:44,571 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:12:44] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:12:44,596 - __main__ - INFO - Verification result: match=True, score=95, threshold=50
+2026-02-19 19:12:44,597 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:12:44] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:12:59,821 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:12:59] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:13:03,918 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:13:03,935 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:13:03] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:13:03,935 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:13:03,935 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:13:03] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:13:56,896 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:13:56] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:13:58,876 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:13:58,876 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:13:58] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:13:58,897 - __main__ - INFO - Verification result: match=True, score=91, threshold=50
+2026-02-19 19:13:58,898 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:13:58] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:14:05,965 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:14:05,966 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:14:05] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:14:05,982 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:14:05,984 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:14:05] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:14:20,074 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:14:20] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:14:21,648 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:14:21,649 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:14:21] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:14:21,664 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:14:21,665 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:14:21] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:18:25,242 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:18:25] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:18:27,288 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:18:27,290 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:18:27] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:18:27,304 - __main__ - INFO - Verification result: match=True, score=53, threshold=50
+2026-02-19 19:18:27,305 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:18:27] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:18:34,075 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:18:34,076 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:18:34] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:18:34,089 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:18:34,090 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:18:34] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:19:04,194 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:19:04] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:19:06,209 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:19:06,209 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:19:06] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:19:06,209 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:19:06,209 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:19:06] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:21:41,721 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:21:41] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:21:43,498 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:21:43,501 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:21:43] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:21:43,501 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:21:43,501 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:21:43] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:22:29,046 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:22:30,827 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:22:30,827 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:30] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:22:30,827 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 19:22:30,827 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:30] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:22:33,569 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:22:35,342 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:22:35,342 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:35] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:22:35,342 - __main__ - INFO - Verification result: match=False, score=0, threshold=50
+2026-02-19 19:22:35,342 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:35] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:22:37,041 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:37] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:22:39,058 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:22:39,058 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:39] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:22:39,103 - __main__ - INFO - Verification result: match=True, score=95, threshold=50
+2026-02-19 19:22:39,104 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:39] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:22:46,357 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:22:46,357 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:46] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:22:46,373 - __main__ - INFO - Verification result: match=True, score=72, threshold=50
+2026-02-19 19:22:46,378 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:46] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 19:22:58,625 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:22:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 19:23:01,245 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 19:23:01,246 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:23:01] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 19:23:01,260 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 19:23:01,261 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 19:23:01] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:00:12,225 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:12] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:00:14,209 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:00:14,209 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:14] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:00:14,230 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 20:00:14,232 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:14] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:00:23,707 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:00:25,673 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:00:25,690 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:25] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:00:25,690 - __main__ - INFO - Verification result: match=True, score=85, threshold=50
+2026-02-19 20:00:25,690 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:25] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:00:32,596 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:00:32,598 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:32] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:00:32,611 - __main__ - INFO - Verification result: match=True, score=55, threshold=50
+2026-02-19 20:00:32,612 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:32] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:00:44,156 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:00:46,120 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:00:46,120 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:46] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:00:46,140 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 20:00:46,141 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:00:46] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:06:26,600 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:26] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:06:28,814 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:06:28,814 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:28] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:06:28,836 - __main__ - INFO - Verification result: match=True, score=84, threshold=50
+2026-02-19 20:06:28,837 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:28] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:06:36,160 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:06:36,162 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:36] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:06:36,172 - __main__ - INFO - Verification result: match=True, score=62, threshold=50
+2026-02-19 20:06:36,173 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:36] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:06:49,562 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:49] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:06:51,793 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:06:51,793 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:51] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:06:51,812 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 20:06:51,813 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:06:51] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:09:10,374 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:10] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:09:13,192 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:09:13,193 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:13] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:09:13,207 - __main__ - INFO - Verification result: match=True, score=59, threshold=50
+2026-02-19 20:09:13,209 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:13] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:09:27,335 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:09:27,354 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:27] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:09:27,373 - __main__ - INFO - Verification result: match=True, score=83, threshold=50
+2026-02-19 20:09:27,374 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:27] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:09:37,686 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:37] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:09:39,666 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:09:39,666 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:39] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:09:39,689 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-19 20:09:39,690 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:09:39] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:14:58,049 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:14:58] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:15:00,059 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:15:00,060 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:15:00] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:15:00,064 - __main__ - INFO - Verification result: match=True, score=88, threshold=50
+2026-02-19 20:15:00,064 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:15:00] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:15:06,297 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:15:06,297 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:15:06] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:15:06,319 - __main__ - INFO - Verification result: match=True, score=64, threshold=50
+2026-02-19 20:15:06,321 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:15:06] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 20:15:14,914 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:15:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-19 20:15:16,679 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-19 20:15:16,679 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:15:16] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-19 20:15:16,697 - __main__ - INFO - Verification result: match=True, score=97, threshold=50
+2026-02-19 20:15:16,698 - werkzeug - INFO - 127.0.0.1 - - [19/Feb/2026 20:15:16] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-19 22:24:43,992 - __main__ - INFO - Scanner closed
+2026-02-22 08:52:01,611 - __main__ - INFO - ZKFPScanner created
+2026-02-22 08:52:01,612 - __main__ - INFO - ============================================================
+2026-02-22 08:52:01,613 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-22 08:52:01,613 - __main__ - INFO - ============================================================
+2026-02-22 08:52:01,613 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-22 08:52:02,925 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-22 08:52:02,926 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-22 08:52:02,926 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 08:52:03,880 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 08:52:03,880 - __main__ - INFO - Scanner ready!
+2026-02-22 08:52:03,880 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-22 08:52:03,941 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-22 08:52:03,941 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-22 08:52:28,758 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:52:28] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 08:52:28,780 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 08:52:28,781 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 08:52:28,781 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:52:28] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 08:52:37,986 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:52:37] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 08:52:38,003 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 08:52:38,004 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 08:52:38,004 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:52:38] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 08:52:38,045 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:52:38] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 08:52:40,776 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-22 08:52:55,910 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:52:55] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-22 08:53:06,711 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-22 08:53:21,812 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:53:21] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-22 08:54:57,374 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-22 08:55:12,487 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:55:12] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-22 08:56:03,670 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-22 08:56:18,805 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:56:18] "[31m[1mPOST /api/fingerprint/register HTTP/1.1[0m" 400 -
+2026-02-22 08:57:32,901 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:57:32] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 08:57:32,906 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 08:57:32,907 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 08:57:32,909 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 08:57:32] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:05:28,917 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:05:28] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:05:28,940 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:05:28,940 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:05:28,941 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:05:28] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:06:36,484 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:06:36] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:06:36,499 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:06:36,500 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:06:36,501 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:06:36] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:07:17,863 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:07:17] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:07:17,880 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:07:17,881 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:07:17,881 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:07:17] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:20:51,051 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:20:51] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:20:51,058 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:20:51,059 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:20:51,060 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:20:51] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:27:27,851 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:27] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:27:27,860 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:27:27,862 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:27:27,862 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:27] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:27:29,339 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:27:29,360 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:27:29,361 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:27:29,362 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:27:29,939 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:29] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:27:29,944 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:27:29,945 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:27:29,946 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:29] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:27:30,109 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:27:30,113 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:27:30,113 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:27:30,115 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:27:30,621 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:30] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:27:30,648 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:27:30,649 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:27:30,649 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:27:30] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 09:33:33,154 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:33:33] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 09:33:33,158 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 09:33:33,159 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 09:33:33,159 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 09:33:33] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 16:53:09,323 - __main__ - INFO - ZKFPScanner created
+2026-02-22 16:53:09,324 - __main__ - INFO - ============================================================
+2026-02-22 16:53:09,324 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-22 16:53:09,325 - __main__ - INFO - ============================================================
+2026-02-22 16:53:09,325 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-22 16:53:09,727 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-22 16:53:09,727 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-02-22 16:53:09,728 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-22 16:53:09,752 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-22 16:53:09,752 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-22 16:54:05,555 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:05] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 16:54:05,580 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-22 16:54:05,581 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:05] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-22 16:54:09,143 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:09] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 16:54:09,159 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-22 16:54:09,160 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:09] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-22 16:54:23,118 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:23] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 16:54:23,388 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-22 16:54:23,389 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 16:54:24,538 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 16:54:24,539 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:24] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 16:54:24,598 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:24] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 16:54:29,633 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-22 16:54:33,050 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 16:54:33,051 - __main__ - INFO - Capture 1/3 successful
+2026-02-22 16:54:33,552 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-22 16:54:34,917 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 16:54:34,918 - __main__ - INFO - Capture 2/3 successful
+2026-02-22 16:54:35,419 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-22 16:54:36,395 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 16:54:36,395 - __main__ - INFO - Capture 3/3 successful
+2026-02-22 16:54:36,409 - __main__ - INFO - Registration template generated successfully
+2026-02-22 16:54:36,410 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:36] "POST /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-22 16:54:38,528 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:38] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 16:54:38,546 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 16:54:38,547 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 16:54:38,548 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:38] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 16:54:47,153 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 16:54:48,941 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 16:54:48,943 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:48] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 16:54:48,981 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 16:54:48,983 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 16:54:48] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 17:10:07,878 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 17:10:07] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 17:10:07,901 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 17:10:07,902 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 17:10:07,903 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 17:10:07] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:23:39,956 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:23:39] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:23:39,978 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:23:39,980 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:23:39,981 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:23:39] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:24:57,510 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:24:57] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:24:57,517 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:24:57,518 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:24:57,519 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:24:57] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:26:14,189 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:26:14] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:26:14,198 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:26:14,201 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:26:14,205 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:26:14] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:27:06,001 - __main__ - INFO - Scanner closed
+2026-02-22 19:27:09,775 - __main__ - INFO - ZKFPScanner created
+2026-02-22 19:27:09,776 - __main__ - INFO - ============================================================
+2026-02-22 19:27:09,777 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-22 19:27:09,777 - __main__ - INFO - ============================================================
+2026-02-22 19:27:09,777 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-22 19:27:10,248 - __main__ - INFO - ZKFP2 SDK initialized successfully
+2026-02-22 19:27:10,249 - __main__ - INFO - SDK initialized. Detecting scanner...
+2026-02-22 19:27:10,249 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:27:11,563 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:27:11,565 - __main__ - INFO - Scanner ready!
+2026-02-22 19:27:11,565 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-22 19:27:11,648 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-22 19:27:11,649 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-22 19:27:34,489 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:34] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:27:34,496 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:27:34,498 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:27:34,499 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:34] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:27:39,419 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:39] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:27:39,426 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:27:39,427 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:27:39,429 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:39] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:27:39,468 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:39] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:27:41,817 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-22 19:27:42,183 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:27:42,184 - __main__ - INFO - Capture 1/3 successful
+2026-02-22 19:27:42,685 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-22 19:27:43,444 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:27:43,445 - __main__ - INFO - Capture 2/3 successful
+2026-02-22 19:27:43,946 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-22 19:27:45,305 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:27:45,305 - __main__ - INFO - Capture 3/3 successful
+2026-02-22 19:27:45,318 - __main__ - INFO - Registration template generated successfully
+2026-02-22 19:27:45,319 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:45] "POST /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-22 19:27:47,443 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:47] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:27:47,469 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:27:47,470 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:27:47,472 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:47] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:27:55,280 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:27:55,282 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:55] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 19:27:55,323 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 19:27:55,324 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:55] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 19:27:59,017 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:59] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:27:59,024 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:27:59,024 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:27:59,026 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:27:59] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:31:44,077 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:31:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:31:44,086 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:31:44,087 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:31:44,088 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:31:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:34:45,554 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:34:45] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:34:45,562 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:34:45,562 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:34:45,563 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:34:45] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:39:44,865 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:39:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:39:44,883 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:39:44,883 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:39:44,885 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:39:44] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:50:07,820 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:07] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:50:07,839 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:50:07,842 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:50:07,844 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:07] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:50:11,997 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:11] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:50:12,003 - __main__ - INFO - Detected 1 fingerprint device(s)
+2026-02-22 19:50:12,004 - __main__ - INFO - Fingerprint scanner opened successfully
+2026-02-22 19:50:12,007 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:12] "GET /api/scanner/detect HTTP/1.1" 200 -
+2026-02-22 19:50:12,060 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:12] "GET /api/status HTTP/1.1" 200 -
+2026-02-22 19:50:13,766 - __main__ - INFO - Waiting for capture 1/3...
+2026-02-22 19:50:15,539 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:50:15,539 - __main__ - INFO - Capture 1/3 successful
+2026-02-22 19:50:16,041 - __main__ - INFO - Waiting for capture 2/3...
+2026-02-22 19:50:16,997 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:50:16,997 - __main__ - INFO - Capture 2/3 successful
+2026-02-22 19:50:17,499 - __main__ - INFO - Waiting for capture 3/3...
+2026-02-22 19:50:18,864 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:50:18,865 - __main__ - INFO - Capture 3/3 successful
+2026-02-22 19:50:18,874 - __main__ - INFO - Registration template generated successfully
+2026-02-22 19:50:18,876 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:18] "POST /api/fingerprint/register HTTP/1.1" 200 -
+2026-02-22 19:50:28,430 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:50:28,431 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:28] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 19:50:28,446 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 19:50:28,448 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:28] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 19:50:57,802 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:50:57,804 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:57] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 19:50:57,828 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 19:50:57,830 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:50:57] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 19:51:35,610 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:51:35,611 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:51:35] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 19:51:35,626 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 19:51:35,627 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:51:35] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 19:58:35,146 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:58:35,149 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:58:35] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 19:58:35,164 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 19:58:35,166 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:58:35] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 19:58:56,347 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:58:56,348 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:58:56] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 19:58:56,379 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 19:58:56,381 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:58:56] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 19:59:18,398 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 19:59:18,400 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:59:18] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 19:59:18,415 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 19:59:18,416 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 19:59:18] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 20:08:25,331 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 20:08:25,332 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 20:08:25] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 20:08:25,349 - __main__ - INFO - Verification result: match=True, score=98, threshold=50
+2026-02-22 20:08:25,353 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 20:08:25] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 20:08:37,859 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 20:08:37,860 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 20:08:37] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 20:08:37,877 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 20:08:37,880 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 20:08:37] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-22 20:08:56,410 - __main__ - INFO - Fingerprint captured. Type: <class 'System.Byte[]'>, Length: 2048
+2026-02-22 20:08:56,412 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 20:08:56] "GET /api/fingerprint/capture HTTP/1.1" 200 -
+2026-02-22 20:08:56,443 - __main__ - INFO - Verification result: match=True, score=100, threshold=50
+2026-02-22 20:08:56,445 - werkzeug - INFO - 127.0.0.1 - - [22/Feb/2026 20:08:56] "POST /api/fingerprint/verify HTTP/1.1" 200 -
+2026-02-24 15:31:48,046 - __main__ - INFO - ZKFPScanner created
+2026-02-24 15:31:48,047 - __main__ - INFO - ============================================================
+2026-02-24 15:31:48,047 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-02-24 15:31:48,047 - __main__ - INFO - ============================================================
+2026-02-24 15:31:48,047 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-02-24 15:31:48,873 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-24 15:31:48,873 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-02-24 15:31:48,873 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-02-24 15:31:48,892 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-02-24 15:31:48,893 - werkzeug - INFO - [33mPress CTRL+C to quit[0m

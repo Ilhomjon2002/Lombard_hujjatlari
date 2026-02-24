@@ -1,0 +1,30 @@
+{% extends 'base_login.html' %}
+{% load static %}
+{% block title %}Barmoq izi bilan kirish{% endblock %}
+
+{% block content %}
+<h2>Barmoq izini tasdiqlang</h2>
+
+<button id="fp">Fingerprint bilan kirish</button>
+
+<script src="{% static 'passkeys/webauthn.js' %}"></script>
+<script>
+    document.getElementById("fp").onclick = async () => {
+        const resp = await fetch("{% url 'fingerprint_login' %}");
+        const options = await resp.json();
+
+        const cred = await navigator.credentials.get({ publicKey: options });
+
+        await fetch("{% url 'fingerprint_login' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify(cred)
+        });
+
+        window.location.href = "/dashboard/";
+    };
+</script>
+{% endblock %}

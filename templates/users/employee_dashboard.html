@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}Ishchi Dashboard - HAT{% endblock %}
-{% block header_title %}Ishchi Dashboard{% endblock %}
+{% block title %}Ishchi Bosh sahifasi - HAT{% endblock %}
+{% block header_title %}Ishchi Bosh sahifasi{% endblock %}
 
 {% block content %}
 <div class="row">
     <!-- Pending Signatures -->
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Imzolash Kerak Bo'lgan Buyruqlar</h5>
+    <div class="col-md-8 mb-4 mb-md-0">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
+                <h5 class="mb-0 fw-bold text-primary"><i class="fas fa-file-signature me-2"></i>Imzolash Kerak Bo'lgan
+                    Buyruqlar</h5>
             </div>
             <div class="card-body">
                 {% if pending_signatures %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
+                <div class="table-responsive px-2 pb-2">
+                    <table class="table table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -30,26 +31,30 @@
                             {% for signature in pending_signatures %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ signature.document.title }}</td>
-                                <td>{{ signature.document.branch.name }}</td>
-                                <td>{{ signature.document.created_at|date:"d.m.Y" }}</td>
+                                <td>{{ signature.order.title }}</td>
+                                <td>{{ signature.order.branch.name }}</td>
+                                <td>{{ signature.order.created_at|date:"d.m.Y" }}</td>
                                 <td>
-                                    <span class="badge bg-info">{{ signature.order }}</span>
+                                    <span class="badge bg-info">{{ signature.order_number }}</span>
                                 </td>
                                 <td>
-                                    {% if signature.document.deadline %}
-                                        {{ signature.document.deadline|date:"d.m.Y H:i" }}
+                                    {% if signature.order.deadline %}
+                                    {{ signature.order.deadline|date:"d.m.Y" }}
                                     {% else %}
-                                        <span class="text-muted">Muddat yo'q</span>
+                                    <span class="text-muted">Muddat yo'q</span>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    <a href="{% url 'sign_document' signature.id %}" class="btn btn-sm btn-success">
-                                        <i class="fas fa-signature"></i> Imzolash
-                                    </a>
-                                    <a href="{% url 'document_detail' signature.document.id %}" class="btn btn-sm btn-info">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                <td class="text-end">
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <a href="{% url 'order_detail' signature.order.id %}"
+                                            class="btn btn-sm btn-info" title="Ko'rish">
+                                            <i class="fas fa-eye"></i> Ko'rish
+                                        </a>
+                                        <a href="{% url 'sign_order' signature.id %}" class="btn btn-sm btn-primary"
+                                            title="Imzolash">
+                                            <i class="fas fa-signature"></i> Imzolash
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -66,16 +71,17 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Sidebar -->
     <div class="col-md-4">
         <!-- Notifications -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Bildirishnomalar</h5>
-                <a href="{% url 'notifications' %}" class="btn btn-sm btn-primary">Barchasi</a>
+        <div class="card border-0 shadow-sm mb-4">
+            <div
+                class="card-header bg-white border-bottom-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-bell text-warning me-2"></i>Bildirishnomalar</h5>
+                <a href="{% url 'notifications' %}" class="btn btn-sm btn-outline-primary">Barchasi</a>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div class="list-group list-group-flush">
                     {% for notification in notifications %}
                     <div class="list-group-item {% if not notification.read %}bg-light{% endif %}">
@@ -84,8 +90,9 @@
                             <small>{{ notification.created_at|timesince }} oldin</small>
                         </div>
                         <p class="mb-1">{{ notification.message|truncatechars:50 }}</p>
-                        {% if notification.document %}
-                        <a href="{% url 'document_detail' notification.document.id %}" class="btn btn-sm btn-outline-primary btn-sm">
+                        {% if notification.order %}
+                        <a href="{% url 'order_detail' notification.order.id %}"
+                            class="btn btn-sm btn-outline-primary btn-sm">
                             Ko'rish
                         </a>
                         {% endif %}
@@ -98,21 +105,22 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Signed Documents -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="mb-0">Oxirgi Imzolanganlar</h5>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
+                <h5 class="mb-0 fw-bold text-success"><i class="fas fa-check-circle me-2"></i>Oxirgi Imzolanganlar</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div class="list-group list-group-flush">
                     {% for signature in signed_documents %}
-                    <a href="{% url 'document_detail' signature.document.id %}" class="list-group-item list-group-item-action">
+                    <a href="{% url 'order_detail' signature.order.id %}"
+                        class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">{{ signature.document.title|truncatechars:25 }}</h6>
+                            <h6 class="mb-1">{{ signature.order.title|truncatechars:25 }}</h6>
                             <small class="text-muted">{{ signature.signed_at|date:"d.m" }}</small>
                         </div>
-                        <small class="text-muted">{{ signature.document.branch.name }}</small>
+                        <small class="text-muted">{{ signature.order.branch.name }}</small>
                     </a>
                     {% empty %}
                     <div class="text-center text-muted py-3">

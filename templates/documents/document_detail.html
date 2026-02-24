@@ -1,83 +1,123 @@
-{% extends 'users/base.html' %}
+{% extends 'base.html' %}
 {% block title %}{{ document.number }} - {{ document.title }}{% endblock %}
 
 {% block content %}
-<div class="card shadow">
-    <div class="card-header d-flex justify-content-between align-items-center">
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
         <div>
-            <h4 class="mb-0">{{ document.number }} — {{ document.title }}</h4>
-            <small class="text-muted">
-                Yaratgan: {{ document.created_by.get_full_name }} • 
-                {{ document.created_at|date:"d.m.Y H:i" }}
+            <h4 class="mb-1 fw-bold text-dark">{{ document.number }} — {{ document.title }}</h4>
+            <small class="text-muted fw-semibold" style="letter-spacing: 0.5px;">
+                <i class="bi bi-person me-1"></i>{{ document.created_by.get_full_name }} •
+                <i class="bi bi-clock me-1"></i>{{ document.created_at|date:"d.m.Y H:i" }}
             </small>
         </div>
-        <div>
-            {% if document.status == 'completed' %}
-                <span class="badge bg-success fs-6">To‘liq imzolangan</span>
+        <div class="d-flex align-items-center gap-2">
+            {% if document.director_approved %}
+            <span class="badge bg-success fs-6 fw-normal">Direktor tasdiqlagan</span>
+            {% elif document.is_fully_signed %}
+            <span class="badge bg-warning fs-6 text-dark fw-normal">Tasdiq kutilmoqda</span>
+            {% elif document.status == 'completed' %}
+            <span class="badge bg-success fs-6 fw-normal">To'liq imzolangan</span>
             {% elif document.status == 'partial' %}
-                <span class="badge bg-warning fs-6">Qisman imzolangan</span>
+            <span class="badge bg-warning text-dark fs-6 fw-normal">Qisman imzolangan</span>
             {% else %}
-                <span class="badge bg-secondary fs-6">{{ document.get_status_display }}</span>
+            <span class="badge bg-secondary fs-6 fw-normal">{{ document.get_status_display }}</span>
             {% endif %}
+
+            {% if document.is_fully_signed and not document.director_approved and user.role == 'director' %}
+            <a href="{% url 'director_approve_order' document.id %}" class="btn btn-primary btn-sm">
+                <i class="bi bi-check2-circle me-1"></i>Tasdiqlash
+            </a>
+            {% endif %}
+
+            <a href="{% url 'download_pdf' document.id %}" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-file-pdf me-1"></i>PDF yuklab olish
+            </a>
         </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body px-4 pb-4">
         {% if document.file %}
         <p>
-            <a href="{{ document.file.url }}" target="_blank" class="btn btn-outline-primary">
-                <i class="bi bi-file-earmark-arrow-down me-2"></i> Faylni yuklab olish
+            <a href="{{ document.file.url }}" target="_blank" class="btn btn-outline-primary shadow-sm"
+                style="border-radius: var(--radius-md);">
+                <i class="bi bi-file-earmark-arrow-down me-2"></i>Faylni ko'rish (PDF)
             </a>
         </p>
         {% endif %}
 
         {% if document.content %}
-        <div class="border p-3 bg-light rounded mb-4">
-            <strong>Mazmun / matn:</strong><br>
-            {{ document.content|linebreaks }}
+        <div class="p-3 bg-light rounded mb-4" style="border: 1px solid var(--sidebar-border);">
+            <strong class="text-secondary fw-semibold">Mazmun / matn:</strong><br>
+            <div class="mt-2 text-dark" style="font-size: 15px;">{{ document.content|linebreaks }}</div>
         </div>
         {% endif %}
 
-        <h5>Imzolash jarayoni</h5>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+        <h5 class="fw-bold text-dark mt-4 mb-3"><i class="bi bi-list-check me-2"></i>Imzolash jarayoni</h5>
+        <div class="table-responsive border" style="border-radius: var(--radius-md);">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>Tartib</th>
-                        <th>Xodim</th>
+                        <th>F.I.O</th>
+                        <th>Lavozim</th>
                         <th>Holati</th>
                         <th>Imzolangan vaqti</th>
                         <th>Izoh</th>
-                        <th>Imzo</th>
-                        <th>QR</th>
+                        <th>QR kod</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for sig in signature_status %}
-                    <tr {% if sig.signed %}class="table-success"{% endif %}>
-                        <td>{{ sig.position }}</td>
-                        <td>{{ sig.employee }}</td>
+                    {% for sig in signatures %}
+                    <tr {% if sig.signed %}class="table-success" {% endif %}>
+                        <td>{{ sig.order_number }}</td>
+                        <td>
+                            <strong>{{ sig.user.last_name }} {{ sig.user.first_name }} {{ sig.user.middle_name }}</strong>
+                        </td>
+                        <td>{{ sig.user.position|default:"—" }}</td>
                         <td>
                             {% if sig.signed %}
-                                <span class="badge bg-success">Imzolangan</span>
+                            <span class="badge bg-success">Imzolangan</span>
                             {% else %}
-                                <span class="badge bg-warning">Kutilmoqda</span>
+                            <span class="badge bg-warning">Kutilmoqda</span>
                             {% endif %}
                         </td>
-                        <td>{{ sig.signed_at|default:"—" }}</td>
+                        <td>
+                            {% if sig.signed_at %}
+                            {{ sig.signed_at|date:"d.m.Y H:i:s" }}
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
                         <td>{{ sig.comment|default:"—" }}</td>
                         <td>
-                            {% if sig.has_signature_image %}
-                                <i class="bi bi-check-circle-fill text-success"></i>
+                            {% if sig.qr_code %}
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#qrModal{{ sig.id }}">
+                                <img src="{{ sig.qr_code.url }}" alt="QR Code"
+                                    style="width: 50px; height: 50px; border-radius: 4px;">
+                            </a>
+                            <!-- QR Modal -->
+                            <div class="modal fade" id="qrModal{{ sig.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-sm modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">{{ sig.user.last_name }} {{ sig.user.first_name }}
+                                                {{ sig.user.middle_name }}</h6>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="{{ sig.qr_code.url }}" alt="QR Code" class="img-fluid">
+                                            <hr>
+                                            <small class="text-muted">
+                                                <strong>Lavozim:</strong> {{ sig.user.position|default:"—" }}<br>
+                                                <strong>Vaqt:</strong> {{ sig.signed_at|date:"d.m.Y H:i:s" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             {% else %}
-                                <i class="bi bi-dash-circle text-muted"></i>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if sig.has_qr_code %}
-                                <i class="bi bi-qr-code-scan text-primary"></i>
-                            {% else %}
-                                <i class="bi bi-dash-circle text-muted"></i>
+                            <i class="bi bi-dash-circle text-muted"></i>
                             {% endif %}
                         </td>
                     </tr>
@@ -86,9 +126,27 @@
             </table>
         </div>
 
-        <div class="mt-4">
-            <a href="{% url 'documents:order_tracking' document.id %}" class="btn btn-info">
-                <i class="bi bi-diagram-3 me-2"></i> Imzolash tarixi (tracking)
+        {% if document.director_approved %}
+        <div class="mt-4 p-4 rounded text-center shadow-sm"
+            style="background-color: var(--primary-light); border: 1px solid var(--primary-color);">
+            <h5 class="fw-bold text-dark mb-3">Hujjat to'liq tasdiqlangan (Umumiy QR kod)</h5>
+            {% if document.final_qr_code %}
+            <div class="d-inline-block bg-white p-2 rounded shadow-sm mb-2">
+                <img src="{{ document.final_qr_code.url }}" alt="Umumiy QR Kod" style="width: 150px; height: 150px;">
+            </div>
+            <p class="text-muted small mt-1">Ushbu QR kod barcha imzolaganlar va direktor tasdig'ini o'z ichiga oladi.
+            </p>
+            {% endif %}
+            <div class="text-success fw-bold p-2 bg-white rounded shadow-sm d-inline-block">
+                <i class="bi bi-check-circle-fill me-1"></i> Direktor tasdiqlagan: {{ document.director_approved_at|date:"d.m.Y H:i:s" }}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-4 text-end">
+            <a href="{% url 'order_tracking' document.id %}" class="btn btn-outline-info shadow-sm"
+                style="border-radius: var(--radius-md);">
+                <i class="bi bi-diagram-3 me-2"></i>Imzolash tarixi (Tracking)
             </a>
         </div>
     </div>

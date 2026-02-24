@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Imzolash tarixi — {{ document.number }}{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-0">
+                <i class="bi bi-diagram-3 me-2"></i>Imzolash tarixi: {{ document.number }} — {{ document.title }}
+            </h4>
+        </div>
+        <a href="{% url 'order_detail' document.id %}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Hujjatga qaytish
+        </a>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tartib</th>
+                        <th>Xodim</th>
+                        <th>Holati</th>
+                        <th>Imzolangan vaqti</th>
+                        <th>Izoh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sig in signature_history %}
+                    <tr class="{% if sig.status == 'Imzolandi' %}table-success{% endif %}">
+                        <td>{{ sig.position }}</td>
+                        <td>{{ sig.employee }}</td>
+                        <td>
+                            {% if sig.status == 'Imzolandi' %}
+                            <span class="badge bg-success">{{ sig.status }}</span>
+                            {% else %}
+                            <span class="badge bg-warning">{{ sig.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ sig.signed_at|default:"—" }}</td>
+                        <td>{{ sig.comment }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

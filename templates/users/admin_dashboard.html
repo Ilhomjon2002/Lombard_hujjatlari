@@ -1,85 +1,146 @@
 {% extends 'base.html' %}
 
-{% block title %}Admin Dashboard - HAT{% endblock %}
-{% block header_title %}Admin Dashboard{% endblock %}
+{% block title %}Admin Bosh sahifasi - HAT{% endblock %}
+{% block header_title %}Admin Bosh sahifasi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        cursor: pointer;
+    }
+
+    .stat-card-link:hover {
+        transform: translateY(-3px);
+        color: inherit;
+    }
+
+    .stat-card-link:hover .card {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+        border-color: var(--primary-color) !important;
+    }
+
+    .stat-card-link .card {
+        transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .stat-card-link.active-card .card {
+        border-color: var(--primary-color) !important;
+        border-width: 2px;
+    }
+
+    .detail-panel {
+        max-height: 45vh;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row g-2 mb-2">
     <!-- Stats Cards -->
     <div class="col-md-3">
-        <div class="card">
-            <div class="card-body text-center">
-                <h1 class="display-4">{{ document_total }}</h1>
-                <p class="text-muted">Jami Buyruqlar</p>
+        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelAll" aria-expanded="false">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
+                    <i class="fas fa-file-alt text-secondary mb-1" style="font-size: 22px;"></i>
+                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ document_total }}</h2>
+                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Jami
+                        Buyruqlar</p>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card">
-            <div class="card-body text-center">
-                <h1 class="display-4 text-warning">{{ document_pending }}</h1>
-                <p class="text-muted">Kutilayotgan</p>
+        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelPending" aria-expanded="false">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
+                    <i class="fas fa-clock text-warning mb-1" style="font-size: 22px;"></i>
+                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ document_pending }}</h2>
+                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
+                        Kutilayotgan</p>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card">
-            <div class="card-body text-center">
-                <h1 class="display-4 text-success">{{ document_signed }}</h1>
-                <p class="text-muted">Imzolangan</p>
+        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelSigned" aria-expanded="false">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
+                    <i class="fas fa-check-circle text-success mb-1" style="font-size: 22px;"></i>
+                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ document_signed }}</h2>
+                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
+                        Imzolangan</p>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card">
-            <div class="card-body text-center">
-                <h1 class="display-4 text-primary">{{ branches.count }}</h1>
-                <p class="text-muted">Lombardlar</p>
+        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelBranches" aria-expanded="false">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
+                    <i class="fas fa-building text-primary mb-1" style="font-size: 22px;"></i>
+                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ branches.count }}</h2>
+                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
+                        Lombardlar</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
-    <!-- Branches List -->
-    <!-- <div class="col-md-8">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Lombardlar</h5>
-                <a href="#" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> Yangi Buyruq
-                </a>
+<!-- Expandable Detail Panels -->
+<div id="detailPanels">
+
+    <!-- All Orders Panel -->
+    <div class="collapse" id="panelAll" data-bs-parent="#detailPanels">
+        <div class="card shadow-sm border-0 mb-2">
+            <div class="card-header bg-white py-2">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-file-alt text-secondary me-2"></i>Barcha Buyruqlar ({{ document_total }})</h6>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0 detail-panel">
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
                             <tr>
-                                <th>Nomi</th>
-                                <th>Manzil</th>
-                                <th>Hujjatlar</th>
-                                <th>Telefon</th>
-                                <th>Harakatlar</th>
+                                <th>#</th>
+                                <th>Sarlavha</th>
+                                <th>Filial</th>
+                                <th>Yaratgan</th>
+                                <th>Sana</th>
+                                <th>Holati</th>
+                                <th class="text-end">Amallar</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for branch in branches %}
+                            {% for order in all_orders %}
                             <tr>
-                                <td>{{ branch.name }}</td>
-                                <td>{{ branch.address|truncatechars:30 }}</td>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ order.title|truncatechars:35 }}</td>
+                                <td>{{ order.branch.name|default:"—" }}</td>
+                                <td>{{ order.created_by.get_full_name|default:order.created_by.username }}</td>
+                                <td><small>{{ order.created_at|date:"d.m.Y" }}</small></td>
                                 <td>
-                                    <span class="badge bg-primary">{{ branch.document_count }}</span>
+                                    {% if order.status == 'signed' %}
+                                    <span class="badge bg-success">Imzolangan</span>
+                                    {% elif order.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">Kutilmoqda</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ order.status }}</span>
+                                    {% endif %}
                                 </td>
-                                <td>{{ branch.phone }}</td>
-                                <td>
-                                    <a href="{% url 'branch_documents' branch.id %}" class="btn btn-sm btn-info">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
+                                <td class="text-end">
+                                    <a href="{% url 'order_detail' order.id %}"
+                                        class="btn btn-sm btn-outline-primary">Ko'rish</a>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center">Filiallar mavjud emas</td>
+                                <td colspan="7" class="text-center text-muted py-3">Buyruqlar mavjud emas</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -87,86 +148,186 @@
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
 
-    <!-- Recent Documents -->
-    <!-- <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">So'nggi Buyruqlar</h5>
+    <!-- Pending Orders Panel -->
+    <div class="collapse" id="panelPending" data-bs-parent="#detailPanels">
+        <div class="card shadow-sm border-0 mb-2">
+            <div class="card-header bg-white py-2">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-clock text-warning me-2"></i>Kutilayotgan Buyruqlar ({{ document_pending }})</h6>
             </div>
-            <div class="card-body">
-                <div class="list-group list-group-flush">
-                    {% for document in recent_documents %}
-                    <a href="{% url 'document_detail' document.id %}" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">{{ document.title|truncatechars:30 }}</h6>
-                            <small class="text-muted">{{ document.created_at|date:"d.m.Y" }}</small>
-                        </div>
-                        <p class="mb-1">
-                            <span class="badge {% if document.status == 'pending' %}status-pending
-                                {% elif document.status == 'partially_signed' %}status-partial
-                                {% elif document.status == 'fully_signed' %}status-signed
-                                {% else %}status-rejected{% endif %}">
-                                {{ document.get_status_display }}
-                            </span>
-                        </p>
-                        <small class="text-muted">{{ document.branch.name }}</small>
-                    </a>
-                    {% empty %}
-                    <div class="text-center text-muted py-3">
-                        Hujjatlar mavjud emas
-                    </div>
-                    {% endfor %}
+            <div class="card-body p-0 detail-panel">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Sarlavha</th>
+                                <th>Filial</th>
+                                <th>Yaratgan</th>
+                                <th>Sana</th>
+                                <th class="text-end">Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in pending_orders %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ order.title|truncatechars:35 }}</td>
+                                <td>{{ order.branch.name|default:"—" }}</td>
+                                <td>{{ order.created_by.get_full_name|default:order.created_by.username }}</td>
+                                <td><small>{{ order.created_at|date:"d.m.Y" }}</small></td>
+                                <td class="text-end">
+                                    <a href="{% url 'order_detail' order.id %}"
+                                        class="btn btn-sm btn-outline-primary">Ko'rish</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-3">Kutilayotgan buyruq yo'q</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
 
-    <!-- Admin dashboardga foydalanuvchilar boshqarish linkini qo'shamiz -->
-    <div class="card mt-4">
-        <div class="card-header">
-            <h5 class="mb-0">
-                <i class="fas fa-users-cog"></i>
-                Foydalanuvchilar Boshqarish
-            </h5>
+    <!-- Signed Orders Panel -->
+    <div class="collapse" id="panelSigned" data-bs-parent="#detailPanels">
+        <div class="card shadow-sm border-0 mb-2">
+            <div class="card-header bg-white py-2">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-check-circle text-success me-2"></i>Imzolangan Buyruqlar ({{ document_signed }})</h6>
+            </div>
+            <div class="card-body p-0 detail-panel">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Sarlavha</th>
+                                <th>Filial</th>
+                                <th>Yaratgan</th>
+                                <th>Sana</th>
+                                <th class="text-end">Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in signed_orders %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ order.title|truncatechars:35 }}</td>
+                                <td>{{ order.branch.name|default:"—" }}</td>
+                                <td>{{ order.created_by.get_full_name|default:order.created_by.username }}</td>
+                                <td><small>{{ order.created_at|date:"d.m.Y" }}</small></td>
+                                <td class="text-end">
+                                    <a href="{% url 'order_detail' order.id %}"
+                                        class="btn btn-sm btn-outline-primary">Ko'rish</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-3">Imzolangan buyruq yo'q</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h6 class="card-title">Jami foydalanuvchilar</h6>
-                            <h3>{{ total_users }}</h3>
-                            <a href="{% url 'manage_users' %}" class="btn btn-sm btn-outline-primary">
-                                Barchasini ko'rish
-                            </a>
+    </div>
+
+    <!-- Branches Panel -->
+    <div class="collapse" id="panelBranches" data-bs-parent="#detailPanels">
+        <div class="card shadow-sm border-0 mb-2">
+            <div class="card-header bg-white py-2">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-building text-primary me-2"></i>Lombardlar ({{ branches.count }})</h6>
+            </div>
+            <div class="card-body p-0 detail-panel">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Nomi</th>
+                                <th>Manzil</th>
+                                <th>Telefon</th>
+                                <th class="text-end">Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for branch in branches %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td class="fw-medium">{{ branch.name }}</td>
+                                <td>{{ branch.address|default:"—"|truncatechars:40 }}</td>
+                                <td>{{ branch.phone|default:"—" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'branch_documents' branch.id %}"
+                                        class="btn btn-sm btn-outline-primary">Hujjatlar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-3">Lombardlar mavjud emas</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- User Management Section -->
+<div class="card border-0 shadow-sm mt-2">
+    <div class="card-header bg-white border-bottom-0 pt-3 pb-2">
+        <h5 class="mb-0 fw-bold text-dark">
+            <i class="fas fa-users-cog text-primary me-2"></i>
+            Foydalanuvchilar Boshqarish
+        </h5>
+    </div>
+    <div class="card-body pb-3">
+        <div class="row align-items-stretch g-2">
+            <div class="col-md-3">
+                <a href="{% url 'manage_users' %}" class="stat-card-link">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
+                            <p class="text-muted mb-1 small text-uppercase fw-semibold">Jami foydalanuvchilar</p>
+                            <h3 class="fw-bold mb-0">{{ total_users }}</h3>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h6 class="card-title">Administratorlar</h6>
-                            <h3>{{ admin_count }}</h3>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'manage_users' %}?role=admin" class="stat-card-link">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
+                            <p class="text-muted mb-1 small text-uppercase fw-semibold">Administratorlar</p>
+                            <h3 class="fw-bold text-dark mb-0">{{ admin_count }}</h3>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h6 class="card-title">Ishchilar</h6>
-                            <h3>{{ employee_count }}</h3>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'manage_users' %}?role=employee" class="stat-card-link">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
+                            <p class="text-muted mb-1 small text-uppercase fw-semibold">Ishchilar</p>
+                            <h3 class="fw-bold text-dark mb-0">{{ employee_count }}</h3>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="d-grid">
-                        <a href="{% url 'create_user' %}" class="btn btn-success">
-                            <i class="fas fa-user-plus"></i> Yangi foydalanuvchi qo'shish
-                        </a>
-                    </div>
-                </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'create_user' %}"
+                    class="btn btn-primary w-100 d-flex align-items-center justify-content-center h-100 shadow-sm"
+                    style="border-radius: var(--radius-md); min-height: 70px;">
+                    <i class="fas fa-user-plus me-2"></i> Yangi foydalanuvchi
+                </a>
             </div>
         </div>
     </div>

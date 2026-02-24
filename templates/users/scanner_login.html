@@ -1,0 +1,122 @@
+{% extends "base_login.html" %}
+{% load static %}
+{% block title %}Barmoq izi orqali tizimga kirish{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-fingerprint"></i> Barmoq izi orqali tizimga kirish
+                    </h3>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Error Messages -->
+                    <div id="fingerprint-error" class="alert alert-danger d-none" role="alert"></div>
+
+                    <!-- Status Messages -->
+                    <div id="fingerprint-status" class="alert d-none" role="alert"></div>
+
+                    <!-- Login Form -->
+                    <form id="scanner-login-form">
+                        {% csrf_token %}
+
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="fingerprint-username" class="form-label">
+                                <i class="fas fa-user"></i> Login
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="fingerprint-username"
+                                name="username" placeholder="Loginingizni kiriting" required autocomplete="off">
+                            <small class="text-muted d-block mt-2">
+                                Loginingizni kiriting, so'ng barmog'ingizni skanerga qo'ying
+                            </small>
+                        </div>
+
+                        <!-- Separator -->
+                        <hr class="my-4">
+
+                        <!-- Login Button -->
+                        <button type="button" class="btn btn-primary btn-lg w-100 mb-2" id="login-fingerprint-btn"
+                            onclick="handleLoginClick()">
+                            <i class="fas fa-fingerprint"></i> Barmoq izi orqali kirish
+                        </button>
+
+                        <!-- Alternative Login -->
+                        <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg w-100">
+                            <i class="fas fa-key"></i> Parol orqali kirish
+                        </a>
+                    </form>
+
+                    <!-- Help Section -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="text-muted">
+                            <i class="fas fa-question-circle"></i> Muammolarni hal qilish
+                        </h6>
+                        <ul class="small text-muted mb-0">
+                            <li>USB barmoq izi skaneri ulanganligini tekshiring</li>
+                            <li>Kompyuteringizda barmoq izi agenti ishlayotganligini tekshiring</li>
+                            <li>Ro'yxatdan o'tgan barmog'ingizni skanerga aniq qo'ying</li>
+                            <li>Muammolar davom etsa, parol orqali kiring</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Fingerprint Scanner Client -->
+<script src="{% static 'js/fingerprint-scanner.js' %}"></script>
+
+<style>
+    .fingerprint-status {
+        display: none;
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        animation: slideIn 0.3s ease-in-out;
+    }
+
+    .fingerprint-status.status-info {
+        background-color: #e7f3ff;
+        color: #0066cc;
+        border: 1px solid #b3d9ff;
+    }
+
+    .fingerprint-status.status-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .fingerprint-status.status-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #fingerprint-error {
+        display: none;
+    }
+
+    #fingerprint-error.d-none {
+        display: none !important;
+    }
+</style>
+{% endblock %}

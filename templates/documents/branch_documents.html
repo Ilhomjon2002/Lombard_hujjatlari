@@ -19,27 +19,25 @@
     <ul class="nav nav-tabs nav-fill mb-4 flex-nowrap" id="branchTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <a class="nav-link {% if active_tab == 'documents' or not active_tab %}active{% endif %}"
-               href="{% url 'branch_documents' branch.id %}?tab=documents"
-               role="tab">
+                href="{% url 'branch_documents' branch.id %}?tab=documents" role="tab">
                 <i class="bi bi-file-earmark-text me-1"></i> Hujjatlar
             </a>
         </li>
         <li class="nav-item" role="presentation">
             <a class="nav-link {% if active_tab == 'employees' %}active{% endif %}"
-               href="{% url 'branch_employees' branch.id %}?tab=employees"
-               role="tab">
+                href="{% url 'branch_employees' branch.id %}?tab=employees" role="tab">
                 <i class="bi bi-people me-1"></i> Ishchilar
             </a>
         </li>
-        <li class="nav-item" role="presentation">
+        <!-- <li class="nav-item" role="presentation">
             <a class="nav-link disabled" href="#" tabindex="-1">
                 <i class="bi bi-graph-up me-1"></i> Statistika
             </a>
-        </li>
+        </li> -->
         <li class="nav-item ms-auto">
             <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2"
-                        type="button" id="newDocumentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2" type="button"
+                    id="newDocumentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-plus-lg"></i>
                     Yangi hujjat
                 </button>
@@ -59,7 +57,9 @@
                             <i class="bi bi-arrow-right-square me-2 text-info"></i> SH/T (Shartnoma/Talab)
                         </a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <a class="dropdown-item text-muted" href="#">
                             <i class="bi bi-file-earmark-plus me-2"></i> Boshqa tur...
@@ -82,14 +82,10 @@
                 <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
                 <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Barchasi —</option>
-                    {% for dt in document_types %}
-                        <option value="{{ dt.name }}"
-                            {% if selected_type == dt.name %}selected{% endif %}>
-                            {{ dt.name }}
-                        </option>
-                    {% endfor %}
+                    <option value="internal" {% if selected_type=='internal' %}selected{% endif %}>I/CH</option>
+                    <option value="external" {% if selected_type=='external' %}selected{% endif %}>SH/T</option>
+                    <option value="official" {% if selected_type=='official' %}selected{% endif %}>Buyruq</option>
                 </select>
-                {% if request.GET.tab %}<input type="hidden" name="tab" value="{{ request.GET.tab }}">{% endif %}
             </form>
         </div>
 
@@ -99,13 +95,15 @@
                 <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
                 <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Hammasi —</option>
-                    <option value="yangi"    {% if selected_status == 'yangi'    %}selected{% endif %}>Yangi</option>
-                    <option value="jarayonda"{% if selected_status == 'jarayonda' %}selected{% endif %}>Jarayonda</option>
-                    <option value="imzolangan"{% if selected_status == 'imzolangan' %}selected{% endif %}>Imzolangan (faol)</option>
-                    <option value="tugatilgan"{% if selected_status == 'tugatilgan' %}selected{% endif %}>Tugatilgan (faol emas)</option>
+                    <option value="pending" {% if selected_status=='yangi' %}selected{% endif %}>Yangi</option>
+                    <option value="partial" {% if selected_status=='jarayonda' %}selected{% endif %}>Jarayonda</option>
+                    <option value="imzolangan" {% if selected_status=='imzolangan' %}selected{% endif %}>Imzolangan
+                        (faol)</option>
+                    <option value="tugatilgan" {% if selected_status=='tugatilgan' %}selected{% endif %}>Tugatilgan
+                        (faol emas)</option>
                 </select>
-                {% if request.GET.type   %}<input type="hidden" name="type"   value="{{ request.GET.type }}">{% endif %}
-                {% if request.GET.tab    %}<input type="hidden" name="tab"    value="{{ request.GET.tab }}">{% endif %}
+                {% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
+                {% if request.GET.tab %}<input type="hidden" name="tab" value="{{ request.GET.tab }}">{% endif %}
             </form>
         </div>
 
@@ -157,16 +155,17 @@
                             </td>
                             <td>
                                 {% if doc.is_fully_signed %}
-                                    <span class="badge bg-success">Imzolangan</span>
+                                <span class="badge bg-success">Imzolangan</span>
                                 {% elif doc.signatures.count > 0 %}
-                                    <span class="badge bg-warning">Jarayonda</span>
+                                <span class="badge bg-warning">Jarayonda</span>
                                 {% else %}
-                                    <span class="badge bg-secondary">Yangi</span>
+                                <span class="badge bg-secondary">Yangi</span>
                                 {% endif %}
                             </td>
                             <td class="text-end">
-                                <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fa fa-eye"></i>
+                                <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary"
+                                    title="Ko'rish">
+                                    <i class="bi bi-eye"></i> Ko'rish
                                 </a>
                                 {% if request.user == doc.created_by or request.user.role == 'admin' %}
                                 <!-- <a href="{% url 'order_update' doc.id %}" class="btn btn-sm btn-outline-secondary">
@@ -218,15 +217,20 @@
         padding: 0.75rem 1.25rem;
         font-weight: 500;
     }
+
     .nav-tabs .nav-link.active {
         border-bottom: 3px solid #0d6efd;
     }
-    .table th, .table td {
+
+    .table th,
+    .table td {
         vertical-align: middle;
     }
+
     .badge {
         font-weight: 500;
     }
+
     @media (max-width: 576px) {
         .nav-tabs {
             overflow-x: auto;
@@ -238,11 +242,11 @@
 
 {% block extra_js %}
 <script>
-// Tablar o'zgarganda URLni toza saqlash uchun (ixtiyoriy)
-document.querySelectorAll('.nav-tabs a').forEach(link => {
-    link.addEventListener('click', function(e) {
-        // Agar server tarafda tabni qayta ishlash kerak bo'lmasa, bu qismni o'chirib qo'yish mumkin
+    // Tablar o'zgarganda URLni toza saqlash uchun (ixtiyoriy)
+    document.querySelectorAll('.nav-tabs a').forEach(link => {
+        link.addEventListener('click', function (e) {
+            // Agar server tarafda tabni qayta ishlash kerak bo'lmasa, bu qismni o'chirib qo'yish mumkin
+        });
     });
-});
 </script>
 {% endblock %}

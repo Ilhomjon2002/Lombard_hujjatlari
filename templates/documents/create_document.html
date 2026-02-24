@@ -14,13 +14,13 @@
         display: inline-flex;
         align-items: center;
     }
-    
+
     .remove-employee {
         cursor: pointer;
         margin-left: 10px;
         color: #dc3545;
     }
-    
+
     .order-badge {
         width: 30px;
         height: 30px;
@@ -32,7 +32,7 @@
         color: white;
         margin-right: 10px;
     }
-    
+
     .employee-item {
         display: flex;
         align-items: center;
@@ -55,10 +55,10 @@
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data" id="documentForm">
                     {% csrf_token %}
-                    
+
                     <!-- Basic Information -->
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="title" class="form-label">Sarlavha *</label>
                             <input type="text" class="form-control" id="title" name="title" required>
                         </div>
@@ -72,22 +72,23 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <!-- Document Number and File -->
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="number" class="form-label">Hujjat raqami *</label>
                             <input type="text" class="form-control" id="number" name="number" required>
                         </div>
                         <div class="col-md-6">
                             <label for="file" class="form-label">Fayl (PDF yoki DOCX) *</label>
-                            <input type="file" class="form-control" id="file" name="file" accept=".pdf,.doc,.docx" required>
+                            <input type="file" class="form-control" id="file" name="file" accept=".pdf,.doc,.docx"
+                                required>
                         </div>
                     </div>
-                    
+
                     <!-- Signature Settings -->
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="signature_type" class="form-label">Imzolash turi *</label>
                             <select class="form-select" id="signature_type" name="signature_type" required>
                                 <option value="">Imzolash turini tanlang</option>
@@ -100,7 +101,7 @@
                             <input type="date" class="form-control" id="deadline" name="deadline">
                         </div>
                     </div>
-                    
+
                     <!-- Employees Selection -->
                     <div class="row mb-3">
                         <div class="col-12">
@@ -111,15 +112,15 @@
                                     Ishchilar tanlanmagan. Quyidagi ro'yxatdan tanlang.
                                 </div>
                             </div>
-                            
+
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-8 mb-3 mb-md-0">
                                     <select class="form-select" id="employeeSelect">
                                         <option value="">Ishchini tanlang</option>
                                         {{employees.count}}
                                         {% for employee in employees %}
                                         <option value="{{ employee.id }}">
-                                            {{ employee.first_name }} {{ employee.last_name }} ({{ employee.role }})
+                                            {{ employee.first_name }} {{ employee.last_name }} ({{ employee.get_role_display }})
                                         </option>
                                         {% endfor %}
                                     </select>
@@ -130,11 +131,11 @@
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <input type="hidden" name="employees" id="employeesInput">
                         </div>
                     </div>
-                    
+
                     <!-- Employee Order (for sequential) -->
                     <div class="row mb-3" id="orderSection" style="display: none;">
                         <div class="col-12">
@@ -153,7 +154,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Hujjatni yaratish
@@ -169,22 +170,22 @@
 
 {% block extra_js %}
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         let selectedEmployees = [];
         let availableEmployees = [];
-        
+
         // Initialize available employees from Django template
         {% for employee in employees %}
         availableEmployees.push({
             id: "{{ employee.id }}",
             first_name: "{{ employee.first_name }}",
             last_name: "{{ employee.last_name }}",
-            role: "{{ employee.role }}"
+            role: "{{ employee.get_role_display }}"
         });
         {% endfor %}
-        
+
         // Add employee to selected list
-        $('#addEmployeeBtn').click(function() {
+        $('#addEmployeeBtn').click(function () {
             const employeeId = $('#employeeSelect').val();
             if (employeeId && !selectedEmployees.includes(employeeId)) {
                 const employee = availableEmployees.find(e => e.id == employeeId);
@@ -193,7 +194,7 @@
                     updateSelectedEmployees();
                     updateOrderSection();
                     updateEmployeesInput();
-                    
+
                     // Clear selection
                     $('#employeeSelect').val('');
                 }
@@ -201,43 +202,43 @@
                 alert('Bu ishchi allaqachon tanlangan!');
             }
         });
-        
+
         // Remove employee
-        $(document).on('click', '.remove-employee', function() {
+        $(document).on('click', '.remove-employee', function () {
             const employeeId = $(this).data('id');
             selectedEmployees = selectedEmployees.filter(id => id != employeeId);
             updateSelectedEmployees();
             updateOrderSection();
             updateEmployeesInput();
         });
-        
+
         // Update order (for sequential)
-        $(document).on('click', '.move-up, .move-down', function() {
+        $(document).on('click', '.move-up, .move-down', function () {
             const employeeId = $(this).data('id');
             const direction = $(this).hasClass('move-up') ? -1 : 1;
             const index = selectedEmployees.indexOf(employeeId);
-            
+
             if ((direction === -1 && index > 0) || (direction === 1 && index < selectedEmployees.length - 1)) {
                 const newIndex = index + direction;
                 // Swap employees
-                [selectedEmployees[index], selectedEmployees[newIndex]] = 
-                [selectedEmployees[newIndex], selectedEmployees[index]];
-                
+                [selectedEmployees[index], selectedEmployees[newIndex]] =
+                    [selectedEmployees[newIndex], selectedEmployees[index]];
+
                 updateSelectedEmployees();
                 updateOrderSection();
                 updateEmployeesInput();
             }
         });
-        
+
         // Show/hide order section based on signature type
-        $('#signature_type').change(function() {
+        $('#signature_type').change(function () {
             updateOrderSection();
         });
-        
+
         // Functions
         function updateSelectedEmployees() {
             const container = $('#selectedEmployees');
-            
+
             if (selectedEmployees.length === 0) {
                 container.html(`
                     <div class="alert alert-info">
@@ -246,9 +247,9 @@
                 `);
                 return;
             }
-            
+
             let html = '<div class="row">';
-            
+
             selectedEmployees.forEach(employeeId => {
                 const employee = availableEmployees.find(e => e.id == employeeId);
                 if (employee) {
@@ -267,20 +268,20 @@
                     `;
                 }
             });
-            
+
             html += '</div>';
             container.html(html);
         }
-        
+
         function updateOrderSection() {
             const signatureType = $('#signature_type').val();
             const orderSection = $('#orderSection');
             const employeeOrder = $('#employeeOrder');
-            
+
             if (signatureType === 'sequential' && selectedEmployees.length > 0) {
                 orderSection.show();
                 employeeOrder.empty();
-                
+
                 selectedEmployees.forEach((employeeId, index) => {
                     const employee = availableEmployees.find(e => e.id == employeeId);
                     if (employee) {
@@ -310,18 +311,18 @@
                 orderSection.hide();
             }
         }
-        
+
         function updateEmployeesInput() {
             $('#employeesInput').val(selectedEmployees.join(','));
         }
-        
+
         // Form validation
-        $('#documentForm').submit(function(e) {
+        $('#documentForm').submit(function (e) {
             // Required fields validation
             const requiredFields = ['title', 'branch', 'number', 'file', 'signature_type'];
             let isValid = true;
             let errorMessage = '';
-            
+
             requiredFields.forEach(field => {
                 const value = $(`[name="${field}"]`).val();
                 if (!value) {
@@ -330,24 +331,24 @@
                     errorMessage += `- ${fieldName.replace('*', '').trim()} maydoni to'ldirilmagan\n`;
                 }
             });
-            
+
             // Check if at least one employee is selected
             if (selectedEmployees.length === 0) {
                 isValid = false;
                 errorMessage += "- Kamida bitta ishchini tanlashingiz kerak\n";
             }
-            
+
             if (!isValid) {
                 e.preventDefault();
                 alert('Quyidagi maydonlarni to\'ldiring:\n\n' + errorMessage);
                 return false;
             }
-            
+
             // Prepare employees array for submission
             const employeesField = $('<input>')
                 .attr('type', 'hidden')
                 .attr('name', 'employees[]');
-            
+
             selectedEmployees.forEach(id => {
                 const clone = employeesField.clone().val(id);
                 $('#documentForm').append(clone);

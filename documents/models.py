@@ -109,6 +109,11 @@ class Order(models.Model):
 
     signature_type = models.CharField(max_length=20, choices=SIGNATURE_TYPES, default='sequential')
 
+    # Yangi maydonlar: Direktor tasdig'i va umumiy QR kod
+    director_approved = models.BooleanField(default=False, verbose_name="Direktor tasdiqladi")
+    director_approved_at = models.DateTimeField(null=True, blank=True, verbose_name="Direktor tasdiqlagan vaqt")
+    final_qr_code = models.ImageField(upload_to='orders/final_qr/%Y/%m/', null=True, blank=True, verbose_name="Umumiy QR kod")
+
     class Meta:
         verbose_name = "Buyruq"
         verbose_name_plural = "Buyruqlar"
@@ -131,7 +136,12 @@ class Order(models.Model):
         elif signed_count == 0:
             self.status = 'pending'
         elif signed_count == total_signatures:
-            self.status = 'completed'
+            if not self.director_approved:
+                # Agar hamma imzolagan bo'lsa, lekin direktor tasdiqlamagan bo'lsa, qisman deb tursak bo'ladi 
+                # (yoki completed o'z holicha, pending_director kabi qo'shimcha status yo'q)
+                self.status = 'partial'
+            else:
+                self.status = 'completed'
         elif signed_count > 0:
             self.status = 'partial'
         else:
@@ -147,6 +157,14 @@ class Order(models.Model):
     def get_pending_signers(self):
         signed_users = self.signatures.filter(signed=True).values_list('user__id', flat=True)
         return self.signers.exclude(user__id__in=signed_users)
+
+    @property
+    def signatures_signed_count(self):
+        return self.signatures.filter(signed=True).count()
+
+    @property
+    def signatures_total_count(self):
+        return self.signatures.count()
 
 class OrderSigner(models.Model):
     order = models.ForeignKey(

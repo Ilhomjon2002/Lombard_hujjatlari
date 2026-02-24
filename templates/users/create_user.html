@@ -15,9 +15,9 @@
             <div class="card-body">
                 <form method="post" novalidate>
                     {% csrf_token %}
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.username.id_for_label }}" class="form-label">
                                 Foydalanuvchi nomi *
                             </label>
@@ -28,22 +28,22 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="col-md-6">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">
-                                Email manzil *
+                            <label for="{{ form.middle_name.id_for_label }}" class="form-label">
+                                Otasining ismi
                             </label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
+                            {{ form.middle_name }}
+                            {% if form.middle_name.errors %}
                             <div class="invalid-feedback d-block">
-                                {{ form.email.errors.0 }}
+                                {{ form.middle_name.errors.0 }}
                             </div>
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.first_name.id_for_label }}" class="form-label">
                                 Ism *
                             </label>
@@ -54,7 +54,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.last_name.id_for_label }}" class="form-label">
                                 Familiya *
@@ -67,9 +67,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.role.id_for_label }}" class="form-label">
                                 Rol *
                             </label>
@@ -80,7 +80,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.branch.id_for_label }}" class="form-label">
                                 Filial *
@@ -93,9 +93,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.phone.id_for_label }}" class="form-label">
                                 Telefon raqam
                             </label>
@@ -106,7 +106,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.position.id_for_label }}" class="form-label">
                                 Lavozim
@@ -119,9 +119,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.password1.id_for_label }}" class="form-label">
                                 Parol *
                             </label>
@@ -133,7 +133,7 @@
                             {% endif %}
                             <small class="form-text text-muted">{{ form.password1.help_text }}</small>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.password2.id_for_label }}" class="form-label">
                                 Parolni tasdiqlash *
@@ -146,7 +146,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a href="{% url 'manage_users' %}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Bekor qilish
@@ -158,7 +158,7 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="card mt-3">
             <div class="card-body">
                 <h6 class="card-title">
@@ -166,10 +166,34 @@
                     Qo'shimcha ma'lumot
                 </h6>
                 <ul class="text-muted">
-                    <li>Yangi foydalanuvchiga avtomatik ravishda email yuboriladi</li>
-                    <li>Parolni keyinchalik o'zgartirish mumkin</li>
                     <li>Foydalanuvchi tizimga kirishi uchun "Faol" holatda bo'lishi kerak</li>
                 </ul>
+            </div>
+        </div>
+
+        <!-- Excel Import -->
+        <div class="card mt-3 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>Exceldan import qilish
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info py-2 mb-3">
+                    <small>
+                        <strong>Excel formati:</strong> Организация | ФИО сотрудника | Должность<br>
+                        <strong>Login:</strong> familiya.ism &nbsp;|&nbsp; <strong>Parol:</strong> Ab123456
+                    </small>
+                </div>
+                <form method="POST" action="{% url 'import_employees' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="excel_file" accept=".xlsx,.xls" required>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-upload me-1"></i>Import
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -178,18 +202,20 @@
 
 {% block extra_css %}
 <style>
-.form-control, .form-select {
-    padding: 10px;
-    border-radius: 5px;
-}
+    .form-control,
+    .form-select {
+        padding: 10px;
+        border-radius: 5px;
+    }
 
-.form-control:focus, .form-select:focus {
-    border-color: #28a745;
-    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-}
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
 
-.invalid-feedback {
-    font-size: 0.875em;
-}
+    .invalid-feedback {
+        font-size: 0.875em;
+    }
 </style>
 {% endblock %}

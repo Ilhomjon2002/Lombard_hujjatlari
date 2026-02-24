@@ -5,10 +5,21 @@ from . import views
 
 urlpatterns = [
     # Auth
-    path('',          views.login_view,                 name='login'),
-    path('logout/',         views.logout_view,          name='logout'),
-
-    # Foydalanuvchi sahifalari
+    path('',                                views.login_view,                   name='login'),
+    path('logout/',                         views.logout_view,                  name='logout'),
+    
+    # Scanner-based fingerprint authentication (USB ZKTeco)
+    path('scanner/register/',                              views.scanner_register_page,            name='scanner_register'),
+    path('api/auth/scanner/status',                        views.scanner_status,                   name='scanner_status'),
+    path('api/auth/fingerprint/register/start',            views.fingerprint_register_start_scanner, name='fingerprint_register_start_scanner'),
+    path('api/auth/fingerprint/capture',                   views.fingerprint_capture,              name='fingerprint_capture'),
+    path('api/auth/fingerprint/register/complete',         views.fingerprint_register_complete_scanner, name='fingerprint_register_complete_scanner'),
+    path('api/auth/fingerprint/authenticate',              views.fingerprint_authenticate_scanner, name='fingerprint_authenticate_scanner'),
+    path('api/auth/fingerprint/verify',                    views.fingerprint_verify_scanner,       name='fingerprint_verify_scanner'),
+    path('api/auth/fingerprint/remove',                    views.fingerprint_remove_scanner,       name='fingerprint_remove_scanner'),
+    path('api/auth/fingerprint/verify-signing',            views.fingerprint_verify_for_signing,   name='fingerprint_verify_for_signing'),
+    
+    # User pages
     path('dashboard/',      views.dashboard,            name='dashboard'),
     path('profile/',        views.profile,              name='profile'),
     path('notifications/',  views.notifications,        name='notifications'),
@@ -22,8 +33,7 @@ urlpatterns = [
     path('reset-password/<int:user_id>/', views.reset_user_password, name='reset_password'),
     path('toggle-status/<int:user_id>/',  views.toggle_user_status,   name='toggle_status'),
 
-    # Qo‘shimcha (oldingi taklifda qo‘shilganlar, agar ishlatilsa)
+    # Additional
     path('branches/create/',         views.create_branch,        name='create_branch'),
-    # path('holidays/',                views.manage_holidays,      name='manage_holidays'),
-    # path('holidays/create/',         views.create_holiday,       name='create_holiday'),
+    path('import-employees/',        views.import_employees_excel, name='import_employees'),
 ]

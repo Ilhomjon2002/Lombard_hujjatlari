@@ -15,13 +15,13 @@
             <div class="card-body">
                 <form method="post" novalidate>
                     {% csrf_token %}
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label class="form-label">Foydalanuvchi nomi</label>
                             <input type="text" class="form-control" value="{{ user.username }}" readonly>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.email.id_for_label }}" class="form-label">
                                 Email manzil *
@@ -34,9 +34,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.first_name.id_for_label }}" class="form-label">
                                 Ism *
                             </label>
@@ -47,7 +47,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.last_name.id_for_label }}" class="form-label">
                                 Familiya *
@@ -60,9 +60,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.role.id_for_label }}" class="form-label">
                                 Rol *
                             </label>
@@ -73,7 +73,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.branch.id_for_label }}" class="form-label">
                                 Filial *
@@ -86,9 +86,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.phone.id_for_label }}" class="form-label">
                                 Telefon raqam
                             </label>
@@ -99,7 +99,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="col-md-6">
                             <label for="{{ form.position.id_for_label }}" class="form-label">
                                 Lavozim
@@ -112,9 +112,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="{{ form.is_active.id_for_label }}" class="form-label">
                                 Holat
                             </label>
@@ -126,12 +126,12 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <a href="{% url 'manage_users' %}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Bekor qilish
                         </a>
-                        <a href="{% url 'reset_user_password' user.id %}" class="btn btn-primary">
+                        <a href="{% url 'reset_password' user.id %}" class="btn btn-primary">
                             <i class="fas fa-key"></i> Parolni yangilash
                         </a>
                         <button type="submit" class="btn btn-warning">

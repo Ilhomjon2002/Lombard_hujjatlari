@@ -27,7 +27,7 @@
                     <a href="{% url 'edit_user' user.id %}" class="btn btn-warning">
                         <i class="fas fa-edit"></i> Tahrirlash
                     </a>
-                    <a href="{% url 'reset_user_password' user.id %}" class="btn btn-primary">
+                    <a href="{% url 'reset_password' user.id %}" class="btn btn-primary">
                         <i class="fas fa-key"></i> Parolni yangilash
                     </a>
                 </div>
@@ -123,7 +123,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="d-grid">
-                            <form method="post" action="{% url 'toggle_user_status' user.id %}" style="display: inline;">
+                            <form method="post" action="{% url 'toggle_status' user.id %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn {% if user.is_active %}btn-danger{% else %}btn-success{% endif %} w-100">
                                     <i class="fas {% if user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %}"></i>
