@@ -477,9 +477,8 @@ def verify_document(request, order_id):
     })
 
 
-@login_required
 def download_pdf(request, order_id):
-    """Buyruqni PDF shaklida yuklab olish.
+    """Buyruqni PDF shaklida yuklab olish (login talab qilinmaydi — QR orqali ishlaydi).
     
     Jarayon:
     1. DOCX nusxasi yaratiladi
@@ -491,18 +490,6 @@ def download_pdf(request, order_id):
     import shutil
     
     order = get_object_or_404(Order, id=order_id)
-    
-    # Ruxsat tekshirish
-    can_view = (
-        request.user.role == 'admin' or
-        request.user.role == 'director' or
-        request.user == order.created_by or
-        order.signatures.filter(user=request.user).exists()
-    )
-    
-    if not can_view:
-        messages.error(request, "Ushbu hujjatni PDF variantini olishga ruxsat yo'q")
-        return redirect('dashboard')
     
     if not order.file:
         messages.error(request, "Xatolik: Fayl topilmadi.")
