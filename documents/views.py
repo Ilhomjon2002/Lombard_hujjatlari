@@ -757,17 +757,13 @@ def download_docx(request, order_id):
 
 
 def _convert_docx_to_pdf(docx_path, temp_files):
-    """DOCX faylni PDF ga konvertatsiya qilish.
-    
-    1-usul: LibreOffice headless (pixel-perfect, agar mavjud bo'lsa)
-    2-usul: python-docx + reportlab (fallback, har doim ishlaydi)
-    """
+    """DOCX faylni PDF ga konvertatsiya qilish — faqat LibreOffice orqali."""
     import tempfile
     import os
     import subprocess
     import shutil
     
-    # 1-usul: LibreOffice bilan sinash
+    # LibreOffice yo'llarini tekshirish
     soffice_paths = [
         r'C:\Program Files\LibreOffice\program\soffice.exe',
         r'C:\Program Files (x86)\LibreOffice\program\soffice.exe',
@@ -788,48 +784,41 @@ def _convert_docx_to_pdf(docx_path, temp_files):
         if soffice:
             print(f"LibreOffice PATH dan topildi: {soffice}")
     
-    if soffice:
-        try:
-            temp_dir = tempfile.mkdtemp()
-            temp_files.append(temp_dir)
-            
-            docx_basename = os.path.basename(docx_path)
-            temp_docx = os.path.join(temp_dir, docx_basename)
-            shutil.copy2(docx_path, temp_docx)
-            
-            result = subprocess.run(
-                [soffice, '--headless', '--norestore', '--convert-to', 'pdf',
-                 '--outdir', temp_dir, temp_docx],
-                capture_output=True, text=True, timeout=120, cwd=temp_dir,
-            )
-            
-            print(f"LibreOffice stdout: {result.stdout}")
-            print(f"LibreOffice stderr: {result.stderr}")
-            print(f"LibreOffice return code: {result.returncode}")
-            
-            pdf_basename = os.path.splitext(docx_basename)[0] + '.pdf'
-            output_pdf = os.path.join(temp_dir, pdf_basename)
-            
-            if os.path.exists(output_pdf) and os.path.getsize(output_pdf) > 0:
-                fd, final_pdf = tempfile.mkstemp(suffix='.pdf')
-                os.close(fd)
-                temp_files.append(final_pdf)
-                shutil.copy2(output_pdf, final_pdf)
-                print(f"LibreOffice PDF muvaffaqiyatli yaratildi: {os.path.getsize(final_pdf)} bytes")
-                return final_pdf
-            
-            print(f"LibreOffice PDF yaratmadi. temp_dir tarkibi: {os.listdir(temp_dir)}")
-        except subprocess.TimeoutExpired:
-            print(f"LibreOffice timeout (120s), Python fallback ishlatiladi")
-        except Exception as e:
-            print(f"LibreOffice xatolik: {e}, Python fallback ishlatiladi")
-            import traceback
-            traceback.print_exc()
-    else:
-        print("LibreOffice topilmadi, Python fallback ishlatiladi")
+    if not soffice:
+        raise RuntimeError("LibreOffice topilmadi! PDF konvertatsiya uchun LibreOffice o'rnatilishi kerak.")
     
-    # 2-usul: python-docx + reportlab fallback
-    return _convert_docx_to_pdf_python(docx_path, temp_files)
+    temp_dir = tempfile.mkdtemp()
+    temp_files.append(temp_dir)
+    
+    docx_basename = os.path.basename(docx_path)
+    temp_docx = os.path.join(temp_dir, docx_basename)
+    shutil.copy2(docx_path, temp_docx)
+    
+    result = subprocess.run(
+        [soffice, '--headless', '--norestore', '--convert-to', 'pdf',
+         '--outdir', temp_dir, temp_docx],
+        capture_output=True, text=True, timeout=120, cwd=temp_dir,
+    )
+    
+    print(f"LibreOffice stdout: {result.stdout}")
+    print(f"LibreOffice stderr: {result.stderr}")
+    print(f"LibreOffice return code: {result.returncode}")
+    
+    pdf_basename = os.path.splitext(docx_basename)[0] + '.pdf'
+    output_pdf = os.path.join(temp_dir, pdf_basename)
+    
+    if os.path.exists(output_pdf) and os.path.getsize(output_pdf) > 0:
+        fd, final_pdf = tempfile.mkstemp(suffix='.pdf')
+        os.close(fd)
+        temp_files.append(final_pdf)
+        shutil.copy2(output_pdf, final_pdf)
+        print(f"LibreOffice PDF muvaffaqiyatli yaratildi: {os.path.getsize(final_pdf)} bytes")
+        return final_pdf
+    
+    raise RuntimeError(
+        f"LibreOffice PDF yaratmadi. Return code: {result.returncode}, "
+        f"stderr: {result.stderr}, temp_dir: {os.listdir(temp_dir)}"
+    )
 
 
 def _emu_to_pt(emu):
