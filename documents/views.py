@@ -539,8 +539,10 @@ def download_pdf(request, order_id):
 
 @login_required
 def download_docx(request, order_id):
-    """Asl DOCX/DOC faylni yuklab olish (o'zgartirilmagan holda)"""
+    """DOCX faylni imzolangan holda yuklab olish — asl faylga tegmaydi, nusxaga imzo ma'lumotlari qo'shiladi"""
     import os
+    import tempfile
+    import shutil
     
     order = get_object_or_404(Order, id=order_id)
     
@@ -565,13 +567,193 @@ def download_docx(request, order_id):
         messages.error(request, "Xatolik: Fayl topilmadi.")
         return redirect('order_detail', order_id=order.id)
     
-    ext = os.path.splitext(file_path)[1]
+    ext = os.path.splitext(file_path)[1].lower()
     filename = f"hujjat_{order.number}{ext}".replace("/", "_")
     
-    with open(file_path, 'rb') as f:
-        buffer = BytesIO(f.read())
+    # Agar DOCX bo'lmasa, oddiy yuklab olish
+    if ext not in ['.docx']:
+        with open(file_path, 'rb') as f:
+            buffer = BytesIO(f.read())
+        return FileResponse(buffer, as_attachment=True, filename=filename)
     
-    return FileResponse(buffer, as_attachment=True, filename=filename)
+    # DOCX nusxasiga imzo ma'lumotlarini qo'shish
+    temp_files = []
+    try:
+        from docx import Document
+        from docx.shared import Inches, Pt, Cm, RGBColor
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        from docx.enum.table import WD_TABLE_ALIGNMENT
+        
+        # Nusxa yaratish (asl faylga tegmaymiz)
+        fd, temp_docx = tempfile.mkstemp(suffix='.docx')
+        os.close(fd)
+        temp_files.append(temp_docx)
+        shutil.copy2(file_path, temp_docx)
+        
+        doc = Document(temp_docx)
+        
+        # === Imzo sahifasi qo'shish ===
+        # Bo'sh paragraf (ajratuvchi)
+        doc.add_paragraph()
+        
+        # Sarlavha
+        heading = doc.add_paragraph()
+        heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = heading.add_run("═══════════════════════════════════════")
+        run.font.size = Pt(10)
+        run.font.color.rgb = RGBColor(0, 120, 212)
+        
+        title_p = doc.add_paragraph()
+        title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = title_p.add_run(f"IMZOLASH MA'LUMOTLARI")
+        run.bold = True
+        run.font.size = Pt(14)
+        run.font.color.rgb = RGBColor(0, 120, 212)
+        
+        # Hujjat ma'lumotlari
+        info_p = doc.add_paragraph()
+        info_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = info_p.add_run(f"Buyruq: {order.number} — {order.title}")
+        run.font.size = Pt(10)
+        run.font.color.rgb = RGBColor(96, 94, 92)
+        
+        doc.add_paragraph()
+        
+        # Imzolovchilar jadvali
+        signatures = order.signatures.filter(signed=True).order_by('order_number')
+        
+        if signatures.exists():
+            # Jadval yaratish
+            table = doc.add_table(rows=1, cols=4)
+            table.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.style = 'Table Grid'
+            
+            # Sarlavha qatori
+            header_cells = table.rows[0].cells
+            headers = ['№', 'F.I.O.', 'Lavozimi', 'Imzolangan sana']
+            for i, header_text in enumerate(headers):
+                run = header_cells[i].paragraphs[0].add_run(header_text)
+                run.bold = True
+                run.font.size = Pt(9)
+                header_cells[i].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+            
+            # Imzolovchilar
+            for index, sig in enumerate(signatures, 1):
+                row = table.add_row()
+                cells = row.cells
+                
+                # №
+                cells[0].text = str(index)
+                cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+                
+                # F.I.O.
+                cells[1].text = sig.user.get_full_name()
+                
+                # Lavozimi
+                cells[2].text = sig.user.position or sig.user.get_role_display()
+                
+                # Sana
+                if sig.signed_at:
+                    cells[3].text = sig.signed_at.strftime('%d.%m.%Y %H:%M')
+                else:
+                    cells[3].text = '—'
+                cells[3].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+                
+                # Shrift o'lchami
+                for cell in cells:
+                    for para in cell.paragraphs:
+                        for run in para.runs:
+                            run.font.size = Pt(9)
+            
+            doc.add_paragraph()
+        else:
+            no_sig = doc.add_paragraph()
+            no_sig.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = no_sig.add_run("Hali hech kim imzolamagan")
+            run.font.size = Pt(10)
+            run.font.color.rgb = RGBColor(164, 38, 44)
+        
+        # Direktor tasdig'i
+        if order.director_approved:
+            dir_p = doc.add_paragraph()
+            dir_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = dir_p.add_run("✓ Direktor tomonidan tasdiqlangan")
+            run.bold = True
+            run.font.size = Pt(11)
+            run.font.color.rgb = RGBColor(16, 124, 65)
+            
+            if order.director_approved_at:
+                date_p = doc.add_paragraph()
+                date_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                run = date_p.add_run(f"Sana: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
+                run.font.size = Pt(9)
+                run.font.color.rgb = RGBColor(96, 94, 92)
+        
+        # QR kod qo'shish
+        try:
+            qr_data_lines = [f"{order.title} ({order.number})"]
+            if signatures.exists():
+                qr_data_lines.append("Imzolaganlar:")
+                for index, sig in enumerate(signatures, 1):
+                    time_str = sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'
+                    qr_data_lines.append(f"{index}. {sig.user.get_full_name()} - {time_str}")
+            
+            if order.director_approved:
+                qr_data_lines.append("Direktor: TASDIQLANGAN")
+            
+            sig_qr = qrcode.QRCode(version=1, box_size=8, border=1)
+            sig_qr.add_data("\n".join(qr_data_lines))
+            sig_qr.make(fit=True)
+            sig_img = sig_qr.make_image(fill='black', back_color='white')
+            
+            fd, qr_path = tempfile.mkstemp(suffix='.png')
+            os.close(fd)
+            temp_files.append(qr_path)
+            sig_img.save(qr_path, format='PNG')
+            
+            qr_p = doc.add_paragraph()
+            qr_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = qr_p.add_run()
+            run.add_picture(qr_path, width=Inches(1.5))
+            
+            qr_label = doc.add_paragraph()
+            qr_label.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = qr_label.add_run("Imzolar QR kodi")
+            run.font.size = Pt(8)
+            run.font.color.rgb = RGBColor(96, 94, 92)
+        except Exception as e:
+            print(f"QR code error in DOCX: {e}")
+        
+        # Pastki chiziq
+        footer = doc.add_paragraph()
+        footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = footer.add_run("═══════════════════════════════════════")
+        run.font.size = Pt(10)
+        run.font.color.rgb = RGBColor(0, 120, 212)
+        
+        # Saqlash
+        doc.save(temp_docx)
+        
+        with open(temp_docx, 'rb') as f:
+            buffer = BytesIO(f.read())
+        
+        return FileResponse(buffer, as_attachment=True, filename=filename)
+        
+    except Exception as e:
+        print(f"download_docx error: {e}")
+        import traceback
+        traceback.print_exc()
+        # Xato bo'lsa asl faylni yuborish
+        with open(file_path, 'rb') as f:
+            buffer = BytesIO(f.read())
+        return FileResponse(buffer, as_attachment=True, filename=filename)
+    finally:
+        for tmp in temp_files:
+            try:
+                if os.path.exists(tmp):
+                    os.remove(tmp)
+            except Exception:
+                pass
 
 
 def _convert_docx_to_pdf(docx_path, temp_files):
