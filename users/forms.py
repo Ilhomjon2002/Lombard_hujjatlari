@@ -16,7 +16,7 @@ class CustomUserForm(UserCreationForm):
         model = CustomUser
         fields = [
             'username', 'first_name', 'last_name', 'middle_name',
-            'role', 'branch', 'phone', 'position',
+            'role', 'branch', 'position',
             'profile_image', 'signature_image'
         ]
         widgets = {
@@ -25,7 +25,6 @@ class CustomUserForm(UserCreationForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Familiya'}),
             'middle_name': forms.TextInput(attrs={'placeholder': 'Otasining ismi'}),
             'role': forms.Select(attrs={'class': 'form-select'}),
-            'phone': forms.TextInput(attrs={'placeholder': '+998 90 123 45 67'}),
             'position': forms.TextInput(attrs={'placeholder': 'Masalan: Bosh hisobchi'}),
             'profile_image': forms.FileInput(),
             'signature_image': forms.FileInput(),
