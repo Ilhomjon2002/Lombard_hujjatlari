@@ -462,6 +462,21 @@ def sign_with_fingerprint(request, signature_id):
     return JsonResponse(response_data)
 
 
+def verify_document(request, order_id):
+    """Hujjat imzolarini tekshirish — QR kodni skanerlash uchun (login kerak emas)."""
+    order = get_object_or_404(Order, id=order_id)
+    signatures = order.signatures.all().order_by('order_number')
+    signed_count = signatures.filter(signed=True).count()
+    total_count = signatures.count()
+    
+    return render(request, 'documents/verify_document.html', {
+        'order': order,
+        'signatures': signatures,
+        'signed_count': signed_count,
+        'total_count': total_count,
+    })
+
+
 @login_required
 def download_pdf(request, order_id):
     """Buyruqni PDF shaklida yuklab olish.
@@ -667,44 +682,30 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     try:
         signatures = order.signatures.filter(signed=True).order_by('order_number')
         
+        # Imzolar tekshirish sahifasi URL
+        verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
+        
         if signatures.exists() or (order.director_approved and order.final_qr_code):
             # Bo'sh joy
             doc.add_paragraph()
             
-            # Har bir imzolovchi uchun alohida QR
+            # Bitta umumiy imzo QR — tekshirish sahifasiga yo'naltiradi
+            sig_qr = qrcode.QRCode(version=None, box_size=5, border=1)
+            sig_qr.add_data(verify_url)
+            sig_qr.make(fit=True)
+            sig_img = sig_qr.make_image(fill='black', back_color='white')
+            
+            fd, qr_img_path = tempfile.mkstemp(suffix='.png')
+            os.close(fd)
+            temp_files.append(qr_img_path)
+            sig_img.save(qr_img_path, format='PNG')
+            
+            # Har bir imzolovchi uchun QR + ma'lumot
             for sig in signatures:
                 user = sig.user
                 full_name = f"{user.last_name} {user.first_name}"
                 if hasattr(user, 'middle_name') and user.middle_name:
                     full_name += f" {user.middle_name}"
-                
-                qr_data = (
-                    f"IMZO TASDIQLANGAN\n"
-                    f"F.I.O: {full_name}\n"
-                    f"Lavozim: {user.position or '-'}\n"
-                    f"Buyruq: {order.number}\n"
-                    f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}"
-                )
-                
-                # QR kodni yaratish yoki mavjud bo'lsa ishlatish
-                qr_img_path = None
-                if sig.qr_code:
-                    try:
-                        if os.path.exists(sig.qr_code.path):
-                            qr_img_path = sig.qr_code.path
-                    except Exception:
-                        pass
-                
-                if not qr_img_path:
-                    sig_qr = qrcode.QRCode(version=None, box_size=5, border=1)
-                    sig_qr.add_data(qr_data)
-                    sig_qr.make(fit=True)
-                    sig_img = sig_qr.make_image(fill='black', back_color='white')
-                    
-                    fd, qr_img_path = tempfile.mkstemp(suffix='.png')
-                    os.close(fd)
-                    temp_files.append(qr_img_path)
-                    sig_img.save(qr_img_path, format='PNG')
                 
                 # QR va ism yonma-yon paragrafda
                 p = doc.add_paragraph()

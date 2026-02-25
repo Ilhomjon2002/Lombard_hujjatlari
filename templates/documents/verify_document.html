@@ -1,0 +1,84 @@
+{% extends 'base_login.html' %}
+{% block title %}Hujjat Imzolari Tekshirish{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-success text-white text-center py-3">
+            <h4 class="mb-0">
+                <i class="fas fa-shield-alt me-2"></i>Imzo Tekshirish
+            </h4>
+        </div>
+        <div class="card-body p-4">
+            <!-- Hujjat ma'lumotlari -->
+            <div class="mb-4 p-3 bg-light rounded">
+                <h5 class="text-dark fw-bold mb-2">
+                    <i class="bi bi-file-text me-2"></i>{{ order.title }}
+                </h5>
+                <div class="row">
+                    <div class="col-6">
+                        <small class="text-muted">Buyruq raqami</small>
+                        <div class="fw-semibold">{{ order.number }}</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Yaratilgan sana</small>
+                        <div class="fw-semibold">{{ order.created_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Imzolovchilar ro'yxati -->
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-people me-2"></i>Imzolaganlar ({{ signed_count }}/{{ total_count }})
+            </h5>
+
+            {% for sig in signatures %}
+            <div class="d-flex align-items-start mb-3 p-3 rounded {% if sig.signed %}bg-success bg-opacity-10 border border-success{% else %}bg-light{% endif %}">
+                <div class="me-3 mt-1">
+                    {% if sig.signed %}
+                    <i class="fas fa-check-circle text-success fs-4"></i>
+                    {% else %}
+                    <i class="fas fa-clock text-warning fs-4"></i>
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">{{ sig.user.last_name }} {{ sig.user.first_name }} {{ sig.user.middle_name }}</div>
+                    {% if sig.user.position %}
+                    <small class="text-muted">{{ sig.user.position }}</small><br>
+                    {% endif %}
+                    {% if sig.signed %}
+                    <small class="text-success fw-semibold">
+                        <i class="fas fa-calendar-check me-1"></i>
+                        {{ sig.signed_at|date:"d.m.Y H:i:s" }}
+                    </small>
+                    {% if sig.comment %}
+                    <br><small class="text-muted"><i class="fas fa-comment me-1"></i>{{ sig.comment }}</small>
+                    {% endif %}
+                    {% else %}
+                    <small class="text-warning">Kutilmoqda...</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if order.director_approved %}
+            <div class="mt-4 p-3 bg-success bg-opacity-10 border border-success rounded text-center">
+                <i class="fas fa-award text-success fs-3"></i>
+                <h6 class="mt-2 fw-bold text-success">Direktor tasdiqlagan</h6>
+                <small class="text-muted">{{ order.director_approved_at|date:"d.m.Y H:i:s" }}</small>
+            </div>
+            {% endif %}
+
+            <!-- Yuklab olish tugmasi -->
+            <div class="mt-4 text-center">
+                <a href="{% url 'download_pdf' order.id %}" class="btn btn-danger btn-lg">
+                    <i class="bi bi-file-pdf me-2"></i>PDF yuklab olish
+                </a>
+            </div>
+        </div>
+        <div class="card-footer text-center text-muted py-3" style="font-size: 12px;">
+            <i class="fas fa-lock me-1"></i>Hujjat Aylanish Tizimi — Imzo tekshirish tizimi
+        </div>
+    </div>
+</div>
+{% endblock %}
