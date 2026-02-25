@@ -2,7 +2,6 @@
 {% block title %}Imzo qo'yish — {{ signature.order.title }}{% endblock %}
 
 {% block extra_css %}
-{% block content %}
 <style>
     .fingerprint-area {
         text-align: center;
@@ -30,15 +29,8 @@
     }
 
     @keyframes pulse {
-
-        0%,
-        100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.7;
-        }
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
     }
 
     .fingerprint-icon {
@@ -47,17 +39,9 @@
         transition: color 0.3s ease;
     }
 
-    .scanning .fingerprint-icon {
-        color: #0d6efd;
-    }
-
-    .success .fingerprint-icon {
-        color: #198754;
-    }
-
-    .error .fingerprint-icon {
-        color: #dc3545;
-    }
+    .scanning .fingerprint-icon { color: #0d6efd; }
+    .success .fingerprint-icon { color: #198754; }
+    .error .fingerprint-icon { color: #dc3545; }
 
     .qr-result img {
         max-width: 200px;
@@ -65,8 +49,9 @@
         border-radius: 8px;
     }
 </style>
+{% endblock %}
 
-
+{% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -116,8 +101,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="custom_time" class="form-label fw-bold">Imzolash vaqti (Qo'lda kiritish,
-                                ixtiyoriy)</label>
+                            <label for="custom_time" class="form-label fw-bold">Imzolash vaqti (Qo'lda kiritish, ixtiyoriy)</label>
                             <input type="datetime-local" id="custom_time" class="form-control">
                             <small class="text-muted">Agar kiritilmasa, hozirgi vaqt olinadi.</small>
                         </div>
@@ -138,7 +122,7 @@
                         <div class="text-center py-4">
                             <i class="fas fa-check-circle text-success" style="font-size: 64px;"></i>
                             <h4 class="mt-3 text-success">Hujjat muvaffaqiyatli imzolandi!</h4>
-                            <p class="text-muted">QR kod Word faylga qo'shildi</p>
+                            <p class="text-muted">QR kod yaratildi</p>
                         </div>
                         <div id="qr-result" class="text-center qr-result mb-3"></div>
                         <a href="{% url 'order_detail' signature.order.id %}" class="btn btn-primary w-100">
@@ -152,6 +136,7 @@
 </div>
 {% endblock %}
 
+{% block extra_js %}
 {% load static %}
 <script src="{% static 'js/fingerprint-scanner.js' %}"></script>
 <script>
