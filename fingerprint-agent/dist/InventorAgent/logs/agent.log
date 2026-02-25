@@ -216,3 +216,6 @@
 2026-02-25 17:32:48,819 - werkzeug - INFO - 127.0.0.1 - - [25/Feb/2026 17:32:48] "GET /api/status HTTP/1.1" 200 -
 2026-02-25 17:32:48,835 - agent - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
 2026-02-25 17:32:48,836 - werkzeug - INFO - 127.0.0.1 - - [25/Feb/2026 17:32:48] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-02-25 17:41:44,063 - werkzeug - INFO - 127.0.0.1 - - [25/Feb/2026 17:41:44] "GET /api/status HTTP/1.1" 200 -
+2026-02-25 17:41:44,081 - agent - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-02-25 17:41:44,081 - werkzeug - INFO - 127.0.0.1 - - [25/Feb/2026 17:41:44] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
