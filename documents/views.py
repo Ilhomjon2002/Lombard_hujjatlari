@@ -1361,7 +1361,12 @@ def _convert_docx_to_pdf_python(docx_path, temp_files):
 
 
 def _add_qr_overlay(request, order, pdf_path, temp_files):
-    """PDF ustiga QR kodlar qo'shish"""
+    """PDF ustiga QR kodlar qo'shish.
+    
+    Joylashuvi (screenshot bo'yicha):
+    - Top-right: Hujjat QR kodi (download link)
+    - Left margin: Har bir imzolovchi uchun alohida QR kod (vertikal tarzda)
+    """
     import tempfile
     import os
     from PyPDF2 import PdfReader, PdfWriter
@@ -1376,7 +1381,7 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
         c = canvas.Canvas(overlay_buffer, pagesize=A4)
         width, height = A4
         
-        # --- Top Right: Hujjat QR (Download Link) ---
+        # === TOP RIGHT: Hujjat QR (Download Link) ===
         download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
         qr = qrcode.QRCode(version=1, box_size=5, border=1)
         qr.add_data(download_url)
@@ -1388,40 +1393,77 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
         temp_files.append(main_qr_path)
         img.save(main_qr_path, format='PNG')
         
-        # Draw Main QR at Top Right
+        # Top-right joylash
         qr_size = 60
-        c.drawImage(main_qr_path, width - qr_size - 20, height - qr_size - 20, width=qr_size, height=qr_size)
-        c.setFont("Helvetica", 8)
-        c.drawString(width - qr_size - 30, height - qr_size - 30, f"Buyruq: {order.number}")
+        c.drawImage(main_qr_path, width - qr_size - 20, height - qr_size - 20,
+                     width=qr_size, height=qr_size)
         
-        # --- Bottom: Imzolar QR ---
-        start_x = 40
-        start_y = 40
+        # === LEFT MARGIN: Imzolovchilar QR kodlari (vertikal tarzda) ===
+        signatures = order.signatures.filter(signed=True).order_by('order_number')
+        
+        # Chap tarafda QR kodlar joylashuvi
+        left_x = 12  # Chap chekkadan masofa
+        qr_sig_size = 45  # Har bir QR ning o'lchami
+        qr_gap = 8  # QR kodlar orasidagi masofa
+        
+        # Sahifaning o'rta qismidan boshlab pastga joylash
+        # Sahifa balandligi: height (~842pt), o'rtadan yuqoriroq boshlaymiz
+        start_y = height * 0.55  # Sahifaning ~55% balandligidan boshlanadi
         
         if order.director_approved and order.final_qr_code:
+            # Direktor tasdiqlagan — bitta umumiy QR
             try:
-                qr_size_sig = 55
-                c.drawImage(order.final_qr_code.path, start_x, start_y + 10, width=qr_size_sig, height=qr_size_sig)
-                c.setFont("Helvetica-Bold", 7)
-                c.drawString(start_x, start_y, "Tasdiqlandi (Barcha imzolar)")
+                current_y = start_y
+                c.drawImage(order.final_qr_code.path, left_x, current_y,
+                           width=qr_sig_size, height=qr_sig_size)
+                c.setFont("Helvetica", 5)
+                c.drawString(left_x, current_y - 7, "Tasdiqlandi")
+                
                 if order.director_approved_at:
-                    c.setFont("Helvetica", 6)
-                    c.drawString(start_x, start_y - 8, order.director_approved_at.strftime("%d.%m.%Y %H:%M"))
+                    c.drawString(left_x, current_y - 13, 
+                                order.director_approved_at.strftime("%d.%m.%Y"))
             except Exception as e:
                 print(f"Error drawing director final QR: {e}")
-        else:
-            signatures = order.signatures.filter(signed=True).order_by('order_number')
-            if signatures.exists():
-                qr_data_lines = [f"{order.title} ({order.number}) - Imzolaganlar:"]
-                for index, sig in enumerate(signatures, 1):
-                    time_str = sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'
-                    pos = sig.user.position or 'Xodim'
-                    qr_data_lines.append(f"{index}. {sig.user.get_full_name()} ({pos}) - {time_str}")
+        
+        # Har bir imzolovchi uchun alohida QR kod
+        if signatures.exists():
+            current_y = start_y
+            
+            # Agar director QR bor bo'lsa, pastroqdan boshlaymiz
+            if order.director_approved and order.final_qr_code:
+                current_y -= (qr_sig_size + qr_gap + 15)
+            
+            for sig in signatures:
+                # QR ma'lumotlari
+                user = sig.user
+                full_name = f"{user.last_name} {user.first_name}"
+                if hasattr(user, 'middle_name') and user.middle_name:
+                    full_name += f" {user.middle_name}"
                 
-                sig_qr_data = "\n".join(qr_data_lines)
+                qr_data = (
+                    f"IMZO TASDIQLANGAN\n"
+                    f"F.I.O: {full_name}\n"
+                    f"Lavozim: {user.position or '-'}\n"
+                    f"Buyruq: {order.number}\n"
+                    f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}\n"
+                    f"ID: {user.id}"
+                )
                 
-                sig_qr = qrcode.QRCode(version=1, box_size=5, border=1)
-                sig_qr.add_data(sig_qr_data)
+                # Agar imzolovchining o'z QR kodi bo'lsa, uni ishlatamiz
+                if sig.qr_code:
+                    try:
+                        qr_img_path = sig.qr_code.path
+                        if os.path.exists(qr_img_path):
+                            c.drawImage(qr_img_path, left_x, current_y,
+                                       width=qr_sig_size, height=qr_sig_size)
+                            current_y -= (qr_sig_size + qr_gap)
+                            continue
+                    except Exception:
+                        pass
+                
+                # QR kod generatsiya
+                sig_qr = qrcode.QRCode(version=None, box_size=4, border=1)
+                sig_qr.add_data(qr_data)
                 sig_qr.make(fit=True)
                 sig_img = sig_qr.make_image(fill='black', back_color='white')
                 
@@ -1430,15 +1472,17 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                 temp_files.append(sig_qr_path)
                 sig_img.save(sig_qr_path, format='PNG')
                 
-                qr_size_sig = 50
                 try:
-                    c.drawImage(sig_qr_path, start_x, start_y + 10, width=qr_size_sig, height=qr_size_sig)
-                    c.setFont("Helvetica-Bold", 7)
-                    c.drawString(start_x, start_y, "Barcha imzolar QR kodi")
-                    c.setFont("Helvetica", 6)
-                    c.drawString(start_x, start_y - 8, f"{signatures.count()} ta xodim imzolagan")
+                    c.drawImage(sig_qr_path, left_x, current_y,
+                               width=qr_sig_size, height=qr_sig_size)
                 except Exception as e:
-                    print(f"Error drawing consolidated sig QR: {e}")
+                    print(f"Error drawing sig QR for {full_name}: {e}")
+                
+                current_y -= (qr_sig_size + qr_gap)
+                
+                # Sahifadan chiqib ketmasin
+                if current_y < 30:
+                    break
         
         c.save()
         overlay_buffer.seek(0)
