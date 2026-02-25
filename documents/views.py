@@ -773,16 +773,20 @@ def _convert_docx_to_pdf(docx_path, temp_files):
         r'C:\Program Files (x86)\LibreOffice\program\soffice.exe',
         '/usr/bin/soffice',
         '/usr/lib/libreoffice/program/soffice',
+        '/usr/bin/libreoffice',
     ]
     
     soffice = None
     for path in soffice_paths:
         if os.path.exists(path):
             soffice = path
+            print(f"LibreOffice topildi: {path}")
             break
     
     if not soffice:
-        soffice = shutil.which('soffice')
+        soffice = shutil.which('soffice') or shutil.which('libreoffice')
+        if soffice:
+            print(f"LibreOffice PATH dan topildi: {soffice}")
     
     if soffice:
         try:
@@ -796,8 +800,12 @@ def _convert_docx_to_pdf(docx_path, temp_files):
             result = subprocess.run(
                 [soffice, '--headless', '--norestore', '--convert-to', 'pdf',
                  '--outdir', temp_dir, temp_docx],
-                capture_output=True, text=True, timeout=60, cwd=temp_dir,
+                capture_output=True, text=True, timeout=120, cwd=temp_dir,
             )
+            
+            print(f"LibreOffice stdout: {result.stdout}")
+            print(f"LibreOffice stderr: {result.stderr}")
+            print(f"LibreOffice return code: {result.returncode}")
             
             pdf_basename = os.path.splitext(docx_basename)[0] + '.pdf'
             output_pdf = os.path.join(temp_dir, pdf_basename)
@@ -807,30 +815,102 @@ def _convert_docx_to_pdf(docx_path, temp_files):
                 os.close(fd)
                 temp_files.append(final_pdf)
                 shutil.copy2(output_pdf, final_pdf)
+                print(f"LibreOffice PDF muvaffaqiyatli yaratildi: {os.path.getsize(final_pdf)} bytes")
                 return final_pdf
             
-            print(f"LibreOffice PDF yaratmadi, Python fallback ishlatiladi")
+            print(f"LibreOffice PDF yaratmadi. temp_dir tarkibi: {os.listdir(temp_dir)}")
+        except subprocess.TimeoutExpired:
+            print(f"LibreOffice timeout (120s), Python fallback ishlatiladi")
         except Exception as e:
             print(f"LibreOffice xatolik: {e}, Python fallback ishlatiladi")
+            import traceback
+            traceback.print_exc()
+    else:
+        print("LibreOffice topilmadi, Python fallback ishlatiladi")
     
     # 2-usul: python-docx + reportlab fallback
     return _convert_docx_to_pdf_python(docx_path, temp_files)
 
 
+def _emu_to_pt(emu):
+    """EMU (English Metric Units) ni point (pt) ga aylantirish. 1 pt = 12700 EMU"""
+    if emu is None:
+        return None
+    return emu / 12700.0
+
+
 def _convert_docx_to_pdf_python(docx_path, temp_files):
-    """DOCX ni PDF ga python-docx + reportlab orqali konvertatsiya qilish."""
+    """DOCX ni PDF ga python-docx + reportlab orqali konvertatsiya qilish.
+    
+    Word hujjatdagi shrift, o'lcham, rang, alignment, rasmlar, marginlar
+    va jadvallarni iloji boricha aniq ko'chiradi.
+    """
     import tempfile
     import os
     from docx import Document
-    from docx.shared import Pt
+    from docx.shared import Pt, Emu
+    from docx.oxml.ns import qn
     from reportlab.lib.pagesizes import A4
-    from reportlab.lib.units import mm
+    from reportlab.lib.units import mm, inch
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+        Image as RLImage, KeepTogether, PageBreak
+    )
     from reportlab.lib import colors
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
+    
+    # --- Shriftlarni ro'yxatdan o'tkazish ---
+    _font_base = 'Helvetica'
+    _font_bold = 'Helvetica-Bold'
+    _font_italic = 'Helvetica-Oblique'
+    _font_bold_italic = 'Helvetica-BoldOblique'
+    
+    # Arial shriftini topish va ro'yxatdan o'tkazish
+    arial_paths = [
+        'C:/Windows/Fonts/arial.ttf',
+        'C:/Windows/Fonts/arialbd.ttf',
+        'C:/Windows/Fonts/ariali.ttf',
+        'C:/Windows/Fonts/arialbi.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf',
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+    ]
+    
+    try:
+        # Windows: Arial
+        if os.path.exists('C:/Windows/Fonts/arial.ttf'):
+            pdfmetrics.registerFont(TTFont('DocFont', 'C:/Windows/Fonts/arial.ttf'))
+            pdfmetrics.registerFont(TTFont('DocFont-Bold', 'C:/Windows/Fonts/arialbd.ttf'))
+            pdfmetrics.registerFont(TTFont('DocFont-Italic', 'C:/Windows/Fonts/ariali.ttf'))
+            pdfmetrics.registerFont(TTFont('DocFont-BoldItalic', 'C:/Windows/Fonts/arialbi.ttf'))
+            _font_base = 'DocFont'
+            _font_bold = 'DocFont-Bold'
+            _font_italic = 'DocFont-Italic'
+            _font_bold_italic = 'DocFont-BoldItalic'
+        # Linux: Liberation Sans (metrically compatible with Arial)
+        elif os.path.exists('/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'):
+            pdfmetrics.registerFont(TTFont('DocFont', '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'))
+            pdfmetrics.registerFont(TTFont('DocFont-Bold', '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf'))
+            pdfmetrics.registerFont(TTFont('DocFont-Italic', '/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf'))
+            pdfmetrics.registerFont(TTFont('DocFont-BoldItalic', '/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf'))
+            _font_base = 'DocFont'
+            _font_bold = 'DocFont-Bold'
+            _font_italic = 'DocFont-Italic'
+            _font_bold_italic = 'DocFont-BoldItalic'
+        # Linux: DejaVu Sans
+        elif os.path.exists('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'):
+            pdfmetrics.registerFont(TTFont('DocFont', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
+            pdfmetrics.registerFont(TTFont('DocFont-Bold', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
+            _font_base = 'DocFont'
+            _font_bold = 'DocFont-Bold'
+    except Exception as e:
+        print(f"Shrift ro'yxatdan o'tkazishda xatolik: {e}")
     
     # PDF fayl yaratish
     fd, pdf_path = tempfile.mkstemp(suffix='.pdf')
@@ -839,125 +919,444 @@ def _convert_docx_to_pdf_python(docx_path, temp_files):
     
     doc = Document(docx_path)
     
-    # PDF hujjat sozlamalari
+    # --- Word hujjatdan marginlarni olish ---
+    left_margin = 25 * mm
+    right_margin = 25 * mm
+    top_margin = 20 * mm
+    bottom_margin = 20 * mm
+    
+    try:
+        section = doc.sections[0]
+        if section.left_margin is not None:
+            left_margin = _emu_to_pt(section.left_margin) * (mm / 2.835)  # pt -> mm -> reportlab
+            left_margin = _emu_to_pt(section.left_margin)  # EMU -> pt, reportlab pt bilan ishlaydi
+        if section.right_margin is not None:
+            right_margin = _emu_to_pt(section.right_margin)
+        if section.top_margin is not None:
+            top_margin = _emu_to_pt(section.top_margin)
+        if section.bottom_margin is not None:
+            bottom_margin = _emu_to_pt(section.bottom_margin)
+    except Exception as e:
+        print(f"Margin o'qishda xatolik: {e}")
+    
+    # PDF hujjat sozlamalari — Word marginlari bilan
     pdf_doc = SimpleDocTemplate(
         pdf_path, pagesize=A4,
-        leftMargin=25*mm, rightMargin=25*mm,
-        topMargin=20*mm, bottomMargin=20*mm
+        leftMargin=left_margin,
+        rightMargin=right_margin,
+        topMargin=top_margin,
+        bottomMargin=bottom_margin
     )
+    
+    available_width = A4[0] - left_margin - right_margin
     
     styles = getSampleStyleSheet()
     
-    # Kengaytirilgan stillar
-    styles.add(ParagraphStyle(
-        name='DocNormal', fontName='Helvetica', fontSize=11,
-        leading=14, spaceAfter=6, alignment=TA_LEFT
-    ))
-    styles.add(ParagraphStyle(
-        name='DocCenter', fontName='Helvetica', fontSize=11,
-        leading=14, spaceAfter=6, alignment=TA_CENTER
-    ))
-    styles.add(ParagraphStyle(
-        name='DocHeading', fontName='Helvetica-Bold', fontSize=14,
-        leading=18, spaceAfter=10, spaceBefore=12, alignment=TA_CENTER
-    ))
-    styles.add(ParagraphStyle(
-        name='DocBold', fontName='Helvetica-Bold', fontSize=11,
-        leading=14, spaceAfter=6, alignment=TA_LEFT
-    ))
+    # --- Rasmlarni DOCX dan ajratib olish ---
+    def _extract_images_from_paragraph(para, para_index):
+        """Paragrafdan inline rasmlarni ajratib olish"""
+        images = []
+        try:
+            # Inline shapes (rasmlar)
+            for run in para.runs:
+                run_xml = run._element
+                drawing_elements = run_xml.findall(qn('w:drawing'))
+                for drawing in drawing_elements:
+                    # Inline rasm
+                    inline = drawing.find(qn('wp:inline'))
+                    if inline is None:
+                        inline = drawing.find(qn('wp:anchor'))
+                    if inline is None:
+                        continue
+                    
+                    # Rasm o'lchamlari (EMU)
+                    extent = inline.find(qn('wp:extent'))
+                    img_width = None
+                    img_height = None
+                    if extent is not None:
+                        cx = extent.get('cx')
+                        cy = extent.get('cy')
+                        if cx:
+                            img_width = int(cx) / 914400.0 * inch  # EMU -> inch -> pt
+                        if cy:
+                            img_height = int(cy) / 914400.0 * inch
+                    
+                    # Rasm ma'lumotlarini olish
+                    blip = inline.find('.//' + qn('a:blip'))
+                    if blip is not None:
+                        rId = blip.get(qn('r:embed'))
+                        if rId:
+                            try:
+                                image_part = para.part.related_parts[rId]
+                                image_data = image_part.blob
+                                
+                                # Vaqtinchalik fayl
+                                img_ext = os.path.splitext(image_part.partname)[1] or '.png'
+                                fd_img, img_path = tempfile.mkstemp(suffix=img_ext)
+                                os.close(fd_img)
+                                temp_files.append(img_path)
+                                
+                                with open(img_path, 'wb') as f:
+                                    f.write(image_data)
+                                
+                                images.append({
+                                    'path': img_path,
+                                    'width': img_width,
+                                    'height': img_height,
+                                })
+                            except Exception as e:
+                                print(f"Rasm ajratishda xatolik: {e}")
+        except Exception as e:
+            print(f"Paragrafdan rasm olishda xatolik: {e}")
+        return images
     
-    story = []
-    
-    # Paragraflarni qayta ishlash
-    for para in doc.paragraphs:
-        text = para.text.strip()
-        if not text:
-            story.append(Spacer(1, 6))
-            continue
-        
-        # Stilni aniqlash
-        style_name = (para.style.name or '').lower()
-        
-        if 'heading' in style_name or 'title' in style_name:
-            style = styles['DocHeading']
-        elif para.alignment is not None:
+    def _get_paragraph_alignment(para):
+        """Paragrafning alignment-ini aniqlash"""
+        try:
             from docx.enum.text import WD_ALIGN_PARAGRAPH
             if para.alignment == WD_ALIGN_PARAGRAPH.CENTER:
-                style = styles['DocCenter']
-            else:
-                style = styles['DocNormal']
-        else:
-            style = styles['DocNormal']
-        
-        # Bold matnni tekshirish
-        is_bold = all(run.bold for run in para.runs if run.text.strip()) if para.runs else False
-        if is_bold and 'heading' not in style_name:
-            style = styles['DocBold']
-        
-        # Rich text formatlash
+                return TA_CENTER
+            elif para.alignment == WD_ALIGN_PARAGRAPH.RIGHT:
+                return TA_RIGHT
+            elif para.alignment == WD_ALIGN_PARAGRAPH.JUSTIFY:
+                return TA_JUSTIFY
+        except Exception:
+            pass
+        return TA_LEFT
+    
+    def _get_font_size_from_para(para):
+        """Paragrafdan shrift o'lchamini aniqlash"""
+        for run in para.runs:
+            if run.font.size is not None:
+                return _emu_to_pt(run.font.size)
+        # Default
+        return 12
+    
+    def _get_run_font_color(run):
+        """Run-ning rangini olish"""
+        try:
+            if run.font.color and run.font.color.rgb:
+                rgb = run.font.color.rgb
+                return f'#{rgb}'
+        except Exception:
+            pass
+        return None
+    
+    def _build_rich_text(para):
+        """Paragrafdan rich text (HTML teg bilan) yaratish"""
         formatted_parts = []
         for run in para.runs:
             run_text = run.text
             if not run_text:
                 continue
-            # XML maxsus belgilarni escape qilish
+            
+            # XML escape
             run_text = run_text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            
+            # Shrift o'lchami
+            font_size = None
+            if run.font.size is not None:
+                font_size = int(_emu_to_pt(run.font.size))
+            
+            # Rang
+            color = _get_run_font_color(run)
+            
+            # Font nomi
+            font_name = None
+            if run.bold and run.italic:
+                font_name = _font_bold_italic
+            elif run.bold:
+                font_name = _font_bold
+            elif run.italic:
+                font_name = _font_italic
+            else:
+                font_name = _font_base
+            
+            # ReportLab font tag
+            parts = []
+            if font_size or color or font_name:
+                tag_attrs = []
+                if font_name:
+                    tag_attrs.append(f'face="{font_name}"')
+                if font_size:
+                    tag_attrs.append(f'size="{font_size}"')
+                if color:
+                    tag_attrs.append(f'color="{color}"')
+                tag_str = ' '.join(tag_attrs)
+                run_text = f'<font {tag_str}>{run_text}</font>'
+            
             if run.bold:
                 run_text = f'<b>{run_text}</b>'
             if run.italic:
                 run_text = f'<i>{run_text}</i>'
             if run.underline:
                 run_text = f'<u>{run_text}</u>'
+            
             formatted_parts.append(run_text)
         
-        if formatted_parts:
-            formatted_text = ''.join(formatted_parts)
-        else:
-            formatted_text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-        
-        try:
-            story.append(Paragraph(formatted_text, style))
-        except Exception:
-            # Agar Paragraph xatolik bersa, oddiy matn sifatida qo'shish
-            safe_text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            story.append(Paragraph(safe_text, styles['DocNormal']))
+        return ''.join(formatted_parts) if formatted_parts else None
     
-    # Jadvallarni qayta ishlash
-    for table in doc.tables:
-        table_data = []
-        for row in table.rows:
-            row_data = []
-            for cell in row.cells:
-                cell_text = cell.text.strip()
-                cell_text = cell_text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                row_data.append(Paragraph(cell_text, styles['DocNormal']))
-            table_data.append(row_data)
+    story = []
+    
+    # --- Hujjat elementlarini ketma-ketlikda qayta ishlash ---
+    # Word da paragraflar va jadvallar aralash keladi,
+    # ularni to'g'ri tartibda qayta ishlash kerak
+    
+    body = doc.element.body
+    
+    for child in body:
+        tag = child.tag.split('}')[-1] if '}' in child.tag else child.tag
         
-        if table_data:
-            col_count = max(len(row) for row in table_data)
-            available_width = A4[0] - 50*mm
-            col_widths = [available_width / col_count] * col_count
+        # === PARAGRAF ===
+        if tag == 'p':
+            from docx.text.paragraph import Paragraph as DocxParagraph
+            para = DocxParagraph(child, doc)
             
-            pdf_table = Table(table_data, colWidths=col_widths)
-            pdf_table.setStyle(TableStyle([
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-                ('BACKGROUND', (0, 0), (-1, 0), colors.Color(0.9, 0.9, 0.95)),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, 0), (-1, -1), 10),
-                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                ('TOPPADDING', (0, 0), (-1, -1), 4),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-                ('LEFTPADDING', (0, 0), (-1, -1), 6),
-                ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-            ]))
-            story.append(Spacer(1, 10))
-            story.append(pdf_table)
-            story.append(Spacer(1, 10))
+            text = para.text.strip()
+            
+            # Sahifa uzilishi (page break) tekshirish
+            has_page_break = False
+            for run in para.runs:
+                run_xml = run._element
+                br_elements = run_xml.findall(qn('w:br'))
+                for br in br_elements:
+                    if br.get(qn('w:type')) == 'page':
+                        has_page_break = True
+                        break
+            
+            if has_page_break:
+                story.append(PageBreak())
+            
+            # Rasmlarni tekshirish
+            images = _extract_images_from_paragraph(para, 0)
+            
+            if not text and not images:
+                # Bo'sh paragrafdan spacing
+                space_after = 6
+                try:
+                    pf = para.paragraph_format
+                    if pf.space_after is not None:
+                        space_after = _emu_to_pt(pf.space_after)
+                except Exception:
+                    pass
+                story.append(Spacer(1, max(space_after, 2)))
+                continue
+            
+            # Paragraf formatting
+            alignment = _get_paragraph_alignment(para)
+            font_size = _get_font_size_from_para(para)
+            leading = font_size * 1.35  # line spacing
+            
+            # Paragraph spacing
+            space_before = 0
+            space_after = 3
+            left_indent = 0
+            first_line_indent = 0
+            
+            try:
+                pf = para.paragraph_format
+                if pf.space_before is not None:
+                    space_before = _emu_to_pt(pf.space_before)
+                if pf.space_after is not None:
+                    space_after = _emu_to_pt(pf.space_after)
+                if pf.left_indent is not None:
+                    left_indent = _emu_to_pt(pf.left_indent)
+                if pf.first_line_indent is not None:
+                    first_line_indent = _emu_to_pt(pf.first_line_indent)
+                # Line spacing
+                if pf.line_spacing is not None:
+                    try:
+                        if pf.line_spacing_rule is not None:
+                            from docx.enum.text import WD_LINE_SPACING
+                            if pf.line_spacing_rule == WD_LINE_SPACING.EXACTLY:
+                                leading = _emu_to_pt(pf.line_spacing)
+                            elif pf.line_spacing_rule == WD_LINE_SPACING.AT_LEAST:
+                                leading = max(leading, _emu_to_pt(pf.line_spacing))
+                            else:
+                                # Multiple (proportional)
+                                if isinstance(pf.line_spacing, float):
+                                    leading = font_size * pf.line_spacing
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+            
+            # Stil aniqlash
+            style_name = (para.style.name or '').lower()
+            is_heading = 'heading' in style_name or 'title' in style_name
+            
+            if is_heading:
+                font_name = _font_bold
+                if font_size <= 12:
+                    font_size = max(font_size, 14)
+            else:
+                is_bold = all(run.bold for run in para.runs if run.text.strip()) if para.runs else False
+                font_name = _font_bold if is_bold else _font_base
+            
+            # Dynamic ParagraphStyle
+            style_key = f'dyn_{id(para)}'
+            try:
+                dyn_style = ParagraphStyle(
+                    name=style_key,
+                    fontName=font_name,
+                    fontSize=font_size,
+                    leading=leading,
+                    spaceBefore=space_before,
+                    spaceAfter=space_after,
+                    alignment=alignment,
+                    leftIndent=max(left_indent, 0),
+                    firstLineIndent=first_line_indent,
+                )
+            except Exception:
+                dyn_style = ParagraphStyle(
+                    name=style_key,
+                    fontName=_font_base,
+                    fontSize=12,
+                    leading=16,
+                    spaceAfter=6,
+                    alignment=TA_LEFT,
+                )
+            
+            # Rich matn
+            rich_text = _build_rich_text(para)
+            if not rich_text:
+                if text:
+                    rich_text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                else:
+                    rich_text = ''
+            
+            if rich_text:
+                try:
+                    story.append(Paragraph(rich_text, dyn_style))
+                except Exception:
+                    safe_text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                    story.append(Paragraph(safe_text, dyn_style))
+            
+            # Rasmlarni qo'shish
+            for img_info in images:
+                try:
+                    img_w = img_info.get('width')
+                    img_h = img_info.get('height')
+                    
+                    # O'lchamni cheklash (sahifa kengligidan oshmasligi kerak)
+                    if img_w and img_w > available_width:
+                        ratio = available_width / img_w
+                        img_w = available_width
+                        if img_h:
+                            img_h = img_h * ratio
+                    
+                    rl_img = RLImage(img_info['path'])
+                    if img_w:
+                        rl_img.drawWidth = img_w
+                    if img_h:
+                        rl_img.drawHeight = img_h
+                    
+                    # Rasmni sahifa kengligiga sig'dirish
+                    if rl_img.drawWidth > available_width:
+                        ratio = available_width / rl_img.drawWidth
+                        rl_img.drawWidth = available_width
+                        rl_img.drawHeight = rl_img.drawHeight * ratio
+                    
+                    story.append(rl_img)
+                except Exception as e:
+                    print(f"Rasm PDF ga qo'shishda xatolik: {e}")
+        
+        # === JADVAL ===
+        elif tag == 'tbl':
+            from docx.table import Table as DocxTable
+            try:
+                tbl = DocxTable(child, doc)
+                table_data = []
+                
+                for row_idx, row in enumerate(tbl.rows):
+                    row_data = []
+                    for cell in row.cells:
+                        # Hujayra ichidagi matnni formatlash
+                        cell_parts = []
+                        for cp in cell.paragraphs:
+                            cp_text = cp.text.strip()
+                            if not cp_text:
+                                continue
+                            
+                            # Hujayra ichidagi run formatlarni saqlash
+                            cell_rich = _build_rich_text(cp)
+                            if cell_rich:
+                                cell_parts.append(cell_rich)
+                            else:
+                                safe = cp_text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                                cell_parts.append(safe)
+                        
+                        cell_html = '<br/>'.join(cell_parts) if cell_parts else ''
+                        
+                        cell_style = ParagraphStyle(
+                            name=f'cell_{id(cell)}',
+                            fontName=_font_base,
+                            fontSize=10,
+                            leading=13,
+                            alignment=TA_LEFT,
+                        )
+                        
+                        try:
+                            row_data.append(Paragraph(cell_html, cell_style))
+                        except Exception:
+                            row_data.append(Paragraph(cell.text.strip()[:100], cell_style))
+                    
+                    table_data.append(row_data)
+                
+                if table_data:
+                    col_count = max(len(row) for row in table_data)
+                    # Qatorlarni bir xil uzunlikka keltirish
+                    for row in table_data:
+                        while len(row) < col_count:
+                            row.append(Paragraph('', ParagraphStyle(name=f'empty_{id(row)}', fontName=_font_base, fontSize=10)))
+                    
+                    col_widths = [available_width / col_count] * col_count
+                    
+                    pdf_table = Table(table_data, colWidths=col_widths)
+                    pdf_table.setStyle(TableStyle([
+                        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.Color(0.92, 0.92, 0.96)),
+                        ('FONTNAME', (0, 0), (-1, 0), _font_bold),
+                        ('FONTSIZE', (0, 0), (-1, -1), 10),
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                        ('TOPPADDING', (0, 0), (-1, -1), 4),
+                        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+                        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+                        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+                    ]))
+                    story.append(Spacer(1, 6))
+                    story.append(pdf_table)
+                    story.append(Spacer(1, 6))
+            except Exception as e:
+                print(f"Jadval qayta ishlashda xatolik: {e}")
     
     if not story:
-        story.append(Paragraph("(Bo'sh hujjat)", styles['DocCenter']))
+        story.append(Paragraph("(Bo'sh hujjat)", ParagraphStyle(
+            name='empty_doc', fontName=_font_base, fontSize=12, alignment=TA_CENTER)))
     
-    pdf_doc.build(story)
+    try:
+        pdf_doc.build(story)
+    except Exception as e:
+        print(f"PDF build xatolik: {e}")
+        import traceback
+        traceback.print_exc()
+        # Oddiy fallback — faqat matn
+        story_simple = []
+        for para in doc.paragraphs:
+            text = para.text.strip()
+            if text:
+                safe = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                story_simple.append(Paragraph(safe, ParagraphStyle(
+                    name=f'simple_{id(para)}', fontName=_font_base, fontSize=12, leading=16)))
+            else:
+                story_simple.append(Spacer(1, 6))
+        if not story_simple:
+            story_simple.append(Paragraph("(Bo'sh hujjat)", ParagraphStyle(
+                name='simple_empty', fontName=_font_base, fontSize=12, alignment=TA_CENTER)))
+        pdf_doc2 = SimpleDocTemplate(pdf_path, pagesize=A4,
+            leftMargin=25*mm, rightMargin=25*mm, topMargin=20*mm, bottomMargin=20*mm)
+        pdf_doc2.build(story_simple)
+    
     return pdf_path
 
 
