@@ -28,5 +28,5 @@ RUN python manage.py collectstatic --noinput
 # Port
 EXPOSE 8000
 
-# Gunicorn bilan ishga tushirish
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "120"]
+# Migrate + Gunicorn ishga tushirish
+CMD python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120
