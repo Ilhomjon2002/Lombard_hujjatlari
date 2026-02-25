@@ -757,19 +757,32 @@ def download_docx(request, order_id):
 
 
 def _convert_docx_to_pdf(docx_path, temp_files):
-    """DOCX faylni PDF ga konvertatsiya qilish — faqat LibreOffice orqali."""
+    """DOCX faylni PDF ga konvertatsiya qilish — LibreOffice orqali (asosiy).
+    
+    Agar LibreOffice topilmasa, python-docx + reportlab fallback ishlatiladi.
+    """
     import tempfile
     import os
     import subprocess
     import shutil
+    import glob
     
-    # LibreOffice yo'llarini tekshirish
+    # LibreOffice yo'llarini tekshirish (barcha muhitlar uchun)
     soffice_paths = [
+        # Windows
         r'C:\Program Files\LibreOffice\program\soffice.exe',
         r'C:\Program Files (x86)\LibreOffice\program\soffice.exe',
+        # Linux standart
         '/usr/bin/soffice',
-        '/usr/lib/libreoffice/program/soffice',
         '/usr/bin/libreoffice',
+        '/usr/lib/libreoffice/program/soffice',
+        # Render Aptfile orqali o'rnatilgan yo'llar
+        '/app/.apt/usr/bin/soffice',
+        '/app/.apt/usr/bin/libreoffice',
+        '/app/.apt/usr/lib/libreoffice/program/soffice',
+        # Snap / flatpak
+        '/snap/bin/libreoffice',
+        '/snap/bin/soffice',
     ]
     
     soffice = None
@@ -779,46 +792,82 @@ def _convert_docx_to_pdf(docx_path, temp_files):
             print(f"LibreOffice topildi: {path}")
             break
     
+    # PATH dan qidirish
     if not soffice:
         soffice = shutil.which('soffice') or shutil.which('libreoffice')
         if soffice:
             print(f"LibreOffice PATH dan topildi: {soffice}")
     
+    # Glob orqali qidirish (oxirgi urinish)
     if not soffice:
-        raise RuntimeError("LibreOffice topilmadi! PDF konvertatsiya uchun LibreOffice o'rnatilishi kerak.")
+        search_patterns = [
+            '/app/.apt/**/soffice',
+            '/app/.apt/**/libreoffice',
+            '/opt/**/soffice',
+            '/usr/**/soffice',
+        ]
+        for pattern in search_patterns:
+            found = glob.glob(pattern, recursive=True)
+            for f in found:
+                if os.path.isfile(f) and os.access(f, os.X_OK):
+                    soffice = f
+                    print(f"LibreOffice glob orqali topildi: {soffice}")
+                    break
+            if soffice:
+                break
     
-    temp_dir = tempfile.mkdtemp()
-    temp_files.append(temp_dir)
+    # LibreOffice topildi — konvertatsiya qilish
+    if soffice:
+        try:
+            temp_dir = tempfile.mkdtemp()
+            temp_files.append(temp_dir)
+            
+            docx_basename = os.path.basename(docx_path)
+            temp_docx = os.path.join(temp_dir, docx_basename)
+            shutil.copy2(docx_path, temp_docx)
+            
+            # Render environment uchun LD_LIBRARY_PATH sozlash
+            env = os.environ.copy()
+            if os.path.exists('/app/.apt'):
+                apt_lib = '/app/.apt/usr/lib:/app/.apt/usr/lib/x86_64-linux-gnu:/app/.apt/usr/lib/libreoffice/program'
+                env['LD_LIBRARY_PATH'] = apt_lib + ':' + env.get('LD_LIBRARY_PATH', '')
+                env['URE_BOOTSTRAP'] = 'file:///app/.apt/usr/lib/libreoffice/program/fundamentalrc'
+            
+            result = subprocess.run(
+                [soffice, '--headless', '--norestore', '--convert-to', 'pdf',
+                 '--outdir', temp_dir, temp_docx],
+                capture_output=True, text=True, timeout=120, cwd=temp_dir,
+                env=env,
+            )
+            
+            print(f"LibreOffice stdout: {result.stdout}")
+            print(f"LibreOffice stderr: {result.stderr}")
+            print(f"LibreOffice return code: {result.returncode}")
+            
+            pdf_basename = os.path.splitext(docx_basename)[0] + '.pdf'
+            output_pdf = os.path.join(temp_dir, pdf_basename)
+            
+            if os.path.exists(output_pdf) and os.path.getsize(output_pdf) > 0:
+                fd, final_pdf = tempfile.mkstemp(suffix='.pdf')
+                os.close(fd)
+                temp_files.append(final_pdf)
+                shutil.copy2(output_pdf, final_pdf)
+                print(f"LibreOffice PDF muvaffaqiyatli yaratildi: {os.path.getsize(final_pdf)} bytes")
+                return final_pdf
+            
+            print(f"LibreOffice PDF yaratmadi. temp_dir: {os.listdir(temp_dir)}")
+        except subprocess.TimeoutExpired:
+            print("LibreOffice timeout (120s)")
+        except Exception as e:
+            print(f"LibreOffice xatolik: {e}")
+            import traceback
+            traceback.print_exc()
+    else:
+        print("LibreOffice topilmadi!")
     
-    docx_basename = os.path.basename(docx_path)
-    temp_docx = os.path.join(temp_dir, docx_basename)
-    shutil.copy2(docx_path, temp_docx)
-    
-    result = subprocess.run(
-        [soffice, '--headless', '--norestore', '--convert-to', 'pdf',
-         '--outdir', temp_dir, temp_docx],
-        capture_output=True, text=True, timeout=120, cwd=temp_dir,
-    )
-    
-    print(f"LibreOffice stdout: {result.stdout}")
-    print(f"LibreOffice stderr: {result.stderr}")
-    print(f"LibreOffice return code: {result.returncode}")
-    
-    pdf_basename = os.path.splitext(docx_basename)[0] + '.pdf'
-    output_pdf = os.path.join(temp_dir, pdf_basename)
-    
-    if os.path.exists(output_pdf) and os.path.getsize(output_pdf) > 0:
-        fd, final_pdf = tempfile.mkstemp(suffix='.pdf')
-        os.close(fd)
-        temp_files.append(final_pdf)
-        shutil.copy2(output_pdf, final_pdf)
-        print(f"LibreOffice PDF muvaffaqiyatli yaratildi: {os.path.getsize(final_pdf)} bytes")
-        return final_pdf
-    
-    raise RuntimeError(
-        f"LibreOffice PDF yaratmadi. Return code: {result.returncode}, "
-        f"stderr: {result.stderr}, temp_dir: {os.listdir(temp_dir)}"
-    )
+    # Fallback: python-docx + reportlab
+    print("Python fallback ishlatilmoqda...")
+    return _convert_docx_to_pdf_python(docx_path, temp_files)
 
 
 def _emu_to_pt(emu):
