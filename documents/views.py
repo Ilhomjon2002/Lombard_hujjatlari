@@ -669,15 +669,15 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     try:
         signatures = order.signatures.filter(signed=True).order_by('order_number')
         
-        # Imzolar tekshirish sahifasi URL
-        verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
-        
-        if signatures.exists() or (order.director_approved and order.final_qr_code):
-            # Bo'sh joy
+        # Faqat direktor tasdiqlangandan keyin bitta imzo QR qo'yiladi
+        if order.director_approved:
+            # Imzolar tekshirish sahifasi URL
+            verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
+            
             doc.add_paragraph()
             
-            # Bitta umumiy imzo QR — tekshirish sahifasiga yo'naltiradi
-            sig_qr = qrcode.QRCode(version=None, box_size=5, border=1)
+            # Bitta umumiy imzo QR
+            sig_qr = qrcode.QRCode(version=None, box_size=6, border=1)
             sig_qr.add_data(verify_url)
             sig_qr.make(fit=True)
             sig_img = sig_qr.make_image(fill='black', back_color='white')
@@ -687,54 +687,20 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             temp_files.append(qr_img_path)
             sig_img.save(qr_img_path, format='PNG')
             
-            # Har bir imzolovchi uchun QR + ma'lumot
-            for sig in signatures:
-                user = sig.user
-                full_name = f"{user.last_name} {user.first_name}"
-                if hasattr(user, 'middle_name') and user.middle_name:
-                    full_name += f" {user.middle_name}"
-                
-                # QR va ism yonma-yon paragrafda
-                p = doc.add_paragraph()
-                p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                run = p.add_run()
-                run.add_picture(qr_img_path, width=Inches(0.7))
-                
-                # Ism va lavozim yonida
-                run2 = p.add_run(f"  {full_name}")
-                run2.font.size = Pt(9)
-                run2.bold = True
-                
-                if user.position:
-                    run3 = p.add_run(f"\n  {user.position}")
-                    run3.font.size = Pt(8)
-                    run3.font.color.rgb = RGBColor(96, 94, 92)
-                
-                if sig.signed_at:
-                    run4 = p.add_run(f"\n  {sig.signed_at.strftime('%d.%m.%Y %H:%M')}")
-                    run4.font.size = Pt(8)
-                    run4.font.color.rgb = RGBColor(96, 94, 92)
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            run = p.add_run()
+            run.add_picture(qr_img_path, width=Inches(0.9))
             
-            # Direktor tasdiqlagan bo'lsa, oxiriga umumiy QR
-            if order.director_approved and order.final_qr_code:
-                try:
-                    doc.add_paragraph()
-                    p = doc.add_paragraph()
-                    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                    run = p.add_run()
-                    run.add_picture(order.final_qr_code.path, width=Inches(0.8))
-                    
-                    run2 = p.add_run("  Direktor tasdiqlagan")
-                    run2.bold = True
-                    run2.font.size = Pt(9)
-                    run2.font.color.rgb = RGBColor(16, 124, 65)
-                    
-                    if order.director_approved_at:
-                        run3 = p.add_run(f"\n  {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
-                        run3.font.size = Pt(8)
-                        run3.font.color.rgb = RGBColor(96, 94, 92)
-                except Exception as e:
-                    print(f"Director QR error: {e}")
+            run2 = p.add_run("  Imzolangan va tasdiqlangan")
+            run2.bold = True
+            run2.font.size = Pt(9)
+            run2.font.color.rgb = RGBColor(16, 124, 65)
+            
+            if order.director_approved_at:
+                run3 = p.add_run(f"\n  {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
+                run3.font.size = Pt(8)
+                run3.font.color.rgb = RGBColor(96, 94, 92)
     except Exception as e:
         print(f"Signature QR embedding error: {e}")
     
