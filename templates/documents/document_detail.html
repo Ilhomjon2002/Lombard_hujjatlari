@@ -39,6 +39,18 @@
             <a href="{% url 'download_docx' document.id %}" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-file-earmark-word me-1"></i>DOCX yuklab olish
             </a>
+
+            {% if document.director_approved %}
+            <!-- Pechatli PDF yuklash/yuklab olish -->
+            {% if document.stamped_file %}
+            <a href="{% url 'download_stamped_pdf' document.id %}" class="btn btn-success btn-sm">
+                <i class="bi bi-file-earmark-check me-1"></i>Pechatli PDF
+            </a>
+            {% endif %}
+            <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadStampedModal">
+                <i class="bi bi-upload me-1"></i>Pechatli PDF yuklash
+            </button>
+            {% endif %}
         </div>
     </div>
 
@@ -216,4 +228,37 @@ function startPdfDownload(event, btn) {
         });
 }
 </script>
+
+<!-- Pechatli PDF yuklash modali -->
+{% if document.director_approved %}
+<div class="modal fade" id="uploadStampedModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-upload me-2"></i>Pechatli PDF yuklash</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'upload_stamped_pdf' document.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p class="text-muted mb-3">
+                        Pechat qo'yilgan PDF faylni yuklang. Faylga avtomatik ravishda yuklab olish QR kodi qo'shiladi.
+                    </p>
+                    <div class="mb-3">
+                        <label for="stamped_pdf" class="form-label fw-bold">PDF fayl</label>
+                        <input type="file" class="form-control" name="stamped_pdf" id="stamped_pdf" accept=".pdf" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-upload me-1"></i>Yuklash
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

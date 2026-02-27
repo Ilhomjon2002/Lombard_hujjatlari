@@ -15,6 +15,8 @@ urlpatterns = [
     path('download-pdf/<int:order_id>/', views.download_pdf,         name='download_pdf'),
     path('download-docx/<int:order_id>/', views.download_docx,       name='download_docx'),
     path('verify/<int:order_id>/',       views.verify_document,      name='verify_document'),
+    path('upload-stamped/<int:order_id>/', views.upload_stamped_pdf, name='upload_stamped_pdf'),
+    path('download-stamped/<int:order_id>/', views.download_stamped_pdf, name='download_stamped_pdf'),
 
     # AJAX/API endpointlar
     path('api/document-types/',         views.get_document_types,   name='api_document_types'),

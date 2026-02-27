@@ -113,6 +113,7 @@ class Order(models.Model):
     director_approved = models.BooleanField(default=False, verbose_name="Direktor tasdiqladi")
     director_approved_at = models.DateTimeField(null=True, blank=True, verbose_name="Direktor tasdiqlagan vaqt")
     final_qr_code = models.ImageField(upload_to='orders/final_qr/%Y/%m/', null=True, blank=True, verbose_name="Umumiy QR kod")
+    stamped_file = models.FileField(upload_to='orders/stamped/%Y/%m/', null=True, blank=True, verbose_name="Pechatli PDF")
 
     class Meta:
         verbose_name = "Buyruq"

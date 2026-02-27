@@ -462,6 +462,139 @@ def sign_with_fingerprint(request, signature_id):
     return JsonResponse(response_data)
 
 
+@login_required
+def upload_stamped_pdf(request, order_id):
+    """Pechat qo'yilgan PDF yuklash — yuklab olish QR kodi qo'shiladi."""
+    import tempfile
+    import os
+    
+    order = get_object_or_404(Order, id=order_id)
+    
+    if not order.director_approved:
+        messages.error(request, "Faqat direktor tasdiqlagan hujjatlarga pechatli PDF yuklash mumkin.")
+        return redirect('order_detail', order_id=order.id)
+    
+    if request.method != 'POST':
+        return redirect('order_detail', order_id=order.id)
+    
+    uploaded_file = request.FILES.get('stamped_pdf')
+    if not uploaded_file:
+        messages.error(request, "PDF fayl tanlanmadi.")
+        return redirect('order_detail', order_id=order.id)
+    
+    if not uploaded_file.name.lower().endswith('.pdf'):
+        messages.error(request, "Faqat PDF format qabul qilinadi.")
+        return redirect('order_detail', order_id=order.id)
+    
+    temp_files = []
+    try:
+        # Yuklangan PDFni vaqtinchalik saqlash
+        fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
+        os.close(fd)
+        temp_files.append(temp_pdf)
+        
+        with open(temp_pdf, 'wb') as f:
+            for chunk in uploaded_file.chunks():
+                f.write(chunk)
+        
+        # Download QR kodi yaratish
+        download_url = request.build_absolute_uri(f"/documents/download-stamped/{order.id}/")
+        
+        qr = qrcode.QRCode(version=1, box_size=5, border=1)
+        qr.add_data(download_url)
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill='black', back_color='white')
+        
+        fd, qr_path = tempfile.mkstemp(suffix='.png')
+        os.close(fd)
+        temp_files.append(qr_path)
+        qr_img.save(qr_path, format='PNG')
+        
+        # QR kodni PDFga qo'shish (yuqori o'ng burchak)
+        from reportlab.lib.pagesizes import A4
+        from reportlab.pdfgen import canvas as rl_canvas
+        from PyPDF2 import PdfReader, PdfWriter
+        
+        # QR overlay yaratish
+        fd, overlay_pdf = tempfile.mkstemp(suffix='.pdf')
+        os.close(fd)
+        temp_files.append(overlay_pdf)
+        
+        c = rl_canvas.Canvas(overlay_pdf, pagesize=A4)
+        page_w, page_h = A4
+        qr_size = 60  # pt
+        margin = 30
+        c.drawImage(qr_path, page_w - qr_size - margin, page_h - qr_size - margin, 
+                     qr_size, qr_size)
+        c.save()
+        
+        # Asl PDF + QR overlay birlashtirish
+        reader = PdfReader(temp_pdf)
+        overlay_reader = PdfReader(overlay_pdf)
+        writer = PdfWriter()
+        
+        for i, page in enumerate(reader.pages):
+            if i == 0:  # Faqat birinchi sahifaga QR qo'yish
+                page.merge_page(overlay_reader.pages[0])
+            writer.add_page(page)
+        
+        # Natijani saqlash
+        fd, final_pdf = tempfile.mkstemp(suffix='.pdf')
+        os.close(fd)
+        temp_files.append(final_pdf)
+        
+        with open(final_pdf, 'wb') as f:
+            writer.write(f)
+        
+        # Order ga saqlash
+        from django.core.files import File
+        with open(final_pdf, 'rb') as f:
+            order.stamped_file.save(
+                f"stamped_{order.number.replace('/', '_')}.pdf",
+                File(f),
+                save=True
+            )
+        
+        messages.success(request, "Pechatli PDF muvaffaqiyatli yuklandi va yuklab olish QR kodi qo'shildi!")
+        
+    except Exception as e:
+        print(f"upload_stamped_pdf error: {e}")
+        import traceback
+        traceback.print_exc()
+        messages.error(request, f"Xatolik: {e}")
+    finally:
+        for tmp in temp_files:
+            try:
+                if os.path.exists(tmp):
+                    os.remove(tmp)
+            except Exception:
+                pass
+    
+    return redirect('order_detail', order_id=order.id)
+
+
+def download_stamped_pdf(request, order_id):
+    """Pechatli PDF yuklab olish (login talab qilinmaydi — QR orqali ishlaydi)."""
+    import os
+    
+    order = get_object_or_404(Order, id=order_id)
+    
+    if not order.stamped_file:
+        messages.error(request, "Pechatli PDF topilmadi.")
+        return redirect('order_detail', order_id=order.id)
+    
+    file_path = order.stamped_file.path
+    if not os.path.exists(file_path):
+        messages.error(request, "Fayl topilmadi.")
+        return redirect('order_detail', order_id=order.id)
+    
+    with open(file_path, 'rb') as f:
+        buffer = BytesIO(f.read())
+    
+    filename = f"pechatli_{order.number}.pdf".replace("/", "_")
+    return FileResponse(buffer, as_attachment=True, filename=filename)
+
+
 def verify_document(request, order_id):
     """Hujjat imzolarini tekshirish — QR kodni skanerlash uchun (login kerak emas)."""
     order = get_object_or_404(Order, id=order_id)
@@ -635,35 +768,7 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     
     doc = Document(temp_docx)
     
-    # === 1. HEADER: Yuklab olish QR kodi (yuqori o'ng burchak) ===
-    try:
-        download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
-        qr = qrcode.QRCode(version=1, box_size=5, border=1)
-        qr.add_data(download_url)
-        qr.make(fit=True)
-        img = qr.make_image(fill='black', back_color='white')
-        
-        fd, qr_path = tempfile.mkstemp(suffix='.png')
-        os.close(fd)
-        temp_files.append(qr_path)
-        img.save(qr_path, format='PNG')
-        
-        # Headerga QR qo'yish
-        section = doc.sections[0]
-        header = section.header
-        header.is_linked_to_previous = False
-        
-        # Header paragrafga QR rasm qo'shish
-        if not header.paragraphs:
-            hp = header.add_paragraph()
-        else:
-            hp = header.paragraphs[0]
-        
-        hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        run = hp.add_run()
-        run.add_picture(qr_path, width=Inches(0.8))
-    except Exception as e:
-        print(f"Header QR error: {e}")
+    # Header QR olib tashlandi — endi faqat pechatli PDF yuklaganda qo'yiladi
     
     # === 2. PASTDA: Imzolovchilar QR kodlari ===
     try:
