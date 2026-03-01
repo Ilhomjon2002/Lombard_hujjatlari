@@ -44,7 +44,8 @@ class Order(models.Model):
     DOCUMENT_TYPES = (
         ('internal', 'Buyruq I/CH - Ichki hujjat'),
         ('external', 'Buyruq SH/T - Shartnoma/Tashqi hujjat'),
-        ('official', 'Buyruq')
+        ('official', 'Buyruq'),
+        ('application', 'Ariza'),
     )
 
     title = models.CharField(max_length=255, verbose_name="Buyruq nomi/sarlavhasi")

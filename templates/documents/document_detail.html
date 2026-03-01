@@ -40,7 +40,7 @@
                 <i class="bi bi-file-earmark-word me-1"></i>DOCX yuklab olish
             </a>
 
-            {% if document.director_approved %}
+            {% if document.director_approved and document.document_type != 'application' %}
             <!-- Pechatli PDF yuklash/yuklab olish -->
             {% if document.stamped_file %}
             <a href="{% url 'download_stamped_pdf' document.id %}" class="btn btn-success btn-sm">

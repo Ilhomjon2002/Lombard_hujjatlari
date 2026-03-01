@@ -56,13 +56,26 @@
                 <form method="POST" enctype="multipart/form-data" id="documentForm">
                     {% csrf_token %}
 
-                    <!-- Basic Information -->
+                    <!-- Document Type and Title -->
                     <div class="row mb-3">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <label for="title" class="form-label">Sarlavha *</label>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <label for="document_type" class="form-label">Hujjat turi *</label>
+                            <select class="form-select" id="document_type" name="document_type" required>
+                                <option value="internal">Ichki hujjat</option>
+                                <option value="external">Tashqi hujjat</option>
+                                <option value="official">Buyruq</option>
+                                <option value="application">Ariza</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="title" class="form-label" id="titleLabel">Sarlavha/Nom</label>
                             <input type="text" class="form-control" id="title" name="title" required>
                         </div>
-                        <div class="col-md-6">
+                    </div>
+
+                    <!-- Branch and Number -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
                             <label for="branch" class="form-label">Filial *</label>
                             <select class="form-select" id="branch" name="branch" required>
                                 <option value="">Filialni tanlang</option>

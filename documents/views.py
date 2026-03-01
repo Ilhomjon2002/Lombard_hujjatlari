@@ -77,7 +77,7 @@ def create_document(request):
         try:
             title = request.POST.get('title')
             branch_id = request.POST.get('branch')
-            # document_type_id = request.POST.get('document_type')  # Agar kerak bo'lsa qo'shish
+            document_type = request.POST.get('document_type', 'internal')
             signature_type = request.POST.get('signature_type')
             
             # Frontenddan kelgan ma'lumotni to'g'ri o'qish (array yoki vergulli string)
@@ -95,7 +95,6 @@ def create_document(request):
             number = request.POST.get('number')
 
             branch = get_object_or_404(Branch, id=branch_id)
-            # document_type = get_object_or_404(DocumentType, id=document_type_id)  # Agar kerak
 
             deadline = None
             if deadline_str:
@@ -107,7 +106,7 @@ def create_document(request):
             order = Order.objects.create(
                 title=title,
                 branch=branch,
-                # document_type=document_type,
+                document_type=document_type,
                 file=file,
                 created_by=request.user,
                 signature_type=signature_type,
@@ -768,7 +767,36 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     
     doc = Document(temp_docx)
     
-    # Header QR olib tashlandi — endi faqat pechatli PDF yuklaganda qo'yiladi
+    # === 1. HEADER: Yuklab olish QR kodi (Faqat 'application' turi uchun va direktor tasdiqlaganda) ===
+    if order.document_type == 'application' and order.director_approved:
+        try:
+            download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
+            qr = qrcode.QRCode(version=1, box_size=5, border=1)
+            qr.add_data(download_url)
+            qr.make(fit=True)
+            img = qr.make_image(fill='black', back_color='white')
+            
+            fd, qr_path = tempfile.mkstemp(suffix='.png')
+            os.close(fd)
+            temp_files.append(qr_path)
+            img.save(qr_path, format='PNG')
+            
+            # Headerga QR qo'yish
+            section = doc.sections[0]
+            header = section.header
+            header.is_linked_to_previous = False
+            
+            # Header paragrafga QR rasm qo'shish
+            if not header.paragraphs:
+                hp = header.add_paragraph()
+            else:
+                hp = header.paragraphs[0]
+            
+            hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            run = hp.add_run()
+            run.add_picture(qr_path, width=Inches(0.8))
+        except Exception as e:
+            print(f"Header QR error: {e}")
     
     # === 2. PASTDA: Imzolovchilar QR kodlari ===
     try:
