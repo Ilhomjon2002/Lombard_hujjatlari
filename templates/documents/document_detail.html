@@ -86,11 +86,13 @@
                             doc.created_at|date:"d.m.Y" }} | {{ doc.branch.name|default:"Umumiy" }}</small>
                     </div>
                     <div>
-                        {% if doc.file %}
+                        {% if doc.file and doc.file.name %}
+                        {# Fayl haqiqatda mavjud bo'lsa, ko'rish tugmasini chiqaramiz #}
                         <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-eye"></i> Ko'rish
                         </a>
                         {% else %}
+                        {# Fayl yo'q bo'lsa, yuklash huquqini tekshiramiz #}
                         {% if request.user.role == 'admin' or request.user.role == 'director' or request.user ==
                         document.created_by %}
                         <form action="{% url 'upload_additional_document_file' doc.id document.id %}" method="post"
