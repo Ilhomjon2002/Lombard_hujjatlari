@@ -98,8 +98,9 @@
                             {% csrf_token %}
                             <input type="file" name="additional_file" class="form-control form-control-sm"
                                 style="max-width: 200px;" required>
-                            <button type="submit" class="btn btn-sm btn-success whitespace-nowrap"><i
-                                    class="bi bi-upload"></i> Yuklash</button>
+                            <button type="submit" class="btn btn-sm btn-success whitespace-nowrap">
+                                <i class="bi bi-upload"></i> Yuklash
+                            </button>
                         </form>
                         {% else %}
                         <span class="badge bg-secondary">Fayl yuklanmagan</span>
