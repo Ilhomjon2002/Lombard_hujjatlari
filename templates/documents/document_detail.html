@@ -98,32 +98,23 @@
 
                     <div>
                         {% if doc.file %}
-                        <!-- Fayl mavjud -->
                         <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-eye"></i> Ko'rish
                         </a>
                         {% else %}
-                        <!-- Fayl yo'q -->
-                        {% if request.user.role == 'admin'
-                        or request.user.role == 'director'
-                        or request.user.id == document.created_by.id %}
-
+                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.id ==
+                        document.created_by.id %}
                         <form action="{% url 'upload_additional_document_file' doc.id document.id %}" method="post"
                             enctype="multipart/form-data" class="d-inline-flex align-items-center gap-2">
                             {% csrf_token %}
-
                             <input type="file" name="additional_file" class="form-control form-control-sm"
                                 style="max-width: 200px;" required>
-
                             <button type="submit" class="btn btn-sm btn-success">
                                 <i class="bi bi-upload"></i> Yuklash
                             </button>
                         </form>
-
                         {% else %}
-                        <span class="badge bg-secondary">
-                            Fayl yuklanmagan
-                        </span>
+                        <span class="badge bg-secondary">Fayl yuklanmagan</span>
                         {% endif %}
                         {% endif %}
                     </div>
