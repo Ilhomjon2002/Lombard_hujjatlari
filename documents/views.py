@@ -126,17 +126,24 @@ def create_document(request):
             new_doc_names = request.POST.getlist('new_additional_names')
             new_doc_files = request.FILES.getlist('new_additional_files')
 
-            for i in range(len(new_doc_files)):
-                try:
-                    name = new_doc_names[i] if i < len(new_doc_names) and new_doc_names[i] else new_doc_files[i].name
-                    new_doc = AdditionalDocument.objects.create(
-                        name=name,
-                        file=new_doc_files[i],
-                        branch=branch
-                    )
-                    order.additional_docs.add(new_doc)
-                except Exception as e:
-                    print(f"Error saving additional document: {e}")
+            # name array and file array might be different lengths if file is optional
+            # iterate over the max length
+            max_len = max(len(new_doc_names), len(new_doc_files))
+            for i in range(max_len):
+                name = new_doc_names[i] if i < len(new_doc_names) and new_doc_names[i] else f"Qo'shimcha hujjat {i+1}"
+                file = new_doc_files[i] if i < len(new_doc_files) else None
+                
+                # Create only if name or file exists
+                if name.strip() != f"Qo'shimcha hujjat {i+1}" or file:
+                    try:
+                        new_doc = AdditionalDocument.objects.create(
+                            name=name,
+                            file=file,
+                            branch=branch
+                        )
+                        order.additional_docs.add(new_doc)
+                    except Exception as e:
+                        print(f"Error saving additional document: {e}")
 
             # Imzolar yaratish
             for i, emp_id in enumerate(employee_ids, start=1):
@@ -605,22 +612,49 @@ def download_stamped_pdf(request, order_id):
     """Pechatli PDF yuklab olish (login talab qilinmaydi — QR orqali ishlaydi)."""
     import os
     
-    order = get_object_or_404(Order, id=order_id)
-    
+    order = get_object_or_404(Order, pk=order_id)
     if not order.stamped_file:
-        messages.error(request, "Pechatli PDF topilmadi.")
+        messages.error(request, "Pechatli fayl topilmadi")
         return redirect('order_detail', order_id=order.id)
     
     file_path = order.stamped_file.path
     if not os.path.exists(file_path):
         messages.error(request, "Fayl topilmadi.")
         return redirect('order_detail', order_id=order.id)
-    
+        
     with open(file_path, 'rb') as f:
         buffer = BytesIO(f.read())
-    
+        
     filename = f"pechatli_{order.number}.pdf".replace("/", "_")
     return FileResponse(buffer, as_attachment=True, filename=filename)
+
+
+@login_required
+def upload_additional_document_file(request, doc_id, order_id):
+    if request.method == 'POST':
+        doc = get_object_or_404(AdditionalDocument, id=doc_id)
+        order = get_object_or_404(Order, id=order_id)
+        
+        # Security check
+        can_edit = (
+            request.user.role == 'admin' or
+            request.user.role == 'director' or
+            request.user == order.created_by
+        )
+        
+        if not can_edit:
+            messages.error(request, "Fayl yuklashga huquqingiz yo'q.")
+            return redirect('order_detail', order_id=order.id)
+            
+        file = request.FILES.get('additional_file')
+        if file:
+            doc.file = file
+            doc.save()
+            messages.success(request, f"{doc.name} hujjatiga fayl muvaffaqiyatli yuklandi.")
+        else:
+            messages.error(request, "Iltimos, fayl tanlang.")
+            
+    return redirect('order_detail', order_id=order_id)
 
 
 def verify_document(request, order_id):

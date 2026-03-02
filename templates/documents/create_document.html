@@ -61,7 +61,6 @@
                         <div class="col-md-4 mb-3 mb-md-0">
                             <label for="document_type" class="form-label">Hujjat turi *</label>
                             <select class="form-select" id="document_type" name="document_type" required>
-                                <option value="internal">Ichki hujjat</option>
                                 <option value="external">Tashqi hujjat</option>
                                 <option value="official">Buyruq</option>
                                 <option value="application">Ariza</option>
@@ -128,7 +127,8 @@
                                         {{employees.count}}
                                         {% for employee in employees %}
                                         <option value="{{ employee.id }}">
-                                            {{ employee.first_name }} {{ employee.last_name }} ({{ employee.get_role_display }})
+                                            {{ employee.first_name }} {{ employee.last_name }} ({{
+                                            employee.get_role_display }})
                                         </option>
                                         {% endfor %}
                                     </select>
@@ -148,16 +148,30 @@
                     <div class="row mb-3 mt-4">
                         <div class="col-12">
                             <label class="form-label fw-bold">Qo'shimcha Hujjatlar (Ixtiyoriy)</label>
-                            
+
                             <!-- Mavjud hujjatlarni tanlash -->
                             <div class="mb-3">
-                                <label class="text-muted small">Mavjud qo'shimcha hujjatlardan tanlash:</label>
-                                <select class="form-select" name="existing_additional_docs" id="existingAdditionalSelect" multiple>
+                                <label class="text-muted small mb-2 d-block">Mavjud qo'shimcha hujjatlardan
+                                    tanlash:</label>
+                                <div class="border rounded p-2"
+                                    style="max-height: 200px; overflow-y: auto; background-color: #f8f9fa;">
                                     {% for doc in additional_docs %}
-                                    <option value="{{ doc.id }}">{{ doc.name }} ({{ doc.branch.name|default:"Umumiy" }} - {{ doc.created_at|date:"d.m.Y" }})</option>
+                                    <div class="form-check border-bottom py-1">
+                                        <input class="form-check-input" type="checkbox" name="existing_additional_docs"
+                                            value="{{ doc.id }}" id="existDoc{{ doc.id }}">
+                                        <label class="form-check-label w-100" style="cursor: pointer;"
+                                            for="existDoc{{ doc.id }}">
+                                            <i class="bi bi-file-earmark-text text-secondary me-1"></i>
+                                            {{ doc.name }}
+                                            <small class="text-muted ms-1">({{ doc.branch.name|default:"Umumiy" }} - {{
+                                                doc.created_at|date:"d.m.Y" }})</small>
+                                        </label>
+                                    </div>
+                                    {% empty %}
+                                    <div class="text-muted small text-center py-2">Mavjud qo'shimcha hujjatlar topilmadi
+                                    </div>
                                     {% endfor %}
-                                </select>
-                                <small class="text-muted">Ctrl (Windows) yoki Cmd (Mac) bosib turib bir nechtasini tanlashingiz mumkin.</small>
+                                </div>
                             </div>
 
                             <!-- Yangi hujjat qo'shish -->
@@ -166,13 +180,19 @@
                                 <div id="newAdditionalDocsContainer">
                                     <div class="row mb-2 new-additional-doc-row align-items-center">
                                         <div class="col-md-5 mb-2 mb-md-0">
-                                            <input type="text" class="form-control form-control-sm" name="new_additional_names" placeholder="Hujjat nomi (ixtiyoriy)">
+                                            <input type="text" class="form-control form-control-sm"
+                                                name="new_additional_names" placeholder="Hujjat nomi (ixtiyoriy)">
                                         </div>
                                         <div class="col-md-5 mb-2 mb-md-0">
-                                            <input type="file" class="form-control form-control-sm" name="new_additional_files">
+                                            <input type="file" class="form-control form-control-sm"
+                                                name="new_additional_files">
+                                            <small class="text-muted" style="font-size: 0.7rem;">Fayl yuklamasangiz ham
+                                                bo'ladi</small>
                                         </div>
                                         <div class="col-md-2">
-                                            <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn" style="display:none;" title="O'chirish"><i class="fas fa-trash"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn"
+                                                style="display:none;" title="O'chirish"><i
+                                                    class="fas fa-trash"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -283,7 +303,7 @@
         }
 
         // Additional Documents Dynamic Fields
-        $('#addNewDocBtn').click(function() {
+        $('#addNewDocBtn').click(function () {
             const newRow = `
                 <div class="row mb-2 new-additional-doc-row align-items-center">
                     <div class="col-md-5 mb-2 mb-md-0">
@@ -291,6 +311,7 @@
                     </div>
                     <div class="col-md-5 mb-2 mb-md-0">
                         <input type="file" class="form-control form-control-sm" name="new_additional_files">
+                        <small class="text-muted" style="font-size: 0.7rem;">Fayl yuklamasangiz ham bo'ladi</small>
                     </div>
                     <div class="col-md-2">
                         <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn" title="O'chirish"><i class="fas fa-trash"></i></button>
@@ -298,16 +319,16 @@
                 </div>
             `;
             $('#newAdditionalDocsContainer').append(newRow);
-            
+
             // Show remove buttons if there's more than one row
             if ($('.new-additional-doc-row').length > 1) {
                 $('.remove-doc-btn').show();
             }
         });
 
-        $(document).on('click', '.remove-doc-btn', function() {
+        $(document).on('click', '.remove-doc-btn', function () {
             $(this).closest('.new-additional-doc-row').remove();
-            
+
             // Hide remove buttons if only one row is left
             if ($('.new-additional-doc-row').length === 1) {
                 $('.remove-doc-btn').hide();

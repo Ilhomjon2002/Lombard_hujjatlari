@@ -28,7 +28,7 @@ class DocumentType(models.Model):
 
 class AdditionalDocument(models.Model):
     name = models.CharField(max_length=255, verbose_name="Hujjat nomi")
-    file = models.FileField(upload_to='additional_docs/%Y/%m/', verbose_name="Fayl")
+    file = models.FileField(upload_to='additional_docs/%Y/%m/', null=True, blank=True, verbose_name="Fayl")
     branch = models.ForeignKey(
         'users.Branch',
         on_delete=models.CASCADE,
