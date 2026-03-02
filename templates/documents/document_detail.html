@@ -102,8 +102,7 @@
                             <i class="bi bi-eye"></i> Ko'rish
                         </a>
                         {% else %}
-                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user.id ==
-                        document.created_by.id %}
+                        {% if request.user.role in 'admin,director' or request.user == document.created_by %}
                         <form action="{% url 'upload_additional_document_file' doc.id document.id %}" method="post"
                             enctype="multipart/form-data" class="d-inline-flex align-items-center gap-2">
                             {% csrf_token %}
