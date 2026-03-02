@@ -157,7 +157,51 @@
             {% endfor %}
         </div>
         {% endif %}
+        {% endif %}
 
+        {% if request.user.role in 'admin,director' or request.user == document.created_by %}
+        <div class="mb-4">
+            <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                data-bs-target="#addNewAdditionalDocModal">
+                <i class="bi bi-plus-circle me-1"></i> Yangi qo'shimcha hujjat qo'shish
+            </button>
+        </div>
+
+        <!-- Add New Additional Doc Modal -->
+        <div class="modal fade" id="addNewAdditionalDocModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i> Yangi qo'shimcha hujjat</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form method="post" action="{% url 'add_new_additional_document' document.id %}"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="new_doc_name" class="form-label fw-bold">Hujjat nomi *</label>
+                                <input type="text" class="form-control" name="name" id="new_doc_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_doc_file" class="form-label fw-bold">Biriktiriladigan fayl</label>
+                                <input type="file" class="form-control" name="file" id="new_doc_file">
+                                <small class="text-muted">Ixtiyoriy. Hozir kiritmay, keyinroq yuklashingiz ham
+                                    mumkin.</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor
+                                qilish</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-plus-circle me-1"></i> Qo'shish
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
         <h5 class="fw-bold text-dark mt-4 mb-3"><i class="bi bi-list-check me-2"></i>Imzolash jarayoni</h5>
         <div class="table-responsive border" style="border-radius: var(--radius-md);">

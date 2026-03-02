@@ -115,36 +115,6 @@ def create_document(request):
                 number=number
             )
 
-            # Qo'shimcha hujjatlarni ulash
-            # 1. Mavjud qo'shimcha hujjatlarni ulash
-            existing_doc_ids = request.POST.getlist('existing_additional_docs')
-            if existing_doc_ids:
-                docs_to_add = AdditionalDocument.objects.filter(id__in=existing_doc_ids)
-                order.additional_docs.add(*docs_to_add)
-
-            # 2. Yangi qo'shimcha hujjatlarni yuklash
-            new_doc_names = request.POST.getlist('new_additional_names')
-            new_doc_files = request.FILES.getlist('new_additional_files')
-
-            # name array and file array might be different lengths if file is optional
-            # iterate over the max length
-            max_len = max(len(new_doc_names), len(new_doc_files))
-            for i in range(max_len):
-                name = new_doc_names[i] if i < len(new_doc_names) and new_doc_names[i] else f"Qo'shimcha hujjat {i+1}"
-                file = new_doc_files[i] if i < len(new_doc_files) else None
-                
-                # Create only if name or file exists
-                if name.strip() != f"Qo'shimcha hujjat {i+1}" or file:
-                    try:
-                        new_doc = AdditionalDocument.objects.create(
-                            name=name,
-                            file=file,
-                            branch=branch
-                        )
-                        order.additional_docs.add(new_doc)
-                    except Exception as e:
-                        print(f"Error saving additional document: {e}")
-
             # Imzolar yaratish
             for i, emp_id in enumerate(employee_ids, start=1):
                 try:
@@ -655,6 +625,43 @@ def upload_additional_document_file(request, doc_id, order_id):
             messages.error(request, "Iltimos, fayl tanlang.")
             
     return redirect('order_detail', order_id=order_id)
+
+
+@login_required
+def add_new_additional_document(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id)
+        
+        # Security check
+        can_edit = (
+            request.user.role == 'admin' or
+            request.user.role == 'director' or
+            request.user == order.created_by
+        )
+        
+        if not can_edit:
+            messages.error(request, "Qo'shimcha hujjat qo'shishga huquqingiz yo'q.")
+            return redirect('order_detail', order_id=order.id)
+            
+        name = request.POST.get('name')
+        file = request.FILES.get('file')
+        
+        if name:
+            try:
+                new_doc = AdditionalDocument.objects.create(
+                    name=name,
+                    file=file,
+                    branch=order.branch
+                )
+                order.additional_docs.add(new_doc)
+                messages.success(request, "Yangi qo'shimcha hujjat muvaffaqiyatli qo'shildi.")
+            except Exception as e:
+                messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+        else:
+            messages.error(request, "Hujjat nomi kiritilishi shart.")
+            
+    return redirect('order_detail', order_id=order_id)
+
 
 
 def verify_document(request, order_id):
