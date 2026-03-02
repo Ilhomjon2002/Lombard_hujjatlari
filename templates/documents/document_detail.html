@@ -157,7 +157,6 @@
             {% endfor %}
         </div>
         {% endif %}
-        {% endif %}
 
         {% if request.user.role in 'admin,director' or request.user == document.created_by %}
         <div class="mb-4">
