@@ -26,6 +26,28 @@ class DocumentType(models.Model):
     def __str__(self):
         return f"{self.get_name_display()} - {self.branch.name}"
 
+class AdditionalDocument(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Hujjat nomi")
+    file = models.FileField(upload_to='additional_docs/%Y/%m/', verbose_name="Fayl")
+    branch = models.ForeignKey(
+        'users.Branch',
+        on_delete=models.CASCADE,
+        related_name='additional_documents',
+        null=True,
+        blank=True,
+        verbose_name="Filial"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Qo'shimcha hujjat"
+        verbose_name_plural = "Qo'shimcha hujjatlar"
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return self.name
+
+
 class Order(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Qoralama'),
@@ -115,6 +137,13 @@ class Order(models.Model):
     director_approved_at = models.DateTimeField(null=True, blank=True, verbose_name="Direktor tasdiqlagan vaqt")
     final_qr_code = models.ImageField(upload_to='orders/final_qr/%Y/%m/', null=True, blank=True, verbose_name="Umumiy QR kod")
     stamped_file = models.FileField(upload_to='orders/stamped/%Y/%m/', null=True, blank=True, verbose_name="Pechatli PDF")
+
+    additional_docs = models.ManyToManyField(
+        'AdditionalDocument', 
+        blank=True, 
+        related_name='orders', 
+        verbose_name="Qo'shimcha hujjatlar"
+    )
 
     class Meta:
         verbose_name = "Buyruq"

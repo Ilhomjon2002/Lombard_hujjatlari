@@ -144,6 +144,45 @@
                         </div>
                     </div>
 
+                    <!-- Qo'shimcha Hujjatlar Selection -->
+                    <div class="row mb-3 mt-4">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Qo'shimcha Hujjatlar (Ixtiyoriy)</label>
+                            
+                            <!-- Mavjud hujjatlarni tanlash -->
+                            <div class="mb-3">
+                                <label class="text-muted small">Mavjud qo'shimcha hujjatlardan tanlash:</label>
+                                <select class="form-select" name="existing_additional_docs" id="existingAdditionalSelect" multiple>
+                                    {% for doc in additional_docs %}
+                                    <option value="{{ doc.id }}">{{ doc.name }} ({{ doc.branch.name|default:"Umumiy" }} - {{ doc.created_at|date:"d.m.Y" }})</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">Ctrl (Windows) yoki Cmd (Mac) bosib turib bir nechtasini tanlashingiz mumkin.</small>
+                            </div>
+
+                            <!-- Yangi hujjat qo'shish -->
+                            <div class="mb-2 p-3 bg-light rounded border">
+                                <label class="text-muted small mb-2 d-block">Yangi qo'shimcha hujjat yuklash:</label>
+                                <div id="newAdditionalDocsContainer">
+                                    <div class="row mb-2 new-additional-doc-row align-items-center">
+                                        <div class="col-md-5 mb-2 mb-md-0">
+                                            <input type="text" class="form-control form-control-sm" name="new_additional_names" placeholder="Hujjat nomi (ixtiyoriy)">
+                                        </div>
+                                        <div class="col-md-5 mb-2 mb-md-0">
+                                            <input type="file" class="form-control form-control-sm" name="new_additional_files">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn" style="display:none;" title="O'chirish"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addNewDocBtn">
+                                    <i class="fas fa-plus"></i> Yana hujjat qo'shish
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Hujjatni yaratish
@@ -242,6 +281,38 @@
         function updateEmployeesInput() {
             $('#employeesInput').val(selectedEmployees.join(','));
         }
+
+        // Additional Documents Dynamic Fields
+        $('#addNewDocBtn').click(function() {
+            const newRow = `
+                <div class="row mb-2 new-additional-doc-row align-items-center">
+                    <div class="col-md-5 mb-2 mb-md-0">
+                        <input type="text" class="form-control form-control-sm" name="new_additional_names" placeholder="Hujjat nomi (ixtiyoriy)">
+                    </div>
+                    <div class="col-md-5 mb-2 mb-md-0">
+                        <input type="file" class="form-control form-control-sm" name="new_additional_files">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn" title="O'chirish"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+            $('#newAdditionalDocsContainer').append(newRow);
+            
+            // Show remove buttons if there's more than one row
+            if ($('.new-additional-doc-row').length > 1) {
+                $('.remove-doc-btn').show();
+            }
+        });
+
+        $(document).on('click', '.remove-doc-btn', function() {
+            $(this).closest('.new-additional-doc-row').remove();
+            
+            // Hide remove buttons if only one row is left
+            if ($('.new-additional-doc-row').length === 1) {
+                $('.remove-doc-btn').hide();
+            }
+        });
 
         // Form validation
         $('#documentForm').submit(function (e) {

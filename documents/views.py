@@ -7,7 +7,8 @@ from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
-from .models import OrderSignature, Notification, Order, OrderSigner
+from datetime import datetime
+from .models import OrderSignature, Notification, Order, OrderSigner, AdditionalDocument
 from users.models import CustomUser, Branch
 from .forms import EditSignatureForm
 import qrcode
@@ -114,6 +115,29 @@ def create_document(request):
                 number=number
             )
 
+            # Qo'shimcha hujjatlarni ulash
+            # 1. Mavjud qo'shimcha hujjatlarni ulash
+            existing_doc_ids = request.POST.getlist('existing_additional_docs')
+            if existing_doc_ids:
+                docs_to_add = AdditionalDocument.objects.filter(id__in=existing_doc_ids)
+                order.additional_docs.add(*docs_to_add)
+
+            # 2. Yangi qo'shimcha hujjatlarni yuklash
+            new_doc_names = request.POST.getlist('new_additional_names')
+            new_doc_files = request.FILES.getlist('new_additional_files')
+
+            for i in range(len(new_doc_files)):
+                try:
+                    name = new_doc_names[i] if i < len(new_doc_names) and new_doc_names[i] else new_doc_files[i].name
+                    new_doc = AdditionalDocument.objects.create(
+                        name=name,
+                        file=new_doc_files[i],
+                        branch=branch
+                    )
+                    order.additional_docs.add(new_doc)
+                except Exception as e:
+                    print(f"Error saving additional document: {e}")
+
             # Imzolar yaratish
             for i, emp_id in enumerate(employee_ids, start=1):
                 try:
@@ -148,9 +172,14 @@ def create_document(request):
 
     branches = Branch.objects.filter(parent_branch__isnull=True)
     employees = CustomUser.objects.values('id', 'first_name', 'last_name', 'role')  # Rol qo'shildi
+    
+    # Barcha mavjud qo'shimcha hujjatlarni olish (hozircha barcha filiallar uchun, keyin ajax orqali filtrlash mumkin)
+    additional_docs = AdditionalDocument.objects.all().order_by('-created_at')
+
     context = {
         'branches': branches,
         'employees': employees,
+        'additional_docs': additional_docs,
     }
     return render(request, 'documents/create_document.html', context)
 

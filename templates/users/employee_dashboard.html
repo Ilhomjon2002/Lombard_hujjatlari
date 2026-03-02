@@ -46,6 +46,29 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex gap-1 justify-content-end">
+                                        {% if signature.order.additional_docs.all %}
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-expanded="false"
+                                                title="Qo'shimcha hujjatlar">
+                                                <i class="bi bi-paperclip"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                                <li>
+                                                    <h6 class="dropdown-header">Qo'shimcha hujjatlar</h6>
+                                                </li>
+                                                {% for add_doc in signature.order.additional_docs.all %}
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ add_doc.file.url }}"
+                                                        target="_blank">
+                                                        <i class="bi bi-file-earmark me-2 text-info"></i>{{ add_doc.name
+                                                        }}
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        {% endif %}
                                         <a href="{% url 'order_detail' signature.order.id %}"
                                             class="btn btn-sm btn-info" title="Ko'rish">
                                             <i class="fas fa-eye"></i> Ko'rish

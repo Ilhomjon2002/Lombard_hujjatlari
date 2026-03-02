@@ -65,12 +65,34 @@
                         <td>{{ sig.order.branch.name|default:"—" }}</td>
                         <td>{{ sig.order.created_at|date:"d.m.Y H:i" }}</td>
                         <td>
-                            <a href="{% url 'sign_order' sig.id %}" class="btn btn-sm btn-danger">
-                                <i class="bi bi-pen me-1"></i>Imzolash
-                            </a>
-                            <a href="{% url 'order_detail' sig.order.id %}" class="btn btn-sm btn-info">
-                                <i class="bi bi-eye me-1"></i>Ko'rish
-                            </a>
+                            <div class="d-flex gap-1">
+                                {% if sig.order.additional_docs.all %}
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false" title="Qo'shimcha hujjatlar">
+                                        <i class="bi bi-paperclip"></i>
+                                    </button>
+                                    <ul class="dropdown-menu shadow">
+                                        <li>
+                                            <h6 class="dropdown-header">Qo'shimcha hujjatlar</h6>
+                                        </li>
+                                        {% for add_doc in sig.order.additional_docs.all %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ add_doc.file.url }}" target="_blank">
+                                                <i class="bi bi-file-earmark me-2 text-info"></i>{{ add_doc.name }}
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                                <a href="{% url 'sign_order' sig.id %}" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-pen me-1"></i>Imzolash
+                                </a>
+                                <a href="{% url 'order_detail' sig.order.id %}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye me-1"></i>Ko'rish
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -111,7 +133,8 @@
                             {% if order.is_fully_signed and not order.director_approved %}
                             <span class="badge bg-warning text-dark">Tasdiq kutilmoqda</span>
                             {% else %}
-                            <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count }}/{{ order.signatures_total_count }})</span>
+                            <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count }}/{{
+                                order.signatures_total_count }})</span>
                             {% endif %}
                             {% elif order.status == 'pending' %}
                             <span class="badge bg-info">Kutilmoqda</span>
@@ -130,7 +153,8 @@
                                         style="width: {% widthratio signed total 100 %}%;"></div>
                                     {% endif %}
                                 </div>
-                                <small class="text-muted fw-semibold" style="font-size: 11px;">{{ signed }} / {{ total }} imzolandi</small>
+                                <small class="text-muted fw-semibold" style="font-size: 11px;">{{ signed }} / {{ total
+                                    }} imzolandi</small>
                             </div>
                             <div class="d-flex flex-wrap gap-1">
                                 {% for sig in order.signatures.all %}
@@ -152,6 +176,26 @@
                             </a>
                             {% endif %}
                             <div class="d-flex gap-1 justify-content-end">
+                                {% if order.additional_docs.all %}
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false" title="Qo'shimcha hujjatlar">
+                                        <i class="bi bi-paperclip"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                        <li>
+                                            <h6 class="dropdown-header">Qo'shimcha hujjatlar</h6>
+                                        </li>
+                                        {% for add_doc in order.additional_docs.all %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ add_doc.file.url }}" target="_blank">
+                                                <i class="bi bi-file-earmark me-2 text-info"></i>{{ add_doc.name }}
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
                                 <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary"
                                     title="Ko'rish">
                                     <i class="bi bi-eye"></i> Ko'rish
