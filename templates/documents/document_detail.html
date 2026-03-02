@@ -73,45 +73,67 @@
 
         <!-- Qo'shimcha hujjatlar bo'limi -->
         {% if document.additional_docs.exists %}
-        <h5 class="fw-bold text-dark mt-4 mb-3"><i class="bi bi-paperclip me-2"></i>Qo'shimcha Hujjatlar (Ilovalar)</h5>
+        <h5 class="fw-bold text-dark mt-4 mb-3">
+            <i class="bi bi-paperclip me-2"></i>Qo'shimcha Hujjatlar (Ilovalar)
+        </h5>
+
         <div class="row mb-4">
             {% for doc in document.additional_docs.all %}
             <div class="col-md-6 mb-3">
                 <div class="p-3 border rounded shadow-sm d-flex justify-content-between align-items-center"
                     style="background-color: #f8f9fa;">
+
                     <div>
-                        <h6 class="mb-1 text-dark fw-bold"><i class="bi bi-file-earmark-text text-primary me-2"></i>{{
-                            doc.name }}</h6>
-                        <small class="text-muted"><i class="bi bi-calendar-check me-1"></i>{{
-                            doc.created_at|date:"d.m.Y" }} | {{ doc.branch.name|default:"Umumiy" }}</small>
+                        <h6 class="mb-1 text-dark fw-bold">
+                            <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                            {{ doc.name }}
+                        </h6>
+
+                        <small class="text-muted">
+                            <i class="bi bi-calendar-check me-1"></i>
+                            {{ doc.created_at|date:"d.m.Y" }} |
+                            {{ doc.branch.name|default:"Umumiy" }}
+                        </small>
                     </div>
+
                     <div>
-                        {% if doc.file and doc.file.name %}
+                        {% if doc.file %}
+                        <!-- Fayl mavjud -->
                         <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-eye"></i> Ko'rish
                         </a>
                         {% else %}
-                        {% if request.user.role == 'admin' or request.user.role == 'director' or request.user ==
-                        document.created_by %}
+                        <!-- Fayl yo'q -->
+                        {% if request.user.role == 'admin'
+                        or request.user.role == 'director'
+                        or request.user.id == document.created_by.id %}
+
                         <form action="{% url 'upload_additional_document_file' doc.id document.id %}" method="post"
                             enctype="multipart/form-data" class="d-inline-flex align-items-center gap-2">
                             {% csrf_token %}
+
                             <input type="file" name="additional_file" class="form-control form-control-sm"
                                 style="max-width: 200px;" required>
-                            <button type="submit" class="btn btn-sm btn-success whitespace-nowrap">
+
+                            <button type="submit" class="btn btn-sm btn-success">
                                 <i class="bi bi-upload"></i> Yuklash
                             </button>
                         </form>
+
                         {% else %}
-                        <span class="badge bg-secondary">Fayl yuklanmagan</span>
+                        <span class="badge bg-secondary">
+                            Fayl yuklanmagan
+                        </span>
                         {% endif %}
                         {% endif %}
                     </div>
+
                 </div>
             </div>
             {% endfor %}
         </div>
         {% endif %}
+
 
         <h5 class="fw-bold text-dark mt-4 mb-3"><i class="bi bi-list-check me-2"></i>Imzolash jarayoni</h5>
         <div class="table-responsive border" style="border-radius: var(--radius-md);">
