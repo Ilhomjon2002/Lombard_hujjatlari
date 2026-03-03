@@ -221,9 +221,16 @@
                                             </li>
                                             {% for add_doc in order.additional_docs.all %}
                                             <li>
+                                                {% if add_doc.file %}
                                                 <a class="dropdown-item" href="{{ add_doc.file.url }}" target="_blank">
                                                     <i class="bi bi-file-earmark me-2 text-info"></i>{{ add_doc.name }}
                                                 </a>
+                                                {% else %}
+                                                <span class="dropdown-item text-muted">
+                                                    <i class="bi bi-exclamation-triangle me-2 text-warning"></i>{{
+                                                    add_doc.name }} (Fayl yo'q)
+                                                </span>
+                                                {% endif %}
                                             </li>
                                             {% endfor %}
                                         </ul>
@@ -287,9 +294,16 @@
                                             </li>
                                             {% for add_doc in order.additional_docs.all %}
                                             <li>
+                                                {% if add_doc.file %}
                                                 <a class="dropdown-item" href="{{ add_doc.file.url }}" target="_blank">
                                                     <i class="bi bi-file-earmark me-2 text-info"></i>{{ add_doc.name }}
                                                 </a>
+                                                {% else %}
+                                                <span class="dropdown-item text-muted">
+                                                    <i class="bi bi-exclamation-triangle me-2 text-warning"></i>{{
+                                                    add_doc.name }} (Fayl yo'q)
+                                                </span>
+                                                {% endif %}
                                             </li>
                                             {% endfor %}
                                         </ul>
