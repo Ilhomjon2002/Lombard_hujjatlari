@@ -115,9 +115,12 @@ def create_document(request):
                 number=number
             )
 
-            # Yangi qo'shimcha hujjatlarni nomlari orqali yaratish (faylsiz)
+            # Qo'shimcha hujjatlarni nomlari orqali yaratish (faylsiz)
             new_doc_names = request.POST.getlist('new_additional_names')
-            for name in new_doc_names:
+            selected_saved_names = request.POST.getlist('selected_saved_doc_names')
+            
+            all_names = new_doc_names + selected_saved_names
+            for name in all_names:
                 if name.strip():
                     try:
                         new_doc = AdditionalDocument.objects.create(
@@ -164,13 +167,13 @@ def create_document(request):
     branches = Branch.objects.filter(parent_branch__isnull=True)
     employees = CustomUser.objects.values('id', 'first_name', 'last_name', 'role')  # Rol qo'shildi
     
-    # Barcha mavjud qo'shimcha hujjatlarni olish (hozircha barcha filiallar uchun, keyin ajax orqali filtrlash mumkin)
-    additional_docs = AdditionalDocument.objects.all().order_by('-created_at')
+    # Barcha mavjud unikal qo'shimcha hujjat nomlarini olish
+    saved_doc_names = AdditionalDocument.objects.exclude(name__exact='').values_list('name', flat=True).distinct().order_by('name')
 
     context = {
         'branches': branches,
         'employees': employees,
-        'additional_docs': additional_docs,
+        'saved_doc_names': saved_doc_names,
     }
     return render(request, 'documents/create_document.html', context)
 

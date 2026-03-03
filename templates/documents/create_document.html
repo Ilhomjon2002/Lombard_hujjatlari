@@ -142,8 +142,30 @@
                         <div class="col-12">
                             <label class="form-label fw-bold">Qo'shimcha Hujjatlar (Ixtiyoriy)</label>
 
+                            <div class="mb-3">
+                                <label class="text-muted small mb-2 d-block">Avval foydalanilgan hujjat nomlaridan
+                                    tanlash:</label>
+                                <div class="border rounded p-2"
+                                    style="max-height: 150px; overflow-y: auto; background-color: #f8f9fa;">
+                                    {% for doc_name in saved_doc_names %}
+                                    <div class="form-check border-bottom py-1">
+                                        <input class="form-check-input" type="checkbox" name="selected_saved_doc_names"
+                                            value="{{ doc_name }}" id="savedDoc{{ forloop.counter }}">
+                                        <label class="form-check-label w-100" style="cursor: pointer;"
+                                            for="savedDoc{{ forloop.counter }}">
+                                            <i class="bi bi-file-earmark-text text-secondary me-1"></i> {{ doc_name }}
+                                        </label>
+                                    </div>
+                                    {% empty %}
+                                    <div class="text-muted small text-center py-2">Avval foydalanilgan hujjat nomlari
+                                        topilmadi</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
                             <div class="mb-2 p-3 bg-light rounded border">
                                 <label class="text-muted small mb-2 d-block">Yangi qo'shimcha hujjat nomi:</label>
+
                                 <div id="newAdditionalDocsContainer">
                                     <div class="row mb-2 new-additional-doc-row align-items-center">
                                         <div class="col-md-10 mb-2 mb-md-0">
