@@ -94,9 +94,32 @@
                             {{ doc.created_at|date:"d.m.Y" }} |
                             {{ doc.branch.name|default:"Umumiy" }}
                         </small>
+
+                        <div class="mt-2">
+                            {% if doc.signer %}
+                            <div class="small fw-bold">Imzolovchi: {{ doc.signer.get_full_name }}</div>
+                            {% if doc.is_signed %}
+                            <span class="badge bg-success mt-1"><i class="bi bi-check-circle me-1"></i>
+                                Imzolangan</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark mt-1"><i class="bi bi-clock me-1"></i>
+                                Kutilmoqda</span>
+                            {% endif %}
+                            {% else %}
+                            <span class="badge bg-secondary mt-1">Imzo talab qilinmaydi</span>
+                            {% endif %}
+                        </div>
                     </div>
 
-                    <div>
+                    <div class="d-flex flex-column align-items-end gap-2">
+                        {% if doc.stamped_file %}
+                        <a href="{{ doc.stamped_file.url }}" target="_blank"
+                            class="btn btn-sm btn-outline-success border-2 fw-bold w-100 mb-1"
+                            style="background-color: var(--success-light);">
+                            <i class="bi bi-file-earmark-check-fill me-1"></i> Pechatli PDF
+                        </a>
+                        {% endif %}
+
                         {% if doc.file %}
                         <div class="d-flex align-items-center gap-2">
                             <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -134,21 +157,42 @@
                                 </div>
                             </div>
                             {% endif %}
+
+                            {% if doc.signer == request.user and not doc.is_signed %}
+                            <button type="button" class="btn btn-primary btn-sm ms-2 sign-add-doc-btn"
+                                data-doc-id="{{ doc.id }}" data-doc-name="{{ doc.name }}">
+                                <i class="bi bi-fingerprint"></i> Imzolash
+                            </button>
+                            {% endif %}
                         </div>
                         {% else %}
-                        {% if request.user.role in 'admin,director' or request.user == document.created_by %}
-                        <form action="{% url 'upload_additional_document_file' doc.id document.id %}" method="post"
-                            enctype="multipart/form-data" class="d-inline-flex align-items-center gap-2">
-                            {% csrf_token %}
-                            <input type="file" name="additional_file" class="form-control form-control-sm"
-                                style="max-width: 200px;" required>
-                            <button type="submit" class="btn btn-sm btn-success">
-                                <i class="bi bi-upload"></i> Yuklash
+                        <div class="d-flex gap-2">
+                            {% if request.user.role in 'admin,director' or request.user == document.created_by %}
+                            <form action="{% url 'upload_additional_document_file' doc.id document.id %}" method="post"
+                                enctype="multipart/form-data" class="d-inline-flex align-items-center gap-2">
+                                {% csrf_token %}
+                                <input type="file" name="additional_file" class="form-control form-control-sm"
+                                    style="max-width: 200px;" required>
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="bi bi-upload"></i> Fayl
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="badge bg-secondary">Fayl yuklanmagan</span>
+                            {% endif %}
+
+                            {% if doc.signer == request.user and not doc.is_signed and doc.file %}
+                            <button type="button" class="btn btn-primary btn-sm ms-2 sign-add-doc-btn"
+                                data-doc-id="{{ doc.id }}" data-doc-name="{{ doc.name }}">
+                                <i class="bi bi-fingerprint"></i> Imzolash
                             </button>
-                        </form>
-                        {% else %}
-                        <span class="badge bg-secondary">Fayl yuklanmagan</span>
-                        {% endif %}
+                            {% elif doc.signer == request.user and not doc.is_signed and not doc.file %}
+                            <button type="button" class="btn btn-secondary btn-sm ms-2" disabled
+                                title="Fayl yuklangach imzolash mumkin">
+                                <i class="bi bi-fingerprint"></i> Imzolash
+                            </button>
+                            {% endif %}
+                        </div>
                         {% endif %}
                     </div>
 
@@ -187,6 +231,16 @@
                                 <input type="file" class="form-control" name="file" id="new_doc_file">
                                 <small class="text-muted">Ixtiyoriy. Hozir kiritmay, keyinroq yuklashingiz ham
                                     mumkin.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new_doc_signer" class="form-label fw-bold">Imzolovchi xodim</label>
+                                <select class="form-select" name="signer" id="new_doc_signer">
+                                    <option value="">-- Imzolash ixtiyoriy --</option>
+                                    {% for employee in employees %}
+                                    <option value="{{ employee.id }}">{{ employee.last_name }} {{ employee.first_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -302,6 +356,56 @@
         </div>
     </div>
 </div>
+
+<!-- Add Doc Imzolash Modal -->
+<div class="modal fade" id="signAddDocModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+            <div class="modal-header bg-primary text-white border-bottom-0 rounded-top"
+                style="border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-fingerprint me-2" style="font-size: 1.2rem;"></i>Qo'shimcha hujjatni imzolash
+                </h5>
+                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-5">
+                <div class="fingerprint-scanner pulse-animation mb-4 mx-auto d-flex align-items-center justify-content-center"
+                    style="width: 100px; height: 100px; border-radius: 50%; background-color: rgba(67, 97, 238, 0.1); color: var(--primary-color);">
+                    <i class="bi bi-fingerprint display-1"></i>
+                </div>
+
+                <h4 class="fw-bold mb-3" style="color: var(--dark-color);" id="signAddDocNameDisplay">Hujjat</h4>
+                <p class="text-muted" style="font-size: 1.1rem;">
+                    Qo'shimcha hujjatni imzolash uchun barmoq izi skaneriga barmog'ingizni bosing
+                </p>
+
+                <div id="signAddDocStatusMessage" class="mt-4" style="display: none;">
+                    <div class="spinner-border text-primary me-2" role="status" style="width: 1.5rem; height: 1.5rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <strong>Tekshirilmoqda...</strong>
+                </div>
+
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="confirmSignAddDocBtn"
+                        style="border-radius: var(--radius-md);">
+                        <i class="bi bi-check2-circle me-1"></i> Tasdiqlash (Simulyatsiya)
+                    </button>
+                    <button type="button" class="btn btn-light px-4 py-2 border mt-2 w-100" data-bs-dismiss="modal"
+                        style="border-radius: var(--radius-md);">
+                        Bekor qilish
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center bg-light border-top-0 rounded-bottom"
+                style="border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+                <small class="text-muted"><i class="bi bi-shield-check me-1 text-success"></i> Tizim xavfsizligi
+                    ta'minlangan</small>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -360,6 +464,51 @@
                 if (ov) ov.remove();
             });
     }
+
+    $(document).ready(function () {
+        let currentAddDocId = null;
+
+        $('.sign-add-doc-btn').click(function () {
+            currentAddDocId = $(this).data('doc-id');
+            const docName = $(this).data('doc-name');
+            $('#signAddDocNameDisplay').text(docName);
+            $('#signAddDocStatusMessage').hide();
+            $('#confirmSignAddDocBtn').show();
+            $('#signAddDocModal').modal('show');
+        });
+
+        $('#confirmSignAddDocBtn').click(function () {
+            if (!currentAddDocId) return;
+
+            $(this).hide();
+            $('#signAddDocStatusMessage').show();
+
+            const url = "{% url 'sign_additional_doc_fingerprint' 0 %}".replace('0', currentAddDocId);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#signAddDocStatusMessage').html('<i class="bi bi-check-circle-fill text-success fs-4 me-2"></i><strong class="text-success">Muvaffaqiyatli imzolandi!</strong>');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        alert('Xatolik: ' + response.message);
+                        $('#signAddDocModal').modal('hide');
+                    }
+                },
+                error: function () {
+                    alert('Server bilan xatolik yuz berdi!');
+                    $('#signAddDocModal').modal('hide');
+                }
+            });
+        });
+    });
 </script>
 
 <!-- Pechatli PDF yuklash modali -->

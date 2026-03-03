@@ -39,6 +39,20 @@ class AdditionalDocument(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     
+    # Imzolash uchun yangi maydonlar
+    signer = models.ForeignKey(
+        'users.CustomUser',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='additional_docs_to_sign',
+        verbose_name="Imzolovchi xodim"
+    )
+    is_signed = models.BooleanField(default=False, verbose_name="Imzolandi")
+    signed_at = models.DateTimeField(null=True, blank=True, verbose_name="Imzolangan vaqt")
+    qr_code = models.ImageField(upload_to='additional_docs/qr/%Y/%m/', null=True, blank=True, verbose_name="QR kod")
+    stamped_file = models.FileField(upload_to='additional_docs/stamped/%Y/%m/', null=True, blank=True, verbose_name="Pechatli PDF")
+    
     class Meta:
         verbose_name = "Qo'shimcha hujjat"
         verbose_name_plural = "Qo'shimcha hujjatlar"

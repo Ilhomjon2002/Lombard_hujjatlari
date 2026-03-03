@@ -149,12 +149,25 @@
                                     style="max-height: 150px; overflow-y: auto; background-color: #f8f9fa;">
                                     {% for doc_name in saved_doc_names %}
                                     <div class="form-check border-bottom py-1">
-                                        <input class="form-check-input" type="checkbox" name="selected_saved_doc_names"
-                                            value="{{ doc_name }}" id="savedDoc{{ forloop.counter }}">
-                                        <label class="form-check-label w-100" style="cursor: pointer;"
-                                            for="savedDoc{{ forloop.counter }}">
-                                            <i class="bi bi-file-earmark-text text-secondary me-1"></i> {{ doc_name }}
-                                        </label>
+                                        <input class="form-check-input saved-doc-checkbox" type="checkbox"
+                                            name="selected_saved_doc_names" value="{{ doc_name }}"
+                                            id="savedDoc{{ forloop.counter }}">
+                                        <div class="d-flex w-100 justify-content-between align-items-center">
+                                            <label class="form-check-label mb-0" style="cursor: pointer; flex: 1;"
+                                                for="savedDoc{{ forloop.counter }}">
+                                                <i class="bi bi-file-earmark-text text-secondary me-1"></i> {{ doc_name
+                                                }}
+                                            </label>
+                                            <select class="form-select form-select-sm w-auto saved-doc-signer"
+                                                name="saved_doc_signers_{{ doc_name }}"
+                                                style="display: none; max-width: 200px;">
+                                                <option value="">-- Imzolash ixtiyoriy --</option>
+                                                {% for employee in employees %}
+                                                <option value="{{ employee.id }}">{{ employee.last_name }} {{
+                                                    employee.first_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
                                     {% empty %}
                                     <div class="text-muted small text-center py-2">Avval foydalanilgan hujjat nomlari
@@ -168,10 +181,19 @@
 
                                 <div id="newAdditionalDocsContainer">
                                     <div class="row mb-2 new-additional-doc-row align-items-center">
-                                        <div class="col-md-10 mb-2 mb-md-0">
+                                        <div class="col-md-6 mb-2 mb-md-0">
                                             <input type="text" class="form-control form-control-sm"
                                                 name="new_additional_names"
                                                 placeholder="Hujjat nomi. Fayl keyinroq yuklanadi.">
+                                        </div>
+                                        <div class="col-md-4 mb-2 mb-md-0">
+                                            <select class="form-select form-select-sm" name="new_additional_signers">
+                                                <option value="">-- Imzolash ixtiyoriy --</option>
+                                                {% for employee in employees %}
+                                                <option value="{{ employee.id }}">{{ employee.last_name }} {{
+                                                    employee.first_name }}</option>
+                                                {% endfor %}
+                                            </select>
                                         </div>
                                         <div class="col-md-2">
                                             <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn"
@@ -242,6 +264,18 @@
         });
 
         // Functions
+
+        // Show/hide signer select for saved docs
+        $(document).on('change', '.saved-doc-checkbox', function () {
+            const signerSelect = $(this).siblings('.d-flex').find('.saved-doc-signer');
+            if ($(this).is(':checked')) {
+                signerSelect.show();
+            } else {
+                signerSelect.hide();
+                signerSelect.val('');
+            }
+        });
+
         function updateSelectedEmployees() {
             const container = $('#selectedEmployees');
 

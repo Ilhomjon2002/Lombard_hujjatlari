@@ -117,20 +117,40 @@ def create_document(request):
 
             # Qo'shimcha hujjatlarni nomlari orqali yaratish (faylsiz)
             new_doc_names = request.POST.getlist('new_additional_names')
+            new_doc_signers = request.POST.getlist('new_additional_signers')
             selected_saved_names = request.POST.getlist('selected_saved_doc_names')
             
-            all_names = new_doc_names + selected_saved_names
-            for name in all_names:
+            # Yangi kiritilgan nomlarni saqlash
+            for idx, name in enumerate(new_doc_names):
                 if name.strip():
                     try:
+                        signer_id = new_doc_signers[idx] if idx < len(new_doc_signers) else None
+                        signer = CustomUser.objects.filter(id=signer_id).first() if signer_id else None
                         new_doc = AdditionalDocument.objects.create(
                             name=name.strip(),
                             file=None,
-                            branch=branch
+                            branch=branch,
+                            signer=signer
                         )
                         order.additional_docs.add(new_doc)
                     except Exception as e:
-                        print(f"Error saving additional document name: {e}")
+                        print(f"Error saving new additional document name: {e}")
+
+            # Avvalgi saqlangan nomlarni saqlash
+            for name in selected_saved_names:
+                if name.strip():
+                    try:
+                        signer_id = request.POST.get(f'saved_doc_signers_{name}')
+                        signer = CustomUser.objects.filter(id=signer_id).first() if signer_id else None
+                        new_doc = AdditionalDocument.objects.create(
+                            name=name.strip(),
+                            file=None,
+                            branch=branch,
+                            signer=signer
+                        )
+                        order.additional_docs.add(new_doc)
+                    except Exception as e:
+                        print(f"Error saving selected additional document name: {e}")
 
             # Imzolar yaratish
             for i, emp_id in enumerate(employee_ids, start=1):
@@ -485,6 +505,63 @@ def sign_with_fingerprint(request, signature_id):
 
 
 @login_required
+@require_http_methods(["POST"])
+def sign_additional_doc_fingerprint(request, doc_id):
+    """Barmoq izi orqali qo'shimcha hujjatni imzolash va QR kod yaratish"""
+    doc = get_object_or_404(AdditionalDocument, id=doc_id, signer=request.user)
+    
+    if doc.is_signed:
+        return JsonResponse({'error': 'Bu hujjat allaqachon imzolangan', 'success': False}, status=400)
+    
+    # QR kod ma'lumotlari
+    user = request.user
+    full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
+    signed_at = datetime.now()
+    
+    qr_data = (
+        f"QO'SHIMCHA HUJJAT IMZOLANGAN\n"
+        f"F.I.O: {full_name}\n"
+        f"Lavozim: {user.position or '-'}\n"
+        f"Hujjat nomi: {doc.name}\n"
+        f"Imzolangan: {signed_at.strftime('%d.%m.%Y %H:%M:%S')}\n"
+        f"ID: {user.id}"
+    )
+    
+    # QR kod generatsiya
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=ERROR_CORRECT_L,
+        box_size=4,
+        border=2
+    )
+
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Imzoni saqlash
+    doc.is_signed = True
+    doc.signed_at = signed_at
+    
+    # QR kodni ImageField ga saqlash
+    qr_filename = f"qr_add_doc_{doc.id}_{user.username}_{signed_at.strftime('%Y%m%d%H%M%S')}.png"
+    qr_save_buffer = BytesIO()
+    qr_img.save(qr_save_buffer, format='PNG')
+    qr_save_buffer.seek(0)
+    doc.qr_code.save(qr_filename, File(qr_save_buffer), save=False)
+    
+    doc.save()
+    
+    # Javob
+    response_data = {
+        'success': True,
+        'message': 'Qo\'shimcha hujjat muvaffaqiyatli imzolandi!',
+    }
+    
+    return JsonResponse(response_data)
+
+@login_required
 def upload_stamped_pdf(request, order_id):
     """Pechat qo'yilgan PDF yuklash — yuklab olish QR kodi qo'shiladi."""
     import tempfile
@@ -662,13 +739,16 @@ def add_new_additional_document(request, order_id):
             
         name = request.POST.get('name')
         file = request.FILES.get('file')
+        signer_id = request.POST.get('signer')
         
         if name:
             try:
+                signer = CustomUser.objects.filter(id=signer_id).first() if signer_id else None
                 new_doc = AdditionalDocument.objects.create(
                     name=name,
                     file=file,
-                    branch=order.branch
+                    branch=order.branch,
+                    signer=signer
                 )
                 order.additional_docs.add(new_doc)
                 messages.success(request, "Yangi qo'shimcha hujjat muvaffaqiyatli qo'shildi.")
@@ -1733,6 +1813,90 @@ def api_director_approve(request, order_id):
     img.save(buffer, format='PNG')
     order.final_qr_code.save(f"final_qr_{order.id}.png", File(buffer), save=False)
     order.save()
+    
+    # Asosiy buyruq uchun PDF generatsiya va QR larni yopishtirish
+    # Odatda bu download paytida yaratiladi, lekin avtomatik qilish ham mumkin.
+    # Bu yassi yerda hozircha asosiy order_pdf logic'ini o'zgarishsiz qoldiramiz 
+    # MCHJ uchun order.stamped_file field bizda yo'q, shuning uchun order.pdf yaratish upload_stamped_pdf da yoki download da ishlaydi.
+    
+    # === Qo'shimcha Hujjatlar uchun Pechatli PDF Yaratish ===
+    import os
+    import tempfile
+    from reportlab.lib.pagesizes import A4
+    from reportlab.pdfgen import canvas as rl_canvas
+    from PyPDF2 import PdfReader, PdfWriter
+    
+    additional_docs = order.additional_docs.filter(is_signed=True).exclude(file='')
+    for doc in additional_docs:
+        # doc.file, doc.qr_code, order.final_qr_code bor
+        if not doc.qr_code or not order.final_qr_code:
+            continue
+            
+        temp_files_doc = []
+        try:
+            # Faylni PDF ekanligini tekshirish (faqat PDF lar uchun ishlaydi)
+            if not doc.file.name.lower().endswith('.pdf'):
+                continue
+                
+            # Asl PDF nusxasi
+            fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
+            os.close(fd)
+            temp_files_doc.append(temp_pdf)
+            with open(temp_pdf, 'wb') as f:
+                f.write(doc.file.read())
+            
+            # QR overlay yaratish
+            fd, overlay_pdf = tempfile.mkstemp(suffix='.pdf')
+            os.close(fd)
+            temp_files_doc.append(overlay_pdf)
+            
+            overlay_buffer = BytesIO()
+            c = rl_canvas.Canvas(overlay_buffer, pagesize=A4)
+            width, height = A4
+            
+            # Direktor tasdig'i (Umumiy QR) chap yuqorida
+            qr_size = 60
+            left_margin = 20
+            top_margin = height - qr_size - 20
+            c.drawImage(order.final_qr_code.path, left_margin, top_margin, width=qr_size, height=qr_size)
+            
+            # Xodim imzosi (Qo'shimcha Hujjat xos QR) darhol direktor QR tagida
+            c.drawImage(doc.qr_code.path, left_margin, top_margin - qr_size - 10, width=qr_size, height=qr_size)
+            
+            c.save()
+            overlay_buffer.seek(0)
+            
+            # Birlashtirish
+            overlay_reader = PdfReader(overlay_buffer)
+            overlay_page = overlay_reader.pages[0]
+            
+            pdf_writer = PdfWriter()
+            original_reader = PdfReader(temp_pdf)
+            
+            for page_num in range(len(original_reader.pages)):
+                page = original_reader.pages[page_num]
+                if page_num == 0:
+                    page.merge_page(overlay_page)
+                pdf_writer.add_page(page)
+                
+            final_buffer = BytesIO()
+            pdf_writer.write(final_buffer)
+            final_buffer.seek(0)
+            
+            # Saqlash
+            stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
+            doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
+            doc.save()
+            
+        except Exception as e:
+            print(f"Error generating stamped additional doc {doc.id}: {e}")
+        finally:
+            for tf in temp_files_doc:
+                if os.path.exists(tf):
+                    try:
+                        os.remove(tf)
+                    except:
+                        pass
     
     Notification.objects.create(
         user=order.created_by,
