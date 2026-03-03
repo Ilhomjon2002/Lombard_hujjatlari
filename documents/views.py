@@ -115,6 +115,20 @@ def create_document(request):
                 number=number
             )
 
+            # Yangi qo'shimcha hujjatlarni nomlari orqali yaratish (faylsiz)
+            new_doc_names = request.POST.getlist('new_additional_names')
+            for name in new_doc_names:
+                if name.strip():
+                    try:
+                        new_doc = AdditionalDocument.objects.create(
+                            name=name.strip(),
+                            file=None,
+                            branch=branch
+                        )
+                        order.additional_docs.add(new_doc)
+                    except Exception as e:
+                        print(f"Error saving additional document name: {e}")
+
             # Imzolar yaratish
             for i, emp_id in enumerate(employee_ids, start=1):
                 try:
