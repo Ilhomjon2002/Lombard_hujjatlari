@@ -553,6 +553,26 @@ def sign_additional_doc_fingerprint(request, doc_id):
     
     doc.save()
     
+    # === Hujjatga xodim QR kodini (ostiga) bosish ===
+    if doc.file:
+        try:
+            is_pdf = doc.file.name.lower().endswith('.pdf')
+            is_word = doc.file.name.lower().endswith(('.doc', '.docx'))
+            
+            final_buffer = None
+            if is_pdf:
+                final_buffer = stamp_pdf_with_qrs(doc.file, doc.qr_code.path)
+                stamped_filename = f"stamped_doc_{doc.id}_employee.pdf"
+            elif is_word:
+                final_buffer = stamp_word_with_qrs(doc.file, doc.qr_code.path)
+                stamped_filename = f"stamped_doc_{doc.id}_employee.docx"
+                
+            if final_buffer:
+                doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
+                doc.save()
+        except Exception as e:
+            print(f"Error generating stamped additional doc (employee only) {doc.id}: {e}")
+    
     # Javob
     response_data = {
         'success': True,
@@ -1774,6 +1794,120 @@ def director_approve_page(request, order_id):
         
     return render(request, 'documents/director_approve.html', {'order': order})
 
+def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None):
+    """
+    Helper to stamp a PDF with an employee QR code at the bottom right, 
+    and optionally director QR codes at the top right.
+    Returns a BytesIO buffer with the stamped PDF.
+    """
+    import tempfile, os
+    from reportlab.lib.pagesizes import A4
+    from reportlab.pdfgen import canvas as rl_canvas
+    from PyPDF2 import PdfReader, PdfWriter
+    from io import BytesIO
+
+    fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
+    os.close(fd)
+    
+    with open(temp_pdf, 'wb') as f:
+        f.write(original_file.read())
+        
+    original_file.seek(0)
+    
+    overlay_buffer = BytesIO()
+    c = rl_canvas.Canvas(overlay_buffer, pagesize=A4)
+    width, height = A4
+    
+    qr_size = 60
+    margin = 20
+    
+    # Employee QR code (bottom right)
+    if employee_qr_path and os.path.exists(employee_qr_path):
+        x_pos = width - qr_size - margin
+        y_pos = margin
+        c.drawImage(employee_qr_path, x_pos, y_pos, width=qr_size, height=qr_size)
+        
+    # Director QR code (top right)
+    if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
+        x_pos = width - qr_size - margin
+        y_pos = height - qr_size - margin
+        c.drawImage(director_qr_paths[0], x_pos, y_pos, width=qr_size, height=qr_size)
+
+    c.save()
+    overlay_buffer.seek(0)
+    
+    overlay_reader = PdfReader(overlay_buffer)
+    overlay_page = overlay_reader.pages[0]
+    
+    pdf_writer = PdfWriter()
+    original_reader = PdfReader(temp_pdf)
+    
+    for page_num in range(len(original_reader.pages)):
+        page = original_reader.pages[page_num]
+        if page_num == 0:
+            page.merge_page(overlay_page)
+        pdf_writer.add_page(page)
+        
+    final_buffer = BytesIO()
+    pdf_writer.write(final_buffer)
+    final_buffer.seek(0)
+    
+    if os.path.exists(temp_pdf):
+        try:
+            os.remove(temp_pdf)
+        except Exception:
+            pass
+            
+    return final_buffer
+
+def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None):
+    """
+    Helper to stamp a Word document with QR codes.
+    Appends the employee QR code at the end.
+    If director QR is given, adds it at the beginning.
+    Returns a BytesIO buffer.
+    """
+    import tempfile, os
+    import docx
+    from docx.shared import Inches
+    from io import BytesIO
+
+    fd, temp_word = tempfile.mkstemp(suffix='.docx')
+    os.close(fd)
+    
+    with open(temp_word, 'wb') as f:
+        f.write(original_file.read())
+        
+    original_file.seek(0)
+    
+    doc_obj = docx.Document(temp_word)
+    
+    # Prepend director QR
+    if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
+        p_top = doc_obj.paragraphs[0].insert_paragraph_before()
+        r_top = p_top.add_run()
+        r_top.add_picture(director_qr_paths[0], width=Inches(1.0))
+        p_top.add_run(" Elektron Nusxa (Direktor Tasdig'i)")
+    
+    # Append employee QR
+    if employee_qr_path and os.path.exists(employee_qr_path):
+        doc_obj.add_paragraph("--- Elektron Imzo (Xodim) ---")
+        p_bot = doc_obj.add_paragraph()
+        r_bot = p_bot.add_run()
+        r_bot.add_picture(employee_qr_path, width=Inches(1.0))
+        
+    final_buffer = BytesIO()
+    doc_obj.save(final_buffer)
+    final_buffer.seek(0)
+    
+    if os.path.exists(temp_word):
+        try:
+            os.remove(temp_word)
+        except Exception:
+            pass
+            
+    return final_buffer
+
 @require_http_methods(["POST"])
 @login_required
 def api_director_approve(request, order_id):
@@ -1834,95 +1968,22 @@ def api_director_approve(request, order_id):
             
         temp_files_doc = []
         try:
-        try:
-            # Faylni PDF ekanligini tekshirish (faqat PDF lar uchun ishlaydi)
             is_pdf = doc.file.name.lower().endswith('.pdf')
             is_word = doc.file.name.lower().endswith(('.doc', '.docx'))
 
             if not is_pdf and not is_word:
                 continue
                 
+            final_buffer = None
+            
             if is_pdf:
-                # Asl PDF nusxasi
-                fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
-                os.close(fd)
-                temp_files_doc.append(temp_pdf)
-                with open(temp_pdf, 'wb') as f:
-                    f.write(doc.file.read())
-                
-                # QR overlay yaratish
-                fd, overlay_pdf = tempfile.mkstemp(suffix='.pdf')
-                os.close(fd)
-                temp_files_doc.append(overlay_pdf)
-                
-                overlay_buffer = BytesIO()
-                c = rl_canvas.Canvas(overlay_buffer, pagesize=A4)
-                width, height = A4
-                
-                # Direktor tasdig'i (Umumiy QR) chap yuqorida
-                qr_size = 60
-                left_margin = 20
-                top_margin = height - qr_size - 20
-                c.drawImage(order.final_qr_code.path, left_margin, top_margin, width=qr_size, height=qr_size)
-                
-                # Xodim imzosi (Qo'shimcha Hujjat xos QR) darhol direktor QR tagida
-                c.drawImage(doc.qr_code.path, left_margin, top_margin - qr_size - 10, width=qr_size, height=qr_size)
-                
-                c.save()
-                overlay_buffer.seek(0)
-                
-                # Birlashtirish
-                overlay_reader = PdfReader(overlay_buffer)
-                overlay_page = overlay_reader.pages[0]
-                
-                pdf_writer = PdfWriter()
-                original_reader = PdfReader(temp_pdf)
-                
-                for page_num in range(len(original_reader.pages)):
-                    page = original_reader.pages[page_num]
-                    if page_num == 0:
-                        page.merge_page(overlay_page)
-                    pdf_writer.add_page(page)
-                    
-                final_buffer = BytesIO()
-                pdf_writer.write(final_buffer)
-                final_buffer.seek(0)
-                
-                # Saqlash
+                final_buffer = stamp_pdf_with_qrs(doc.file, doc.qr_code.path, [order.final_qr_code.path])
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
-                doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
-                doc.save()
-
             elif is_word:
-                import docx
-                from docx.shared import Inches
-
-                fd, temp_word = tempfile.mkstemp(suffix='.docx')
-                os.close(fd)
-                temp_files_doc.append(temp_word)
-                with open(temp_word, 'wb') as f:
-                    f.write(doc.file.read())
-
-                doc_obj = docx.Document(temp_word)
-                
-                # Add QR codes to the end of the document
-                doc_obj.add_paragraph("--- Elektron Imzolar ---")
-                
-                p = doc_obj.add_paragraph()
-                r = p.add_run()
-                r.add_picture(order.final_qr_code.path, width=Inches(1.0))
-                p.add_run(" Direktor Tasdig'i")
-
-                p2 = doc_obj.add_paragraph()
-                r2 = p2.add_run()
-                r2.add_picture(doc.qr_code.path, width=Inches(1.0))
-                p2.add_run(" Xodim Imzosi")
-
-                final_buffer = BytesIO()
-                doc_obj.save(final_buffer)
-                final_buffer.seek(0)
-                
+                final_buffer = stamp_word_with_qrs(doc.file, doc.qr_code.path, [order.final_qr_code.path])
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.docx"
+                
+            if final_buffer:
                 doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
                 doc.save()
             
