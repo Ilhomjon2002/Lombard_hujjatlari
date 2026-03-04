@@ -187,34 +187,20 @@
                             {% endif %}
                             <div class="d-flex gap-1 justify-content-end">
                                 {% if order.additional_docs.all %}
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false" title="Qo'shimcha hujjatlar">
-                                        <i class="bi bi-paperclip"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                                        <li>
-                                            <h6 class="dropdown-header">Qo'shimcha hujjatlar</h6>
-                                        </li>
-                                        {% for add_doc in order.additional_docs.all %}
-                                        <li>
-                                            {% if add_doc.stamped_file %}
-                                            <a class="dropdown-item"
-                                                href="{% url 'download_additional_doc' add_doc.id %}" target="_blank">
-                                                <i class="bi bi-file-earmark-check me-2 text-success"></i>{{
-                                                add_doc.name }} (QR bilan)
-                                            </a>
-                                            {% else %}
-                                            <span class="dropdown-item text-muted"
-                                                title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
-                                                <i class="bi bi-file-earmark me-2 text-warning"></i>{{ add_doc.name }}
-                                                (Tasdiqlanmagan)
-                                            </span>
-                                            {% endif %}
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
+                                {% for add_doc in order.additional_docs.all %}
+                                {% if add_doc.stamped_file %}
+                                <a class="btn btn-sm btn-outline-success me-1 mb-1"
+                                    href="{% url 'download_additional_doc' add_doc.id %}" target="_blank"
+                                    title="{{ add_doc.name }} ni yuklab olish">
+                                    <i class="bi bi-file-earmark-check"></i> {{ add_doc.name }} (QR)
+                                </a>
+                                {% else %}
+                                <span class="btn btn-sm btn-outline-secondary disabled me-1 mb-1"
+                                    title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
+                                    <i class="bi bi-file-earmark"></i> {{ add_doc.name }} (Tasdiqlanmagan)
+                                </span>
+                                {% endif %}
+                                {% endfor %}
                                 {% endif %}
                                 <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary"
                                     title="Ko'rish">

@@ -234,6 +234,8 @@
             id: "{{ employee.id }}",
             first_name: "{{ employee.first_name }}",
             last_name: "{{ employee.last_name }}",
+            middle_name: "{{ employee.middle_name|default:'' }}",
+            position: "{{ employee.position|default:'Lavozimi kiritilmagan' }}",
             role: "Xodim"
         });
         {% endfor %}
@@ -322,10 +324,23 @@
 
         // Additional Documents Dynamic Fields
         $('#addNewDocBtn').click(function () {
+            // Options generating string
+            let selectOptions = '<option value="">-- Imzolash ixtiyoriy --</option>';
+            availableEmployees.forEach(e => {
+                const mid = e.middle_name || '';
+                const pos = e.position || 'Lavozimi kiritilmagan';
+                selectOptions += `<option value="${e.id}">${e.last_name} ${e.first_name} ${mid} - ${pos}</option>`;
+            });
+
             const newRow = `
                 <div class="row mb-2 new-additional-doc-row align-items-center">
-                    <div class="col-md-10 mb-2 mb-md-0">
+                    <div class="col-md-6 mb-2 mb-md-0">
                         <input type="text" class="form-control form-control-sm" name="new_additional_names" placeholder="Hujjat nomi. Fayl keyinroq yuklanadi.">
+                    </div>
+                    <div class="col-md-4 mb-2 mb-md-0">
+                        <select class="form-select form-select-sm" name="new_additional_signers">
+                            ${selectOptions}
+                        </select>
                     </div>
                     <div class="col-md-2">
                         <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn" title="O'chirish"><i class="fas fa-trash"></i></button>

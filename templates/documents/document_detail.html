@@ -239,6 +239,8 @@
                                     <option value="">-- Imzolash ixtiyoriy --</option>
                                     {% for employee in employees %}
                                     <option value="{{ employee.id }}">{{ employee.last_name }} {{ employee.first_name }}
+                                        {{ employee.middle_name|default:"" }} - {{ employee.position|default:"Lavozimi
+                                        kiritilmagan" }}
                                     </option>
                                     {% endfor %}
                                 </select>

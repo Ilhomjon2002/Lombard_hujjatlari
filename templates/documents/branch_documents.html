@@ -82,8 +82,8 @@
                 <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
                 <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Barchasi —</option>
-                    <option value="external" {% if selected_type == 'external' %}selected{% endif %}>SH/T</option>
-                    <option value="official" {% if selected_type == 'official' %}selected{% endif %}>Buyruq</option>
+                    <option value="external" {% if selected_type=='external' %}selected{% endif %}>SH/T</option>
+                    <option value="official" {% if selected_type=='official' %}selected{% endif %}>Buyruq</option>
                 </select>
             </form>
         </div>
@@ -94,11 +94,11 @@
                 <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
                 <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Hammasi —</option>
-                    <option value="pending" {% if selected_status == 'yangi' %}selected{% endif %}>Yangi</option>
-                    <option value="partial" {% if selected_status == 'jarayonda' %}selected{% endif %}>Jarayonda</option>
-                    <option value="imzolangan" {% if selected_status == 'imzolangan' %}selected{% endif %}>Imzolangan
+                    <option value="pending" {% if selected_status=='yangi' %}selected{% endif %}>Yangi</option>
+                    <option value="partial" {% if selected_status=='jarayonda' %}selected{% endif %}>Jarayonda</option>
+                    <option value="imzolangan" {% if selected_status=='imzolangan' %}selected{% endif %}>Imzolangan
                         (faol)</option>
-                    <option value="tugatilgan" {% if selected_status == 'tugatilgan' %}selected{% endif %}>Tugatilgan
+                    <option value="tugatilgan" {% if selected_status=='tugatilgan' %}selected{% endif %}>Tugatilgan
                         (faol emas)</option>
                 </select>
                 {% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
@@ -163,34 +163,20 @@
                             </td>
                             <td class="text-end">
                                 {% if doc.additional_docs.all %}
-                                <div class="btn-group me-1" role="group">
-                                    <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false" title="Qo'shimcha hujjatlar">
-                                        <i class="bi bi-paperclip"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                                        <li>
-                                            <h6 class="dropdown-header">Qo'shimcha hujjatlar</h6>
-                                        </li>
-                                        {% for add_doc in doc.additional_docs.all %}
-                                        <li>
-                                            {% if add_doc.stamped_file %}
-                                            <a class="dropdown-item"
-                                                href="{% url 'download_additional_doc' add_doc.id %}" target="_blank">
-                                                <i class="bi bi-file-earmark-check me-2 text-success"></i>{{
-                                                add_doc.name }} (QR bilan)
-                                            </a>
-                                            {% else %}
-                                            <span class="dropdown-item text-muted"
-                                                title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
-                                                <i class="bi bi-file-earmark me-2 text-warning"></i>{{ add_doc.name }}
-                                                (Tasdiqlanmagan)
-                                            </span>
-                                            {% endif %}
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
+                                {% for add_doc in doc.additional_docs.all %}
+                                {% if add_doc.stamped_file %}
+                                <a class="btn btn-sm btn-outline-success me-1 mb-1"
+                                    href="{% url 'download_additional_doc' add_doc.id %}" target="_blank"
+                                    title="{{ add_doc.name }} ni yuklab olish">
+                                    <i class="bi bi-file-earmark-check"></i> {{ add_doc.name }} (QR)
+                                </a>
+                                {% else %}
+                                <span class="btn btn-sm btn-outline-secondary disabled me-1 mb-1"
+                                    title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
+                                    <i class="bi bi-file-earmark"></i> {{ add_doc.name }} (Tasdiqlanmagan)
+                                </span>
+                                {% endif %}
+                                {% endfor %}
                                 {% endif %}
                                 <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary"
                                     title="Ko'rish">

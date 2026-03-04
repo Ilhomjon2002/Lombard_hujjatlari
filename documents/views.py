@@ -239,10 +239,13 @@ def document_detail(request, order_id):
         for sig in signatures
     ]
 
+    employees = CustomUser.objects.filter(role='employee')
+    
     context = {
         'document': order,
         'signatures': signatures,
         'signature_status': signature_status,
+        'employees': employees,
     }
     return render(request, 'documents/document_detail.html', context)
 
