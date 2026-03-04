@@ -258,3 +258,7 @@
 2026-03-04 19:06:28,075 - werkzeug - INFO - 127.0.0.1 - - [04/Mar/2026 19:06:28] "GET /api/status HTTP/1.1" 200 -
 2026-03-04 19:06:28,093 - agent - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
 2026-03-04 19:06:28,093 - werkzeug - INFO - 127.0.0.1 - - [04/Mar/2026 19:06:28] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-03-04 19:18:12,701 - agent - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-03-04 19:18:12,702 - werkzeug - INFO - 127.0.0.1 - - [04/Mar/2026 19:18:12] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-03-04 19:24:57,791 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-03-04 19:24:57,792 - agent - INFO - Scanner closed
