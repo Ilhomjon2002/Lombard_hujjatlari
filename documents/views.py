@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
-from datetime import datetime
+from django.utils import timezone
 from .models import OrderSignature, Notification, Order, OrderSigner, AdditionalDocument
 from users.models import CustomUser, Branch
 from .forms import EditSignatureForm
@@ -28,12 +28,21 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-# Kirillcha shriftni ro'yxatdan o'tkazish
-try:
-    pdfmetrics.registerFont(TTFont('Arial', 'C:/Windows/Fonts/arial.ttf'))
-except Exception:
-    # Font topilmasa tizim shriftlaridan foydalaniladi
-    pass
+# Kirillcha shriftni ro'yxatdan o'tkazish (Windows va Linux/Docker)
+_font_registered = False
+for _font_path in [
+    'C:/Windows/Fonts/arial.ttf',
+    '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+    '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+]:
+    try:
+        import os as _os
+        if _os.path.exists(_font_path):
+            pdfmetrics.registerFont(TTFont('Arial', _font_path))
+            _font_registered = True
+            break
+    except Exception:
+        continue
 
 
 @login_required
@@ -1944,7 +1953,7 @@ def api_director_approve(request, order_id):
         
     # Tasdiqlash
     order.director_approved = True
-    order.director_approved_at = datetime.now()
+    order.director_approved_at = timezone.now()
     
     # Umumiy QR kod yaratish
     signatures = order.signatures.all().order_by('order_number')
