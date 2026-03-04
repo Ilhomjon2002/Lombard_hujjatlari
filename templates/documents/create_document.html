@@ -117,7 +117,6 @@
                                 <div class="col-md-8 mb-3 mb-md-0">
                                     <select class="form-select" id="employeeSelect">
                                         <option value="">Ishchini tanlang</option>
-                                        {{employees.count}}
                                         {% for employee in employees %}
                                         <option value="{{ employee.id }}">
                                             {{ employee.first_name }} {{ employee.last_name }} ({{

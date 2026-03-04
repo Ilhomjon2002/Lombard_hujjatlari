@@ -194,7 +194,7 @@ def create_document(request):
             messages.error(request, f'Xatolik yuz berdi: {str(e)}')
 
     branches = Branch.objects.filter(parent_branch__isnull=True)
-    employees = CustomUser.objects.values('id', 'first_name', 'last_name', 'role')  # Rol qo'shildi
+    employees = CustomUser.objects.filter(role='employee')
     
     # Barcha mavjud unikal qo'shimcha hujjat nomlarini olish
     saved_doc_names = AdditionalDocument.objects.exclude(name__exact='').values_list('name', flat=True).distinct().order_by('name')
