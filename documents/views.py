@@ -712,6 +712,27 @@ def download_stamped_pdf(request, order_id):
     filename = f"pechatli_{order.number}.pdf".replace("/", "_")
     return FileResponse(buffer, as_attachment=True, filename=filename)
 
+def download_additional_document(request, doc_id):
+    """Qo'shimcha hujjatning elektron nusxasini (Pechatli PDF/Word) yuklab olish."""
+    import os
+    
+    doc = get_object_or_404(AdditionalDocument, pk=doc_id)
+    if not doc.stamped_file:
+        messages.error(request, "Ushbu hujjat uchun pechatli fayl mavjud emas.")
+        return redirect('dashboard')
+        
+    file_path = doc.stamped_file.path
+    if not os.path.exists(file_path):
+        messages.error(request, "Fayl topilmadi.")
+        return redirect('dashboard')
+        
+    with open(file_path, 'rb') as f:
+        buffer = BytesIO(f.read())
+    
+    ext = os.path.splitext(file_path)[1]
+    filename = f"hujjat_elektron_{doc.id}{ext}"
+    return FileResponse(buffer, as_attachment=True, filename=filename)
+
 
 @login_required
 def upload_additional_document_file(request, doc_id, order_id):
@@ -1973,14 +1994,26 @@ def api_director_approve(request, order_id):
 
             if not is_pdf and not is_word:
                 continue
+            
+            # Qo'shimcha hujjat uchun yuklab olish URL-i asosida alohida QR yasash
+            download_url = request.build_absolute_uri(f"/documents/download-additional-doc/{doc.id}/")
+            qr_add = qrcode.QRCode(version=1, box_size=5, border=1)
+            qr_add.add_data(download_url)
+            qr_add.make(fit=True)
+            img_add = qr_add.make_image(fill='black', back_color='white')
+            
+            fd, main_add_qr_path = tempfile.mkstemp(suffix='.png')
+            os.close(fd)
+            temp_files_doc.append(main_add_qr_path)
+            img_add.save(main_add_qr_path, format='PNG')
                 
             final_buffer = None
             
             if is_pdf:
-                final_buffer = stamp_pdf_with_qrs(doc.file, doc.qr_code.path, [order.final_qr_code.path])
+                final_buffer = stamp_pdf_with_qrs(doc.file, doc.qr_code.path, [main_add_qr_path])
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
             elif is_word:
-                final_buffer = stamp_word_with_qrs(doc.file, doc.qr_code.path, [order.final_qr_code.path])
+                final_buffer = stamp_word_with_qrs(doc.file, doc.qr_code.path, [main_add_qr_path])
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.docx"
                 
             if final_buffer:
