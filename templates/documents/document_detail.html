@@ -97,7 +97,8 @@
 
                         <div class="mt-2">
                             {% if doc.signer %}
-                            <div class="small fw-bold">Imzolovchi: {{ doc.signer.get_full_name }}</div>
+                            <div class="small fw-bold">Imzolovchi: {{ doc.signer.get_full_name_with_middle }} ({{
+                                doc.signer.position|default:"Lavozim kiritilmagan" }})</div>
                             {% if doc.is_signed %}
                             <span class="badge bg-success mt-1"><i class="bi bi-check-circle me-1"></i>
                                 Imzolangan</span>
@@ -275,8 +276,7 @@
                     <tr {% if sig.signed %}class="table-success" {% endif %}>
                         <td>{{ sig.order_number }}</td>
                         <td>
-                            <strong>{{ sig.user.last_name }} {{ sig.user.first_name }} {{ sig.user.middle_name
-                                }}</strong>
+                            <strong>{{ sig.user.get_full_name_with_middle }}</strong>
                         </td>
                         <td>{{ sig.user.position|default:"—" }}</td>
                         <td>
@@ -305,8 +305,7 @@
                                 <div class="modal-dialog modal-sm modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h6 class="modal-title">{{ sig.user.last_name }} {{ sig.user.first_name }}
-                                                {{ sig.user.middle_name }}</h6>
+                                            <h6 class="modal-title">{{ sig.user.get_full_name_with_middle }}</h6>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
                                         <div class="modal-body text-center">

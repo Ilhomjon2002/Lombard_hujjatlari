@@ -78,14 +78,17 @@
                                         </li>
                                         {% for add_doc in sig.order.additional_docs.all %}
                                         <li>
-                                            {% if add_doc.file %}
-                                            <a class="dropdown-item" href="{{ add_doc.file.url }}" target="_blank">
-                                                <i class="bi bi-file-earmark me-2 text-info"></i>{{ add_doc.name }}
+                                            {% if add_doc.stamped_file %}
+                                            <a class="dropdown-item"
+                                                href="{% url 'download_additional_doc' add_doc.id %}" target="_blank">
+                                                <i class="bi bi-file-earmark-check me-2 text-success"></i>{{
+                                                add_doc.name }} (QR bilan)
                                             </a>
                                             {% else %}
-                                            <span class="dropdown-item text-muted">
-                                                <i class="bi bi-exclamation-triangle me-2 text-warning"></i>{{
-                                                add_doc.name }} (Fayl yo'q)
+                                            <span class="dropdown-item text-muted"
+                                                title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
+                                                <i class="bi bi-file-earmark me-2 text-warning"></i>{{ add_doc.name }}
+                                                (Tasdiqlanmagan)
                                             </span>
                                             {% endif %}
                                         </li>
@@ -195,14 +198,17 @@
                                         </li>
                                         {% for add_doc in order.additional_docs.all %}
                                         <li>
-                                            {% if add_doc.file %}
-                                            <a class="dropdown-item" href="{{ add_doc.file.url }}" target="_blank">
-                                                <i class="bi bi-file-earmark me-2 text-info"></i>{{ add_doc.name }}
+                                            {% if add_doc.stamped_file %}
+                                            <a class="dropdown-item"
+                                                href="{% url 'download_additional_doc' add_doc.id %}" target="_blank">
+                                                <i class="bi bi-file-earmark-check me-2 text-success"></i>{{
+                                                add_doc.name }} (QR bilan)
                                             </a>
                                             {% else %}
-                                            <span class="dropdown-item text-muted">
-                                                <i class="bi bi-exclamation-triangle me-2 text-warning"></i>{{
-                                                add_doc.name }} (Fayl yo'q)
+                                            <span class="dropdown-item text-muted"
+                                                title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
+                                                <i class="bi bi-file-earmark me-2 text-warning"></i>{{ add_doc.name }}
+                                                (Tasdiqlanmagan)
                                             </span>
                                             {% endif %}
                                         </li>

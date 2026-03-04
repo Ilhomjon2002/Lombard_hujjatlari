@@ -162,8 +162,9 @@
                                                 style="display: none; max-width: 200px;">
                                                 <option value="">-- Imzolash ixtiyoriy --</option>
                                                 {% for employee in employees %}
-                                                <option value="{{ employee.id }}">{{ employee.last_name }} {{
-                                                    employee.first_name }}</option>
+                                                <option value="{{ employee.id }}">{{ employee.get_full_name_with_middle
+                                                    }} - {{ employee.position|default:"Lavozimi kiritilmagan" }}
+                                                </option>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -189,8 +190,9 @@
                                             <select class="form-select form-select-sm" name="new_additional_signers">
                                                 <option value="">-- Imzolash ixtiyoriy --</option>
                                                 {% for employee in employees %}
-                                                <option value="{{ employee.id }}">{{ employee.last_name }} {{
-                                                    employee.first_name }}</option>
+                                                <option value="{{ employee.id }}">{{ employee.get_full_name_with_middle
+                                                    }} - {{ employee.position|default:"Lavozimi kiritilmagan" }}
+                                                </option>
                                                 {% endfor %}
                                             </select>
                                         </div>
