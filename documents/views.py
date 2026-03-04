@@ -1834,59 +1834,97 @@ def api_director_approve(request, order_id):
             
         temp_files_doc = []
         try:
+        try:
             # Faylni PDF ekanligini tekshirish (faqat PDF lar uchun ishlaydi)
-            if not doc.file.name.lower().endswith('.pdf'):
+            is_pdf = doc.file.name.lower().endswith('.pdf')
+            is_word = doc.file.name.lower().endswith(('.doc', '.docx'))
+
+            if not is_pdf and not is_word:
                 continue
                 
-            # Asl PDF nusxasi
-            fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
-            os.close(fd)
-            temp_files_doc.append(temp_pdf)
-            with open(temp_pdf, 'wb') as f:
-                f.write(doc.file.read())
-            
-            # QR overlay yaratish
-            fd, overlay_pdf = tempfile.mkstemp(suffix='.pdf')
-            os.close(fd)
-            temp_files_doc.append(overlay_pdf)
-            
-            overlay_buffer = BytesIO()
-            c = rl_canvas.Canvas(overlay_buffer, pagesize=A4)
-            width, height = A4
-            
-            # Direktor tasdig'i (Umumiy QR) chap yuqorida
-            qr_size = 60
-            left_margin = 20
-            top_margin = height - qr_size - 20
-            c.drawImage(order.final_qr_code.path, left_margin, top_margin, width=qr_size, height=qr_size)
-            
-            # Xodim imzosi (Qo'shimcha Hujjat xos QR) darhol direktor QR tagida
-            c.drawImage(doc.qr_code.path, left_margin, top_margin - qr_size - 10, width=qr_size, height=qr_size)
-            
-            c.save()
-            overlay_buffer.seek(0)
-            
-            # Birlashtirish
-            overlay_reader = PdfReader(overlay_buffer)
-            overlay_page = overlay_reader.pages[0]
-            
-            pdf_writer = PdfWriter()
-            original_reader = PdfReader(temp_pdf)
-            
-            for page_num in range(len(original_reader.pages)):
-                page = original_reader.pages[page_num]
-                if page_num == 0:
-                    page.merge_page(overlay_page)
-                pdf_writer.add_page(page)
+            if is_pdf:
+                # Asl PDF nusxasi
+                fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
+                os.close(fd)
+                temp_files_doc.append(temp_pdf)
+                with open(temp_pdf, 'wb') as f:
+                    f.write(doc.file.read())
                 
-            final_buffer = BytesIO()
-            pdf_writer.write(final_buffer)
-            final_buffer.seek(0)
-            
-            # Saqlash
-            stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
-            doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
-            doc.save()
+                # QR overlay yaratish
+                fd, overlay_pdf = tempfile.mkstemp(suffix='.pdf')
+                os.close(fd)
+                temp_files_doc.append(overlay_pdf)
+                
+                overlay_buffer = BytesIO()
+                c = rl_canvas.Canvas(overlay_buffer, pagesize=A4)
+                width, height = A4
+                
+                # Direktor tasdig'i (Umumiy QR) chap yuqorida
+                qr_size = 60
+                left_margin = 20
+                top_margin = height - qr_size - 20
+                c.drawImage(order.final_qr_code.path, left_margin, top_margin, width=qr_size, height=qr_size)
+                
+                # Xodim imzosi (Qo'shimcha Hujjat xos QR) darhol direktor QR tagida
+                c.drawImage(doc.qr_code.path, left_margin, top_margin - qr_size - 10, width=qr_size, height=qr_size)
+                
+                c.save()
+                overlay_buffer.seek(0)
+                
+                # Birlashtirish
+                overlay_reader = PdfReader(overlay_buffer)
+                overlay_page = overlay_reader.pages[0]
+                
+                pdf_writer = PdfWriter()
+                original_reader = PdfReader(temp_pdf)
+                
+                for page_num in range(len(original_reader.pages)):
+                    page = original_reader.pages[page_num]
+                    if page_num == 0:
+                        page.merge_page(overlay_page)
+                    pdf_writer.add_page(page)
+                    
+                final_buffer = BytesIO()
+                pdf_writer.write(final_buffer)
+                final_buffer.seek(0)
+                
+                # Saqlash
+                stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
+                doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
+                doc.save()
+
+            elif is_word:
+                import docx
+                from docx.shared import Inches
+
+                fd, temp_word = tempfile.mkstemp(suffix='.docx')
+                os.close(fd)
+                temp_files_doc.append(temp_word)
+                with open(temp_word, 'wb') as f:
+                    f.write(doc.file.read())
+
+                doc_obj = docx.Document(temp_word)
+                
+                # Add QR codes to the end of the document
+                doc_obj.add_paragraph("--- Elektron Imzolar ---")
+                
+                p = doc_obj.add_paragraph()
+                r = p.add_run()
+                r.add_picture(order.final_qr_code.path, width=Inches(1.0))
+                p.add_run(" Direktor Tasdig'i")
+
+                p2 = doc_obj.add_paragraph()
+                r2 = p2.add_run()
+                r2.add_picture(doc.qr_code.path, width=Inches(1.0))
+                p2.add_run(" Xodim Imzosi")
+
+                final_buffer = BytesIO()
+                doc_obj.save(final_buffer)
+                final_buffer.seek(0)
+                
+                stamped_filename = f"stamped_doc_{doc.id}_{order.number}.docx"
+                doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
+                doc.save()
             
         except Exception as e:
             print(f"Error generating stamped additional doc {doc.id}: {e}")
