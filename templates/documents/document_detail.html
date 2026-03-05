@@ -97,8 +97,8 @@
 
                         <div class="mt-2">
                             {% if doc.signer %}
-                            <div class="small fw-bold">Imzolovchi: {{ doc.signer.get_full_name_with_middle }} ({{
-                                doc.signer.position|default:"Lavozim kiritilmagan" }})</div>
+                            <div class="small fw-bold">Imzolovchi: {{ doc.signer.get_full_name_with_middle }} 
+                                ({{ doc.signer.position|default:"Lavozim kiritilmagan" }})</div>
                             {% if doc.is_signed %}
                             <span class="badge bg-success mt-1"><i class="bi bi-check-circle me-1"></i>
                                 Imzolangan</span>
