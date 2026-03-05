@@ -143,8 +143,8 @@
                             {% if order.is_fully_signed and not order.director_approved %}
                             <span class="badge bg-warning text-dark">Tasdiq kutilmoqda</span>
                             {% else %}
-                            <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count }}/{{
-                                order.signatures_total_count }})</span>
+                            <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count }}/
+                                {{ order.signatures_total_count }})</span>
                             {% endif %}
                             {% elif order.status == 'pending' %}
                             <span class="badge bg-info">Kutilmoqda</span>
