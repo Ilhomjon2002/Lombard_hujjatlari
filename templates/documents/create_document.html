@@ -59,7 +59,7 @@
                     <!-- Document Type and Title -->
                     <div class="row mb-3">
                         <input type="hidden" name="document_type" value="official">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label for="title" class="form-label" id="titleLabel">Sarlavha/Nom</label>
                             <input type="text" class="form-control" id="title" name="title" required>
                         </div>
@@ -118,8 +118,8 @@
                                     <select class="form-select" id="employeeSelect">
                                         <option value="">Ishchini tanlang</option>
                                         {% for employee in employees %}
-                                        <option value="{{ employee.id }}">{{ employee.last_name }} {{
-                                            employee.first_name }}</option>
+                                        <option value="{{ employee.id }}">{{ employee.last_name }} 
+                                            {{ employee.first_name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
