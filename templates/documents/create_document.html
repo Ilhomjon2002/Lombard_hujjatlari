@@ -56,8 +56,9 @@
                 <form method="POST" enctype="multipart/form-data" id="documentForm">
                     {% csrf_token %}
 
-                    <!-- Document Type and Title -->
+                    
                     <div class="row mb-3">
+                    <!-- Document Type and Title -->
                         <input type="hidden" name="document_type" value="official">
                         <div class="col-md-6">
                             <label for="title" class="form-label" id="titleLabel">Sarlavha/Nom</label>
@@ -66,7 +67,6 @@
                     
 
                     <!-- Branch and Number -->
-                    
                         <label for="branch" class="form-label">Filial *</label>
                         <div class="col-md-6 mb-3 mb-md-0">
                             <select class="form-select" id="branch" name="branch" required>
