@@ -152,17 +152,16 @@
                                         <div class="d-flex w-100 justify-content-between align-items-center">
                                             <label class="form-check-label mb-0" style="cursor: pointer; flex: 1;"
                                                 for="savedDoc{{ forloop.counter }}">
-                                                <i class="bi bi-file-earmark-text text-secondary me-1"></i> {{ doc_name
-                                                }}
+                                                <i class="bi bi-file-earmark-text text-secondary me-1"></i> {{ doc_name }}
                                             </label>
                                             <select class="form-select form-select-sm w-auto saved-doc-signer"
                                                 name="saved_doc_signers_{{ doc_name }}"
                                                 style="display: none; max-width: 200px;">
                                                 <option value="">-- Imzolash ixtiyoriy --</option>
                                                 {% for employee in employees %}
-                                                <option value="{{ employee.id }}">{{ employee.last_name }} {{
-                                                    employee.first_name }} {{ employee.middle_name|default:"" }} - {{
-                                                    employee.position|default:"Lavozimi kiritilmagan" }}
+                                                <option value="{{ employee.id }}">{{ employee.last_name }} 
+                                                    {{ employee.first_name }} {{ employee.middle_name|default:"" }} - 
+                                                    {{ employee.position|default:"Lavozimi kiritilmagan" }}
                                                 </option>
                                                 {% endfor %}
                                             </select>
@@ -189,9 +188,9 @@
                                             <select class="form-select form-select-sm" name="new_additional_signers">
                                                 <option value="">-- Imzolash ixtiyoriy --</option>
                                                 {% for employee in employees %}
-                                                <option value="{{ employee.id }}">{{ employee.last_name }} {{
-                                                    employee.first_name }} {{ employee.middle_name|default:"" }} - {{
-                                                    employee.position|default:"Lavozimi kiritilmagan" }}
+                                                <option value="{{ employee.id }}">{{ employee.last_name }} 
+                                                    {{ employee.first_name }} {{ employee.middle_name|default:"" }} - 
+                                                    {{ employee.position|default:"Lavozimi kiritilmagan" }}
                                                 </option>
                                                 {% endfor %}
                                             </select>
