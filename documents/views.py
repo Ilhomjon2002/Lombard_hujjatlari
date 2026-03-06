@@ -1733,11 +1733,11 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                 middle_name = user.middle_name if hasattr(user, 'middle_name') else ''
                 position = user.position or '-'
                 
-                c.drawString(text_x, float(current_text_y), f"{i}. F.I.O: {safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}")
-                current_text_y -= 10.0
-                c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(position)}")
-                current_text_y -= 10.0
-                c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
+                c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}         {safe_str(position)}         {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
+                # current_text_y -= 10.0
+                # c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(position)}")
+                # current_text_y -= 10.0
+                # c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
                 current_text_y -= 15.0
         
         c.save()
