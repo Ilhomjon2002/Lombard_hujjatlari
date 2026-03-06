@@ -1751,9 +1751,9 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
         def safe_str(s):
             return str(s or '').encode('latin-1', 'replace').decode('latin-1')
             
-        if order.director_approved and order.director_approved_at:
-            c.drawString(text_x, float(current_text_y), f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
-            current_text_y -= 15.0
+        # if order.director_approved and order.director_approved_at:
+        #     c.drawString(text_x, float(current_text_y), f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
+        #     current_text_y -= 15.0
             
         if signatures.exists():
             c.setFont("Helvetica-Bold", 8)
