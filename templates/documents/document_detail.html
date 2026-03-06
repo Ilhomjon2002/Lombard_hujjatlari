@@ -347,21 +347,6 @@
                     <div class="small fw-bold mt-1 text-primary">Direktor Tasdig'i</div>
                 </div>
                 {% endif %}
-
-                <!-- Xodimlarning imzolari (QR) -->
-                {% for sig in signatures %}
-                {% if sig.signed and sig.qr_code %}
-                <div class="text-center">
-                    <div class="d-inline-block bg-white p-2 rounded shadow-sm mb-2">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#qrModal{{ sig.id }}">
-                            <img src="{{ sig.qr_code.url }}" alt="QR Code"
-                                style="width: 120px; height: 120px; object-fit: contain;">
-                        </a>
-                    </div>
-                    <div class="small fw-bold mt-1 text-secondary">{{ sig.user.get_full_name_with_middle }}</div>
-                </div>
-                {% endif %}
-                {% endfor %}
             </div>
 
             <p class="text-muted small mt-1">Barcha imzolarning elektron QR nusxalari yuqorida keltirilgan.</p>

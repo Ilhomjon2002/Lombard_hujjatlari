@@ -1688,107 +1688,57 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
         temp_files.append(main_qr_path)
         img.save(main_qr_path, format='PNG')
         
-        # Top-right joylash
-        qr_size = 60
-        c.drawImage(main_qr_path, width - qr_size - 20, height - qr_size - 20,
+        # Top-right joylash (Document umumiy QR)
+        qr_size = 90.0
+        c.drawImage(main_qr_path, float(width - qr_size - 20), float(height - qr_size - 20),
                      width=qr_size, height=qr_size)
         
-        # === LEFT MARGIN: Imzolovchilar QR kodlari (vertikal tarzda) ===
+        # === BOTTOM LEFT: Xodimlar va Tasdiq QR kodi ===
         signatures = order.signatures.filter(signed=True).order_by('order_number')
         
-        # Chap tarafda QR kodlar joylashuvi
-        left_x = 12.0  # Chap chekkadan masofa
-        qr_sig_size = 45.0  # Har bir QR ning o'lchami
-        qr_gap = 8.0  # QR kodlar orasidagi masofa
+        left_x = 30.0  # Chap chekkadan masofa
+        bottom_y = 30.0  # Eng pastdan masofa
+        bottom_qr_size = 90.0
         
-        # Sahifaning o'rta qismidan boshlab pastga joylash
-        # Sahifa balandligi: height (~842pt), o'rtadan yuqoriroq boshlaymiz
-        start_y = float(height * 0.55)  # Sahifaning ~55% balandligidan boshlanadi
+        # Determine the bottom QR code to draw (use director's final QR if available, else the main doc QR)
+        bottom_qr_path = order.final_qr_code.path if (order.director_approved and order.final_qr_code) else main_qr_path
         
-        if order.director_approved and order.final_qr_code:
-            # Direktor tasdiqlagan — bitta umumiy QR
-            try:
-                current_y = start_y
-                c.drawImage(order.final_qr_code.path, left_x, current_y,
-                           width=qr_sig_size, height=qr_sig_size)
-                c.setFont("Helvetica", 5)
-                c.drawString(left_x, float(current_y - 7.0), "Tasdiqlandi")
-                
-                if order.director_approved_at:
-                    c.drawString(left_x, float(current_y - 13.0), 
-                                order.director_approved_at.strftime("%d.%m.%Y"))
-            except Exception as e:
-                print(f"Error drawing director final QR: {e}")
+        try:
+            c.drawImage(bottom_qr_path, left_x, bottom_y, width=bottom_qr_size, height=bottom_qr_size)
+        except Exception as e:
+            print(f"Error drawing bottom QR: {e}")
+            
+        # Draw employee info next to the bottom QR
+        text_x = left_x + bottom_qr_size + 15.0
+        current_text_y = bottom_y + bottom_qr_size - 10.0
+        c.setFont("Helvetica", 8)
         
-        # Har bir imzolovchi uchun alohida QR kod
+        def safe_str(s):
+            return str(s or '').encode('latin-1', 'replace').decode('latin-1')
+            
+        if order.director_approved and order.director_approved_at:
+            c.drawString(text_x, float(current_text_y), f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
+            current_text_y -= 15.0
+            
         if signatures.exists():
-            current_y = start_y
+            c.setFont("Helvetica-Bold", 8)
+            c.drawString(text_x, float(current_text_y), "Elektron imzolar (Xodimlar):")
+            current_text_y -= 12.0
+            c.setFont("Helvetica", 8)
             
-            # Agar director QR bor bo'lsa, pastroqdan boshlaymiz
-            if order.director_approved and order.final_qr_code:
-                current_y -= (qr_sig_size + qr_gap + 15.0)
-            
-            for sig in signatures:
-                # QR ma'lumotlari
+            for i, sig in enumerate(signatures, 1):
                 user = sig.user
-                full_name = f"{user.last_name} {user.first_name}"
-                if hasattr(user, 'middle_name') and user.middle_name:
-                    full_name += f" {user.middle_name}"
+                first_name = user.first_name
+                last_name = user.last_name
+                middle_name = user.middle_name if hasattr(user, 'middle_name') else ''
+                position = user.position or '-'
                 
-                qr_data = (
-                    f"IMZO TASDIQLANGAN\n"
-                    f"F.I.O: {full_name}\n"
-                    f"Lavozim: {user.position or '-'}\n"
-                    f"Buyruq: {order.number}\n"
-                    f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}\n"
-                    f"ID: {user.id}"
-                )
-                
-                # Agar imzolovchining o'z QR kodi bo'lsa, uni ishlatamiz
-                if sig.qr_code:
-                    try:
-                        qr_img_path = sig.qr_code.path
-                        if os.path.exists(qr_img_path):
-                            c.drawImage(qr_img_path, left_x, current_y,
-                                       width=qr_sig_size, height=qr_sig_size)
-                            
-                            c.setFont("Helvetica", 8)
-                            text_x = left_x + qr_sig_size + 15.0
-                            
-                            def safe_str(s):
-                                return str(s or '-').encode('latin-1', 'replace').decode('latin-1')
-                                
-                            c.drawString(text_x, float(current_y + qr_sig_size - 10.0), f"F.I.O: {safe_str(full_name)}")
-                            c.drawString(text_x, float(current_y + qr_sig_size - 22.0), f"Lavozim: {safe_str(user.position)}")
-                            c.drawString(text_x, float(current_y + qr_sig_size - 34.0), f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
-                            
-                            current_y -= (qr_sig_size + qr_gap)
-                            continue
-                    except Exception:
-                        pass
-                
-                # QR kod generatsiya
-                sig_qr = qrcode.QRCode(version=None, box_size=4, border=1)
-                sig_qr.add_data(qr_data)
-                sig_qr.make(fit=True)
-                sig_img = sig_qr.make_image(fill='black', back_color='white')
-                
-                fd, sig_qr_path = tempfile.mkstemp(suffix='.png')
-                os.close(fd)
-                temp_files.append(sig_qr_path)
-                sig_img.save(sig_qr_path, format='PNG')
-                
-                try:
-                    c.drawImage(sig_qr_path, left_x, current_y,
-                               width=qr_sig_size, height=qr_sig_size)
-                except Exception as e:
-                    print(f"Error drawing sig QR for {full_name}: {e}")
-                
-                current_y -= (qr_sig_size + qr_gap)
-                
-                # Sahifadan chiqib ketmasin
-                if current_y < 30.0:
-                    break
+                c.drawString(text_x, float(current_text_y), f"{i}. F.I.O: {safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}")
+                current_text_y -= 10.0
+                c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(position)}")
+                current_text_y -= 10.0
+                c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
+                current_text_y -= 15.0
         
         c.save()
         overlay_buffer.seek(0)
@@ -1866,37 +1816,41 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
     qr_size = 90.0
     margin = 30.0
     
-    # Employee QR codes (bottom left, horizontally aligned)
+    # Employee QR codes (bottom left)
+    # the user wants ONE QR code at the bottom left with text stacked next to it.
     employee_data = employee_info_list if employee_info_list else []
-    if not employee_data and all_employee_qrs:
-        employee_data = [{'qr_path': path} for path in all_employee_qrs]
-    elif not employee_data and employee_qr_path:
-        employee_data = [{'qr_path': employee_qr_path}]
     
+    # We will draw the FIRST employee's QR code (or the only one) at the bottom left.
+    bottom_qr_path = employee_qr_path
+    if not bottom_qr_path and employee_data and employee_data[0].get('qr_path'):
+        bottom_qr_path = employee_data[0]['qr_path']
+        
     x_pos_emp = float(margin)
     y_pos_emp = float(margin)
+    
+    if bottom_qr_path and os.path.exists(bottom_qr_path):
+        c.drawImage(bottom_qr_path, x_pos_emp, y_pos_emp, width=qr_size, height=qr_size)
+    
+    # Draw text next to the BOTTOM QR
+    text_x = x_pos_emp + qr_size + 15.0
+    current_text_y = y_pos_emp + qr_size - 10.0
     
     def safe_str(s):
         return str(s or '').encode('latin-1', 'replace').decode('latin-1')
         
-    for emp in employee_data:
-        emp_qr = emp.get('qr_path')
-        if emp_qr and os.path.exists(emp_qr):
-            c.drawImage(emp_qr, x_pos_emp, y_pos_emp, width=qr_size, height=qr_size)
-            
-            # Draw text next to QR
-            text_x = x_pos_emp + qr_size + 15.0
-            y_base = y_pos_emp + qr_size - 15.0
-            c.setFont("Helvetica", 8)
-            
-            if emp.get('full_name'):
-                c.drawString(text_x, float(y_base), f"F.I.O: {safe_str(emp.get('full_name'))}")
-            if emp.get('position'):
-                c.drawString(text_x, float(y_base - 12.0), f"Lavozim: {safe_str(emp.get('position'))}")
-            if emp.get('date'):
-                c.drawString(text_x, float(y_base - 24.0), f"Sana: {safe_str(emp.get('date'))}")
-                
-            x_pos_emp += float(qr_size + 160.0)  # Make more space for text
+    if employee_data:
+        c.setFont("Helvetica-Bold", 8)
+        c.drawString(text_x, float(current_text_y), "Elektron imzolar (Xodimlar):")
+        current_text_y -= 12.0
+        c.setFont("Helvetica", 8)
+        
+        for i, emp in enumerate(employee_data, 1):
+            c.drawString(text_x, float(current_text_y), f"{i}. F.I.O: {safe_str(emp.get('full_name'))}")
+            current_text_y -= 10.0
+            c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(emp.get('position'))}")
+            current_text_y -= 10.0
+            c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {safe_str(emp.get('date'))}")
+            current_text_y -= 15.0
         
     # Director / Main QR code (top left)
     if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
@@ -1960,32 +1914,36 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         r_top.add_picture(director_qr_paths[0], width=Inches(1.5))
         p_top.add_run(" Elektron Nusxa (Umumiy Tasdiq)")
     
-    # Append employee QRs horizontally
+    # Append employee info next to one QR
     employee_data = employee_info_list if employee_info_list else []
-    if not employee_data and all_employee_qrs:
-        employee_data = [{'qr_path': path} for path in all_employee_qrs]
-    elif not employee_data and employee_qr_path:
-        employee_data = [{'qr_path': employee_qr_path}]
+    
+    bottom_qr_path = employee_qr_path
+    if not bottom_qr_path and employee_data and employee_data[0].get('qr_path'):
+        bottom_qr_path = employee_data[0]['qr_path']
         
-    if employee_data:
+    if employee_data or bottom_qr_path:
         doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
-        for emp in employee_data:
-            emp_qr = emp.get('qr_path')
-            if emp_qr and os.path.exists(emp_qr):
-                p_bot = doc_obj.add_paragraph()
-                r_bot = p_bot.add_run()
-                r_bot.add_picture(emp_qr, width=Inches(1.5))
-                info_text = ""
-                if emp.get('full_name'):
-                    info_text += f"\nF.I.O: {emp.get('full_name')}"
-                if emp.get('position'):
-                    info_text += f"\nLavozim: {emp.get('position')}"
-                if emp.get('date'):
-                    info_text += f"\nSana: {emp.get('date')}"
-                
-                if info_text:
-                    r_bot.add_text(info_text)
-                p_bot.add_run("\n")  # spacing
+        
+        # We can implement 'next to' using a simple table in Word
+        table = doc_obj.add_table(rows=1, cols=2)
+        table.autofit = True
+        
+        cell_img = table.cell(0, 0)
+        cell_text = table.cell(0, 1)
+        
+        if bottom_qr_path and os.path.exists(bottom_qr_path):
+            p_img = cell_img.paragraphs[0]
+            r_img = p_img.add_run()
+            r_img.add_picture(bottom_qr_path, width=Inches(1.5))
+            
+        p_text = cell_text.paragraphs[0]
+        for i, emp in enumerate(employee_data, 1):
+            if emp.get('full_name'):
+                p_text.add_run(f"{i}. F.I.O: {emp.get('full_name')}\n").bold = True
+            if emp.get('position'):
+                p_text.add_run(f"    Lavozim: {emp.get('position')}\n")
+            if emp.get('date'):
+                p_text.add_run(f"    Sana: {emp.get('date')}\n\n")
         
     final_buffer = BytesIO()
     doc_obj.save(final_buffer)
