@@ -966,8 +966,8 @@ def download_docx(request, order_id):
 def _embed_qr_in_docx(request, order, docx_path, temp_files):
     """Word faylga QR kodlar joylash.
     
-    - Yuqorida (header): Yuklab olish QR kodi (kattaroq)
-    - Pastda (oxirgi sahifa): Imzolovchilar ma'lumotlari + QR kod (PDF dagiga o'xshash uslub)
+    - Yuqorida (header): Yuklab olish QR kodi
+    - Pastda (oxirgi sahifa): Imzolovchilar QR kodlari
     
     Returns: QR joylashtirilgan DOCX faylning yo'li
     """
@@ -975,7 +975,7 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     import os
     import shutil
     from docx import Document
-    from docx.shared import Inches, Pt, Cm, RGBColor
+    from docx.shared import Inches, Pt, Cm, RGBColor, Emu
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.oxml.ns import qn
     
@@ -987,11 +987,11 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     
     doc = Document(temp_docx)
     
-    # === 1. HEADER: Yuklab olish QR kodi (kattaroq — ~2.2 sm) ===
+    # === 1. HEADER: Yuklab olish QR kodi (Faqat 'application' turi uchun va direktor tasdiqlaganda) ===
     if order.document_type == 'application' and order.director_approved:
         try:
             download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
-            qr = qrcode.QRCode(version=1, box_size=6, border=1)   # ← kattaroq qilish uchun box_size oshirildi
+            qr = qrcode.QRCode(version=1, box_size=5, border=1)
             qr.add_data(download_url)
             qr.make(fit=True)
             img = qr.make_image(fill='black', back_color='white')
@@ -1001,10 +1001,12 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             temp_files.append(qr_path)
             img.save(qr_path, format='PNG')
             
+            # Headerga QR qo'yish
             section = doc.sections[0]
             header = section.header
             header.is_linked_to_previous = False
             
+            # Header paragrafga QR rasm qo'shish
             if not header.paragraphs:
                 hp = header.add_paragraph()
             else:
@@ -1012,77 +1014,55 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             
             hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
             run = hp.add_run()
-            run.add_picture(qr_path, width=Inches(0.9))   # ≈ 2.3 sm
-            
+            run.add_picture(qr_path, width=Inches(0.8))
         except Exception as e:
             print(f"Header QR error: {e}")
     
-
-    # === 2. PASTKI QISM: Imzolovchilar ma'lumotlari + QR (PDF uslubida) ===
+    # === 2. PASTDA: Imzolovchilar QR kodlari ===
     try:
         signatures = order.signatures.filter(signed=True).order_by('order_number')
         
-        if not order.director_approved:
-            # Direktor tasdiqlamagan bo'lsa hech narsa qo'ymaymiz yoki faqat xabar
-            pass
-        else:
-            # Yangi paragraf qo'shamiz (oxiriga yaqinroq joylash uchun bo'shliq qoldirish mumkin)
-            doc.add_paragraph()   # bo'sh qator
-            doc.add_paragraph()   # yana bitta bo'sh — joylashuvni yaxshilash uchun
-            
-            p = doc.add_paragraph()
-            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-            
-            # QR kod (kattaroq — PDF dagidek ~2.5 sm)
+        # Faqat direktor tasdiqlangandan keyin bitta imzo QR qo'yiladi
+        if order.director_approved:
+            # Imzolar tekshirish sahifasi URL
             verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
             
-            qr = qrcode.QRCode(version=1, box_size=7, border=1)   # kattaroq QR
-            qr.add_data(verify_url)
-            qr.make(fit=True)
-            img = qr.make_image(fill='black', back_color='white')
+            doc.add_paragraph()
+            
+            # Bitta umumiy imzo QR
+            sig_qr = qrcode.QRCode(version=None, box_size=6, border=1)
+            sig_qr.add_data(verify_url)
+            sig_qr.make(fit=True)
+            sig_img = sig_qr.make_image(fill='black', back_color='white')
             
             fd, qr_img_path = tempfile.mkstemp(suffix='.png')
             os.close(fd)
             temp_files.append(qr_img_path)
-            img.save(qr_img_path, format='PNG')
+            sig_img.save(qr_img_path, format='PNG')
             
-            run_qr = p.add_run()
-            run_qr.add_picture(qr_img_path, width=Inches(1.0))   # ≈ 2.54 sm
+            p = doc.add_paragraph()
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            run = p.add_run()
+            run.add_picture(qr_img_path, width=Inches(0.9))
             
-            # QR yoniga matn qo'shish
-            run_space = p.add_run("     ")  # QR bilan matn orasidagi bo'shliq
+            run2 = p.add_run("  Imzolangan va tasdiqlangan")
+            run2.bold = True
+            run2.font.size = Pt(9)
+            run2.font.color.rgb = RGBColor(16, 124, 65)
             
-            run_text = p.add_run()
-            run_text.font.size = Pt(9)
-            
-            # Direktor tasdiqlash ma'lumoti
             if order.director_approved_at:
-                run_text.add_text(f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n")
-            
-            # Imzolovchilar ro'yxati
-            if signatures.exists():
-                run_text.add_text("Elektron imzolar (xodimlar):\n", bold=True)
-                
-                for i, sig in enumerate(signatures, 1):
-                    user = sig.user
-                    fio = f"{user.last_name or ''} {user.first_name or ''} {getattr(user, 'middle_name', '')}".strip()
-                    position = user.position or '-'
-                    signed_time = sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'
-                    
-                    run_text.add_text(f"  {i}. {fio}    {position}    {signed_time}\n")
-            
-            # Rang va shriftni sozlash (ixtiyoriy)
-            run_text.font.name = 'Arial'
-            run_text._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
-            run_text.font.color.rgb = RGBColor(40, 40, 40)
-
+                run3 = p.add_run(f"\n  {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
+                run3.font.size = Pt(8)
+                run3.font.color.rgb = RGBColor(96, 94, 92)
     except Exception as e:
-        print(f"Signature block embedding error: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"Signature QR embedding error: {e}")
     
     doc.save(temp_docx)
     return temp_docx
+
+
+
+
 
 def _convert_docx_to_pdf(docx_path, temp_files):
     """DOCX faylni PDF ga konvertatsiya qilish — faqat LibreOffice (Docker orqali kafolatlanadi)."""
