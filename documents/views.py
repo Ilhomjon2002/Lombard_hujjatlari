@@ -1055,10 +1055,6 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             run_text.font.name = 'Arial'
             run_text._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
 
-            # Direktor tasdiqladi
-            if order.director_approved_at:
-                run_text.text = f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n"
-
             # Imzolar sarlavhasi
             if signatures.exists():
                 bold_run = p.add_run("Elektron imzolar (xodimlar):\n")
@@ -1083,6 +1079,12 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             else:
                 p.add_run("\nImzolar mavjud emas").font.color.rgb = RGBColor(120, 120, 120)
 
+
+            # Direktor tasdiqladi
+            if order.director_approved_at:
+                run_text.text = f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n"
+
+            
     except Exception as e:
         print(f"Signature block error: {e}")
         import traceback
@@ -1090,6 +1092,11 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
     doc.save(temp_docx)
     return temp_docx
+
+
+
+
+
 def _convert_docx_to_pdf(docx_path, temp_files):
     """DOCX faylni PDF ga konvertatsiya qilish — faqat LibreOffice (Docker orqali kafolatlanadi)."""
     import tempfile
