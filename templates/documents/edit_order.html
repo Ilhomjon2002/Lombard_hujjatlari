@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Hujjatni tahrirlash - HAT{% endblock %}
+{% block header_title %}Hujjatni Tahrirlash{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+                <h5 class="mb-0 text-primary fw-bold">
+                    <i class="fas fa-edit me-2"></i> {{ order.number }} - raqamli buyruqni tahrirlash
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label for="title" class="form-label fw-medium text-dark">Sarlavha/Nom <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ order.title }}"
+                            required>
+                    </div>
+
+                    <div class="mb-5">
+                        <label for="deadline" class="form-label fw-medium text-dark">Muddati (ixtiyoriy)</label>
+                        <input type="date" class="form-control" id="deadline" name="deadline"
+                            value="{% if order.deadline %}{{ order.deadline|date:'Y-m-d' }}{% endif %}">
+                        <div class="form-text text-muted">
+                            Agar hujjat imzolanishi uchun aniq muddat kerak bo'lsa, kiriting.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{% url 'document_detail' order.id %}" class="btn btn-light border">
+                            <i class="fas fa-times me-1"></i> Bekor qilish
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-1"></i> Saqlash
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
