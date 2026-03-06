@@ -56,18 +56,18 @@
                 <form method="POST" enctype="multipart/form-data" id="documentForm">
                     {% csrf_token %}
 
-                    
+
                     <div class="row mb-3">
-                    <!-- Document Type and Title -->
+                        <!-- Document Type and Title -->
                         <input type="hidden" name="document_type" value="official">
                         <div class="col-md-6">
                             <label for="title" class="form-label" id="titleLabel">Sarlavha/Nom</label>
                             <input type="text" class="form-control" id="title" name="title" required>
                         </div>
-                    
 
-                    <!-- Branch and Number -->
-                        
+
+                        <!-- Branch and Number -->
+
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label for="branch" class="form-label">Filial *</label>
                             <select class="form-select" id="branch" name="branch" required>
@@ -119,7 +119,7 @@
                                     <select class="form-select" id="employeeSelect">
                                         <option value="">Ishchini tanlang</option>
                                         {% for employee in employees %}
-                                        <option value="{{ employee.id }}">{{ employee.last_name }} 
+                                        <option value="{{ employee.id }}">{{ employee.last_name }}
                                             {{ employee.first_name }}</option>
                                         {% endfor %}
                                     </select>
@@ -141,84 +141,69 @@
                             <label class="form-label fw-bold">Qo'shimcha Hujjatlar (Ixtiyoriy)</label>
 
                             <div class="mb-3">
-                                <label class="text-muted small mb-2 d-block">Avval foydalanilgan hujjat nomlaridan
+                                <label class="text-muted small mb-2 d-block">Avval foydalanilgan hujjat shablonlaridan
                                     tanlash:</label>
-                                <div class="border rounded p-2"
-                                    style="max-height: 150px; overflow-y: auto; background-color: #f8f9fa;">
+                                <div class="row g-2"
+                                    style="max-height: 250px; overflow-y: auto; background-color: #f8f9fa; padding: 10px;">
                                     {% for doc_name in saved_doc_names %}
-                                    <div class="form-check border-bottom py-1">
-                                        <input class="form-check-input saved-doc-checkbox" type="checkbox"
-                                            name="selected_saved_doc_names" value="{{ doc_name }}"
-                                            id="savedDoc{{ forloop.counter }}">
-                                        <div class="d-flex w-100 justify-content-between align-items-center">
-                                            <label class="form-check-label mb-0" style="cursor: pointer; flex: 1;"
-                                                for="savedDoc{{ forloop.counter }}">
-                                                <i class="bi bi-file-earmark-text text-secondary me-1"></i> {{ doc_name }}
-                                            </label>
-                                            <select class="form-select form-select-sm w-auto saved-doc-signer"
-                                                name="saved_doc_signers_{{ doc_name }}"
-                                                style="display: none; max-width: 200px;">
-                                                <option value="">-- Imzolash ixtiyoriy --</option>
-                                                {% for employee in employees %}
-                                                <option value="{{ employee.id }}">{{ employee.last_name }} 
-                                                    {{ employee.first_name }} {{ employee.middle_name|default:"" }} - 
-                                                    {{ employee.position|default:"Lavozimi kiritilmagan" }}
-                                                </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    {% empty %}
-                                    <div class="text-muted small text-center py-2">Avval foydalanilgan hujjat nomlari
-                                        topilmadi</div>
+                                    {% for employee in employees %}
+                                    <option value="{{ employee.id }}">{{ employee.last_name }}
+                                        {{ employee.first_name }} {{ employee.middle_name|default:"" }} -
+                                        {{ employee.position|default:"Lavozimi kiritilmagan" }}
+                                    </option>
                                     {% endfor %}
+                                    </select>
                                 </div>
                             </div>
-
-                            <div class="mb-2 p-3 bg-light rounded border">
-                                <label class="text-muted small mb-2 d-block">Yangi qo'shimcha hujjat nomi:</label>
-
-                                <div id="newAdditionalDocsContainer">
-                                    <div class="row mb-2 new-additional-doc-row align-items-center">
-                                        <div class="col-md-6 mb-2 mb-md-0">
-                                            <input type="text" class="form-control form-control-sm"
-                                                name="new_additional_names"
-                                                placeholder="Hujjat nomi. Fayl keyinroq yuklanadi.">
-                                        </div>
-                                        <div class="col-md-4 mb-2 mb-md-0">
-                                            <select class="form-select form-select-sm" name="new_additional_signers">
-                                                <option value="">-- Imzolash ixtiyoriy --</option>
-                                                {% for employee in employees %}
-                                                <option value="{{ employee.id }}">{{ employee.last_name }} 
-                                                    {{ employee.first_name }} {{ employee.middle_name|default:"" }} - 
-                                                    {{ employee.position|default:"Lavozimi kiritilmagan" }}
-                                                </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn"
-                                                style="display:none;" title="O'chirish"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addNewDocBtn">
-                                    <i class="fas fa-plus"></i> Yana hujjat qo'shish
-                                </button>
-                            </div>
+                            {% empty %}
+                            <div class="text-muted small text-center py-2">Avval foydalanilgan hujjat nomlari
+                                topilmadi</div>
+                            {% endfor %}
                         </div>
                     </div>
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Hujjatni yaratish
+
+                    <div class="mb-2 p-3 bg-light rounded border">
+                        <label class="text-muted small mb-2 d-block">Yangi qo'shimcha hujjat nomi:</label>
+
+                        <div id="newAdditionalDocsContainer">
+                            <div class="row mb-2 new-additional-doc-row align-items-center">
+                                <div class="col-md-6 mb-2 mb-md-0">
+                                    <input type="text" class="form-control form-control-sm" name="new_additional_names"
+                                        placeholder="Hujjat nomi. Fayl keyinroq yuklanadi.">
+                                </div>
+                                <div class="col-md-4 mb-2 mb-md-0">
+                                    <select class="form-select form-select-sm" name="new_additional_signers">
+                                        <option value="">-- Imzolash ixtiyoriy --</option>
+                                        {% for employee in employees %}
+                                        <option value="{{ employee.id }}">{{ employee.last_name }}
+                                            {{ employee.first_name }} {{ employee.middle_name|default:"" }} -
+                                            {{ employee.position|default:"Lavozimi kiritilmagan" }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn"
+                                        style="display:none;" title="O'chirish"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addNewDocBtn">
+                            <i class="fas fa-plus"></i> Yana hujjat qo'shish
                         </button>
-                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Bekor qilish</a>
                     </div>
-                </form>
             </div>
         </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Hujjatni yaratish
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Bekor qilish</a>
+        </div>
+        </form>
     </div>
+</div>
+</div>
 </div>
 {% endblock %}
 

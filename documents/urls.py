@@ -29,5 +29,5 @@ urlpatterns = [
 
     # Qo‘shimcha imkoniyatlar (agar kerak bo‘lsa keyinchalik qo‘shiladi)
     path('<int:order_id>/edit/',      views.edit_order,           name='order_update'),
-    # path('<int:order_id>/cancel/',    views.cancel_order,         name='cancel_order'),
+    path('<int:order_id>/delete/',    views.delete_order,         name='delete_order'),
 ]

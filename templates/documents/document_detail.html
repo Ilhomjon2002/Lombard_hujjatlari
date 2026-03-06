@@ -97,7 +97,7 @@
 
                         <div class="mt-2">
                             {% if doc.signer %}
-                            <div class="small fw-bold">Imzolovchi: {{ doc.signer.get_full_name_with_middle }} 
+                            <div class="small fw-bold">Imzolovchi: {{ doc.signer.get_full_name_with_middle }}
                                 ({{ doc.signer.position|default:"Lavozim kiritilmagan" }})</div>
                             {% if doc.is_signed %}
                             <span class="badge bg-success mt-1"><i class="bi bi-check-circle me-1"></i>
@@ -239,7 +239,7 @@
                                     <option value="">-- Imzolash ixtiyoriy --</option>
                                     {% for employee in employees %}
                                     <option value="{{ employee.id }}">{{ employee.last_name }} {{ employee.first_name }}
-                                        {{ employee.middle_name|default:"" }} - 
+                                        {{ employee.middle_name|default:"" }} -
                                         {{ employee.position|default:"Lavozimi kiritilmagan" }}
                                     </option>
                                     {% endfor %}
@@ -334,16 +334,39 @@
         {% if document.director_approved %}
         <div class="mt-4 p-4 rounded text-center shadow-sm"
             style="background-color: var(--primary-light); border: 1px solid var(--primary-color);">
-            <h5 class="fw-bold text-dark mb-3">Hujjat to'liq tasdiqlangan (Umumiy QR kod)</h5>
-            {% if document.final_qr_code %}
-            <div class="d-inline-block bg-white p-2 rounded shadow-sm mb-2">
-                <img src="{{ document.final_qr_code.url }}" alt="Umumiy QR Kod" style="width: 150px; height: 150px;">
+            <h5 class="fw-bold text-dark mb-3">Hujjat tasdiqlangan va imzolangan</h5>
+
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-4 mb-3">
+                <!-- Asosiy direktor / umumiy QR Kod -->
+                {% if document.final_qr_code %}
+                <div class="text-center">
+                    <div class="d-inline-block bg-white p-2 rounded shadow-sm mb-2">
+                        <img src="{{ document.final_qr_code.url }}" alt="Umumiy QR Kod"
+                            style="width: 150px; height: 150px; object-fit: contain;">
+                    </div>
+                    <div class="small fw-bold mt-1 text-primary">Direktor Tasdig'i</div>
+                </div>
+                {% endif %}
+
+                <!-- Xodimlarning imzolari (QR) -->
+                {% for sig in signatures %}
+                {% if sig.signed and sig.qr_code %}
+                <div class="text-center">
+                    <div class="d-inline-block bg-white p-2 rounded shadow-sm mb-2">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#qrModal{{ sig.id }}">
+                            <img src="{{ sig.qr_code.url }}" alt="QR Code"
+                                style="width: 120px; height: 120px; object-fit: contain;">
+                        </a>
+                    </div>
+                    <div class="small fw-bold mt-1 text-secondary">{{ sig.user.get_full_name_with_middle }}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
             </div>
-            <p class="text-muted small mt-1">Ushbu QR kod barcha imzolaganlar va direktor tasdig'ini o'z ichiga oladi.
-            </p>
-            {% endif %}
+
+            <p class="text-muted small mt-1">Barcha imzolarning elektron QR nusxalari yuqorida keltirilgan.</p>
             <div class="text-success fw-bold p-2 bg-white rounded shadow-sm d-inline-block">
-                <i class="bi bi-check-circle-fill me-1"></i> Direktor tasdiqlagan: 
+                <i class="bi bi-check-circle-fill me-1"></i> Direktor tasdiqlagan:
                 {{ document.director_approved_at|date:"d.m.Y H:i:s" }}
             </div>
         </div>

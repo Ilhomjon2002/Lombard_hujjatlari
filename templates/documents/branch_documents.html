@@ -82,8 +82,8 @@
                 <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
                 <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Barchasi —</option>
-                    <option value="external" {% if selected_type == 'external' %}selected{% endif %}>SH/T</option>
-                    <option value="official" {% if selected_type == 'official' %}selected{% endif %}>Buyruq</option>
+                    <option value="external" {% if selected_type=='external' %}selected{% endif %}>SH/T</option>
+                    <option value="official" {% if selected_type=='official' %}selected{% endif %}>Buyruq</option>
                 </select>
             </form>
         </div>
@@ -94,11 +94,11 @@
                 <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
                 <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Hammasi —</option>
-                    <option value="pending" {% if selected_status == 'yangi' %}selected{% endif %}>Yangi</option>
-                    <option value="partial" {% if selected_status == 'jarayonda' %}selected{% endif %}>Jarayonda</option>
-                    <option value="imzolangan" {% if selected_status == 'imzolangan' %}selected{% endif %}>Imzolangan
+                    <option value="pending" {% if selected_status=='yangi' %}selected{% endif %}>Yangi</option>
+                    <option value="partial" {% if selected_status=='jarayonda' %}selected{% endif %}>Jarayonda</option>
+                    <option value="imzolangan" {% if selected_status=='imzolangan' %}selected{% endif %}>Imzolangan
                         (faol)</option>
-                    <option value="tugatilgan" {% if selected_status == 'tugatilgan' %}selected{% endif %}>Tugatilgan
+                    <option value="tugatilgan" {% if selected_status=='tugatilgan' %}selected{% endif %}>Tugatilgan
                         (faol emas)</option>
                 </select>
                 {% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
@@ -180,12 +180,17 @@
                                 {% endif %}
                                 <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary"
                                     title="Ko'rish">
-                                    <i class="bi bi-eye"></i> Ko'rish
+                                    <i class="bi bi-eye"></i>
                                 </a>
                                 {% if request.user == doc.created_by or request.user.role == 'admin' %}
-                                <!-- <a href="{% url 'order_update' doc.id %}" class="btn btn-sm btn-outline-secondary">
+                                <a href="{% url 'order_update' doc.id %}" class="btn btn-sm btn-outline-secondary"
+                                    title="Tahrirlash">
                                     <i class="bi bi-pencil"></i>
-                                </a> -->
+                                </a>
+                                <a href="{% url 'delete_order' doc.id %}" class="btn btn-sm btn-outline-danger"
+                                    title="O'chirish">
+                                    <i class="bi bi-trash"></i>
+                                </a>
                                 {% endif %}
                             </td>
                         </tr>

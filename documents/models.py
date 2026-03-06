@@ -26,6 +26,27 @@ class DocumentType(models.Model):
     def __str__(self):
         return f"{self.get_name_display()} - {self.branch.name}"
 
+class AdditionalDocumentTemplate(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Hujjat nomi")
+    branch = models.ForeignKey(
+        'users.Branch',
+        on_delete=models.CASCADE,
+        related_name='doc_templates',
+        null=True,
+        blank=True,
+        verbose_name="Filial (Ixtiyoriy)"
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Qo'shimcha hujjat shabloni"
+        verbose_name_plural = "Qo'shimcha hujjat shablonlari"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class AdditionalDocument(models.Model):
     name = models.CharField(max_length=255, verbose_name="Hujjat nomi")
     file = models.FileField(upload_to='additional_docs/%Y/%m/', null=True, blank=True, verbose_name="Fayl")

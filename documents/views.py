@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 from django.utils import timezone
-from .models import OrderSignature, Notification, Order, OrderSigner, AdditionalDocument
+from .models import OrderSignature, Notification, Order, OrderSigner, AdditionalDocument, AdditionalDocumentTemplate
 from users.models import CustomUser, Branch
 from .forms import EditSignatureForm
 import qrcode
@@ -196,8 +196,8 @@ def create_document(request):
     branches = Branch.objects.filter(parent_branch__isnull=True)
     employees = CustomUser.objects.values('id', 'first_name', 'last_name', 'middle_name', 'position', 'role')
     
-    # Barcha mavjud unikal qo'shimcha hujjat nomlarini olish
-    saved_doc_names = AdditionalDocument.objects.exclude(name__exact='').values_list('name', flat=True).distinct().order_by('name')
+    # Barcha mavjud unikal qo'shimcha hujjat shablonlarini olish
+    saved_doc_names = AdditionalDocumentTemplate.objects.filter(is_active=True).values_list('name', flat=True).order_by('name')
 
     context = {
         'branches': branches,
@@ -1697,13 +1697,13 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
         signatures = order.signatures.filter(signed=True).order_by('order_number')
         
         # Chap tarafda QR kodlar joylashuvi
-        left_x = 12  # Chap chekkadan masofa
-        qr_sig_size = 45  # Har bir QR ning o'lchami
-        qr_gap = 8  # QR kodlar orasidagi masofa
+        left_x = 12.0  # Chap chekkadan masofa
+        qr_sig_size = 45.0  # Har bir QR ning o'lchami
+        qr_gap = 8.0  # QR kodlar orasidagi masofa
         
         # Sahifaning o'rta qismidan boshlab pastga joylash
         # Sahifa balandligi: height (~842pt), o'rtadan yuqoriroq boshlaymiz
-        start_y = height * 0.55  # Sahifaning ~55% balandligidan boshlanadi
+        start_y = float(height * 0.55)  # Sahifaning ~55% balandligidan boshlanadi
         
         if order.director_approved and order.final_qr_code:
             # Direktor tasdiqlagan — bitta umumiy QR
@@ -1712,10 +1712,10 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                 c.drawImage(order.final_qr_code.path, left_x, current_y,
                            width=qr_sig_size, height=qr_sig_size)
                 c.setFont("Helvetica", 5)
-                c.drawString(left_x, current_y - 7, "Tasdiqlandi")
+                c.drawString(left_x, float(current_y - 7.0), "Tasdiqlandi")
                 
                 if order.director_approved_at:
-                    c.drawString(left_x, current_y - 13, 
+                    c.drawString(left_x, float(current_y - 13.0), 
                                 order.director_approved_at.strftime("%d.%m.%Y"))
             except Exception as e:
                 print(f"Error drawing director final QR: {e}")
@@ -1726,7 +1726,7 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
             
             # Agar director QR bor bo'lsa, pastroqdan boshlaymiz
             if order.director_approved and order.final_qr_code:
-                current_y -= (qr_sig_size + qr_gap + 15)
+                current_y -= (qr_sig_size + qr_gap + 15.0)
             
             for sig in signatures:
                 # QR ma'lumotlari
@@ -1776,7 +1776,7 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                 current_y -= (qr_sig_size + qr_gap)
                 
                 # Sahifadan chiqib ketmasin
-                if current_y < 30:
+                if current_y < 30.0:
                     break
         
         c.save()
@@ -1827,10 +1827,10 @@ def director_approve_page(request, order_id):
         
     return render(request, 'documents/director_approve.html', {'order': order})
 
-def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None):
+def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None):
     """
-    Helper to stamp a PDF with an employee QR code at the bottom right, 
-    and optionally director QR codes at the top right.
+    Helper to stamp a PDF with an employee QR code(s) at the bottom left, 
+    and optionally director QR codes at the top left.
     Returns a BytesIO buffer with the stamped PDF.
     """
     import tempfile, os
@@ -1851,20 +1851,27 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None):
     c = rl_canvas.Canvas(overlay_buffer, pagesize=A4)
     width, height = A4
     
-    qr_size = 60
-    margin = 20
+    # Increase QR Size
+    qr_size = 90
+    margin = 30
     
-    # Employee QR code (bottom right)
-    if employee_qr_path and os.path.exists(employee_qr_path):
-        x_pos = width - qr_size - margin
-        y_pos = margin
-        c.drawImage(employee_qr_path, x_pos, y_pos, width=qr_size, height=qr_size)
+    # Employee QR codes (bottom left, horizontally aligned)
+    # If all_employee_qrs is passed (list of paths), render them. Otherwise use employee_qr_path
+    employee_paths = all_employee_qrs if all_employee_qrs else ([employee_qr_path] if employee_qr_path else [])
+    
+    x_pos_emp = float(margin)
+    y_pos_emp = float(margin)
+    
+    for emp_qr in employee_paths:
+        if emp_qr and os.path.exists(emp_qr):
+            c.drawImage(emp_qr, x_pos_emp, y_pos_emp, width=qr_size, height=qr_size)
+            x_pos_emp += float(qr_size + 15.0)  # space between QR codes
         
-    # Director QR code (top right)
+    # Director / Main QR code (top left)
     if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
-        x_pos = width - qr_size - margin
-        y_pos = height - qr_size - margin
-        c.drawImage(director_qr_paths[0], x_pos, y_pos, width=qr_size, height=qr_size)
+        x_pos_dir = float(margin)
+        y_pos_dir = float(height) - float(qr_size) - float(margin)
+        c.drawImage(director_qr_paths[0], x_pos_dir, y_pos_dir, width=qr_size, height=qr_size)
 
     c.save()
     overlay_buffer.seek(0)
@@ -1893,10 +1900,10 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None):
             
     return final_buffer
 
-def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None):
+def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None):
     """
     Helper to stamp a Word document with QR codes.
-    Appends the employee QR code at the end.
+    Appends the employee QR codes at the end.
     If director QR is given, adds it at the beginning.
     Returns a BytesIO buffer.
     """
@@ -1919,15 +1926,19 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None)
     if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
         p_top = doc_obj.paragraphs[0].insert_paragraph_before()
         r_top = p_top.add_run()
-        r_top.add_picture(director_qr_paths[0], width=Inches(1.0))
-        p_top.add_run(" Elektron Nusxa (Direktor Tasdig'i)")
+        r_top.add_picture(director_qr_paths[0], width=Inches(1.5))
+        p_top.add_run(" Elektron Nusxa (Umumiy Tasdiq)")
     
-    # Append employee QR
-    if employee_qr_path and os.path.exists(employee_qr_path):
-        doc_obj.add_paragraph("--- Elektron Imzo (Xodim) ---")
+    # Append employee QRs horizontally
+    employee_paths = all_employee_qrs if all_employee_qrs else ([employee_qr_path] if employee_qr_path else [])
+    if employee_paths:
+        doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
         p_bot = doc_obj.add_paragraph()
-        r_bot = p_bot.add_run()
-        r_bot.add_picture(employee_qr_path, width=Inches(1.0))
+        for emp_qr in employee_paths:
+            if emp_qr and os.path.exists(emp_qr):
+                r_bot = p_bot.add_run()
+                r_bot.add_picture(emp_qr, width=Inches(1.5))
+                p_bot.add_run("   ")  # spacing
         
     final_buffer = BytesIO()
     doc_obj.save(final_buffer)
@@ -2022,10 +2033,21 @@ def api_director_approve(request, order_id):
             final_buffer = None
             
             if is_pdf:
-                final_buffer = stamp_pdf_with_qrs(doc.file, doc.qr_code.path, [main_add_qr_path])
+                # `doc.qr_code` is the employee's signature QR code, `main_add_qr_path` is the director/system QR for the document
+                final_buffer = stamp_pdf_with_qrs(
+                    original_file=doc.file, 
+                    employee_qr_path=doc.qr_code.path, 
+                    director_qr_paths=[main_add_qr_path],
+                    all_employee_qrs=[doc.qr_code.path] if doc.qr_code else []
+                )
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
             elif is_word:
-                final_buffer = stamp_word_with_qrs(doc.file, doc.qr_code.path, [main_add_qr_path])
+                final_buffer = stamp_word_with_qrs(
+                    original_file=doc.file, 
+                    employee_qr_path=doc.qr_code.path, 
+                    director_qr_paths=[main_add_qr_path],
+                    all_employee_qrs=[doc.qr_code.path] if doc.qr_code else []
+                )
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.docx"
                 
             if final_buffer:
@@ -2053,4 +2075,18 @@ def api_director_approve(request, order_id):
         'success': True,
         'qr_code_url': order.final_qr_code.url if order.final_qr_code else ''
     })
+
+@login_required
+def delete_order(request, order_id):
+    if request.user.role != 'admin':
+        messages.error(request, 'Ruxsat yo\'q')
+        return redirect('dashboard')
+    
+    order = get_object_or_404(Order, id=order_id)
+    if request.method == 'POST':
+        order.delete()
+        messages.success(request, 'Hujjat muvaffaqiyatli o\'chirildi')
+        return redirect('dashboard')
+        
+    return render(request, 'documents/confirm_delete.html', {'order': order})
 
