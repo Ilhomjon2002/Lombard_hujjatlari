@@ -203,16 +203,16 @@
         </div>
         {% endif %}
 
-        {% if request.user.role in 'admin,director' or request.user == document.created_by %}
+        <!-- {% if request.user.role in 'admin,director' or request.user == document.created_by %}
         <div class="mb-4">
             <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
                 data-bs-target="#addNewAdditionalDocModal">
                 <i class="bi bi-plus-circle me-1"></i> Yangi qo'shimcha hujjat qo'shish
             </button>
-        </div>
+        </div> -->
 
         <!-- Add New Additional Doc Modal -->
-        <div class="modal fade" id="addNewAdditionalDocModal" tabindex="-1">
+        <!-- <div class="modal fade" id="addNewAdditionalDocModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-success text-white">
@@ -256,7 +256,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> -->
         {% endif %}
 
         <h5 class="fw-bold text-dark mt-4 mb-3"><i class="bi bi-list-check me-2"></i>Imzolash jarayoni</h5>

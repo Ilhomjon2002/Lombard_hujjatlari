@@ -1751,6 +1751,17 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                         if os.path.exists(qr_img_path):
                             c.drawImage(qr_img_path, left_x, current_y,
                                        width=qr_sig_size, height=qr_sig_size)
+                            
+                            c.setFont("Helvetica", 8)
+                            text_x = left_x + qr_sig_size + 15.0
+                            
+                            def safe_str(s):
+                                return str(s or '-').encode('latin-1', 'replace').decode('latin-1')
+                                
+                            c.drawString(text_x, float(current_y + qr_sig_size - 10.0), f"F.I.O: {safe_str(full_name)}")
+                            c.drawString(text_x, float(current_y + qr_sig_size - 22.0), f"Lavozim: {safe_str(user.position)}")
+                            c.drawString(text_x, float(current_y + qr_sig_size - 34.0), f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
+                            
                             current_y -= (qr_sig_size + qr_gap)
                             continue
                     except Exception:
@@ -1827,7 +1838,7 @@ def director_approve_page(request, order_id):
         
     return render(request, 'documents/director_approve.html', {'order': order})
 
-def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None):
+def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None, employee_info_list=None):
     """
     Helper to stamp a PDF with an employee QR code(s) at the bottom left, 
     and optionally director QR codes at the top left.
@@ -1852,20 +1863,40 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
     width, height = A4
     
     # Increase QR Size
-    qr_size = 90
-    margin = 30
+    qr_size = 90.0
+    margin = 30.0
     
     # Employee QR codes (bottom left, horizontally aligned)
-    # If all_employee_qrs is passed (list of paths), render them. Otherwise use employee_qr_path
-    employee_paths = all_employee_qrs if all_employee_qrs else ([employee_qr_path] if employee_qr_path else [])
+    employee_data = employee_info_list if employee_info_list else []
+    if not employee_data and all_employee_qrs:
+        employee_data = [{'qr_path': path} for path in all_employee_qrs]
+    elif not employee_data and employee_qr_path:
+        employee_data = [{'qr_path': employee_qr_path}]
     
     x_pos_emp = float(margin)
     y_pos_emp = float(margin)
     
-    for emp_qr in employee_paths:
+    def safe_str(s):
+        return str(s or '').encode('latin-1', 'replace').decode('latin-1')
+        
+    for emp in employee_data:
+        emp_qr = emp.get('qr_path')
         if emp_qr and os.path.exists(emp_qr):
             c.drawImage(emp_qr, x_pos_emp, y_pos_emp, width=qr_size, height=qr_size)
-            x_pos_emp += float(qr_size + 15.0)  # space between QR codes
+            
+            # Draw text next to QR
+            text_x = x_pos_emp + qr_size + 15.0
+            y_base = y_pos_emp + qr_size - 15.0
+            c.setFont("Helvetica", 8)
+            
+            if emp.get('full_name'):
+                c.drawString(text_x, float(y_base), f"F.I.O: {safe_str(emp.get('full_name'))}")
+            if emp.get('position'):
+                c.drawString(text_x, float(y_base - 12.0), f"Lavozim: {safe_str(emp.get('position'))}")
+            if emp.get('date'):
+                c.drawString(text_x, float(y_base - 24.0), f"Sana: {safe_str(emp.get('date'))}")
+                
+            x_pos_emp += float(qr_size + 160.0)  # Make more space for text
         
     # Director / Main QR code (top left)
     if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
@@ -1900,7 +1931,7 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
             
     return final_buffer
 
-def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None):
+def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None, employee_info_list=None):
     """
     Helper to stamp a Word document with QR codes.
     Appends the employee QR codes at the end.
@@ -1930,15 +1961,31 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         p_top.add_run(" Elektron Nusxa (Umumiy Tasdiq)")
     
     # Append employee QRs horizontally
-    employee_paths = all_employee_qrs if all_employee_qrs else ([employee_qr_path] if employee_qr_path else [])
-    if employee_paths:
+    employee_data = employee_info_list if employee_info_list else []
+    if not employee_data and all_employee_qrs:
+        employee_data = [{'qr_path': path} for path in all_employee_qrs]
+    elif not employee_data and employee_qr_path:
+        employee_data = [{'qr_path': employee_qr_path}]
+        
+    if employee_data:
         doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
-        p_bot = doc_obj.add_paragraph()
-        for emp_qr in employee_paths:
+        for emp in employee_data:
+            emp_qr = emp.get('qr_path')
             if emp_qr and os.path.exists(emp_qr):
+                p_bot = doc_obj.add_paragraph()
                 r_bot = p_bot.add_run()
                 r_bot.add_picture(emp_qr, width=Inches(1.5))
-                p_bot.add_run("   ")  # spacing
+                info_text = ""
+                if emp.get('full_name'):
+                    info_text += f"\nF.I.O: {emp.get('full_name')}"
+                if emp.get('position'):
+                    info_text += f"\nLavozim: {emp.get('position')}"
+                if emp.get('date'):
+                    info_text += f"\nSana: {emp.get('date')}"
+                
+                if info_text:
+                    r_bot.add_text(info_text)
+                p_bot.add_run("\n")  # spacing
         
     final_buffer = BytesIO()
     doc_obj.save(final_buffer)
@@ -2032,21 +2079,34 @@ def api_director_approve(request, order_id):
                 
             final_buffer = None
             
+            employee_info = []
+            if doc.qr_code and doc.signer:
+                signer_user = doc.signer
+                full_name = f"{signer_user.last_name} {signer_user.first_name}"
+                if hasattr(signer_user, 'middle_name') and signer_user.middle_name:
+                    full_name += f" {signer_user.middle_name}"
+                employee_info.append({
+                    'qr_path': doc.qr_code.path,
+                    'full_name': full_name,
+                    'position': signer_user.position or '-',
+                    'date': doc.signed_at.strftime('%d.%m.%Y %H:%M') if doc.signed_at else '-'
+                })
+                
             if is_pdf:
                 # `doc.qr_code` is the employee's signature QR code, `main_add_qr_path` is the director/system QR for the document
                 final_buffer = stamp_pdf_with_qrs(
                     original_file=doc.file, 
-                    employee_qr_path=doc.qr_code.path, 
+                    employee_qr_path=doc.qr_code.path if doc.qr_code else None, 
                     director_qr_paths=[main_add_qr_path],
-                    all_employee_qrs=[doc.qr_code.path] if doc.qr_code else []
+                    employee_info_list=employee_info
                 )
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
             elif is_word:
                 final_buffer = stamp_word_with_qrs(
                     original_file=doc.file, 
-                    employee_qr_path=doc.qr_code.path, 
+                    employee_qr_path=doc.qr_code.path if doc.qr_code else None, 
                     director_qr_paths=[main_add_qr_path],
-                    all_employee_qrs=[doc.qr_code.path] if doc.qr_code else []
+                    employee_info_list=employee_info
                 )
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.docx"
                 

@@ -168,28 +168,28 @@
                                 <a class="btn btn-sm btn-outline-success me-1 mb-1"
                                     href="{% url 'download_additional_doc' add_doc.id %}" target="_blank"
                                     title="{{ add_doc.name }} ni yuklab olish">
-                                    <i class="bi bi-file-earmark-check"></i> {{ add_doc.name }} (QR)
+                                    <i class="fa fa-file-earmark-check"></i> {{ add_doc.name }} (QR)
                                 </a>
                                 {% else %}
                                 <span class="btn btn-sm btn-outline-secondary disabled me-1 mb-1"
                                     title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
-                                    <i class="bi bi-file-earmark"></i> {{ add_doc.name }}
+                                    <i class="fa fa-file-earmark"></i> {{ add_doc.name }}
                                 </span>
                                 {% endif %}
                                 {% endfor %}
                                 {% endif %}
                                 <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary"
                                     title="Ko'rish">
-                                    <i class="bi bi-eye"></i>
+                                    <i class="fa fa-eye"></i>
                                 </a>
                                 {% if request.user == doc.created_by or request.user.role == 'admin' %}
                                 <a href="{% url 'order_update' doc.id %}" class="btn btn-sm btn-outline-secondary"
                                     title="Tahrirlash">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="fa fa-pencil"></i>
                                 </a>
                                 <a href="{% url 'delete_order' doc.id %}" class="btn btn-sm btn-outline-danger"
                                     title="O'chirish">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="fa fa-trash"></i>
                                 </a>
                                 {% endif %}
                             </td>
