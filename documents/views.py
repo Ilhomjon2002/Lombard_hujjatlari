@@ -1017,6 +1017,8 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
         except Exception as e:
             print(f"Header QR error: {e}")
 
+
+
     # === 2. PASTKI QISM: Tasdiqlash QR + imzolovchilar ro'yxati ===
     try:
         signatures = order.signatures.filter(signed=True).order_by('order_number')
@@ -1024,15 +1026,19 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
         if order.director_approved:
             verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
 
-            # Bir oz bo'sh joy qoldirish uchun (ixtiyoriy)
-            doc.add_paragraph()
-            doc.add_paragraph()
+            # Bo'sh joy qoldirish (oxirgi sahifada pastga tushirish uchun)
+            for _ in range(2):
+                doc.add_paragraph()
 
+            # Yangi paragraf — QR va matn yonma-yon joylashishi uchun
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
-            # QR kod (kattaroq — PDF dagiga yaqin)
-            qr = qrcode.QRCode(version=1, box_size=7, border=1)   # kattaroq
+            # Chapda: QR kod (o'ngga biroz surish uchun oldin bo'sh run qo'shamiz)
+            p.add_run("   ")  # ← QR ni o'ngga surish uchun 3-4 ta bo'shliq (taxminan 0.5-1 sm)
+
+            # QR ni qo'shish
+            qr = qrcode.QRCode(version=1, box_size=7, border=1)
             qr.add_data(verify_url)
             qr.make(fit=True)
             img = qr.make_image(fill='black', back_color='white')
@@ -1042,18 +1048,20 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             temp_files.append(qr_img_path)
             img.save(qr_img_path, format='PNG')
 
-            # QR ni qo'shamiz
             run_qr = p.add_run()
-            run_qr.add_picture(qr_img_path, width=Inches(1.1))   # ≈ 2.8 sm
+            run_qr.add_picture(qr_img_path, width=Inches(1.1))  # ≈ 2.8 sm
 
-            # QR bilan matn orasida bo'shliq
-            p.add_run("          ")
+            # QR dan keyin katta bo'shliq (matnni o'ngga surish)
+            p.add_run("          ")  # 10-12 ta bo'shliq ≈ 1.5-2 sm
 
-            # Matn qismi
+            # O'ngda: matn bloki (direktor + imzolovchilar)
             run_text = p.add_run()
-            run_text.font.size = Pt(9.5)
-            run_text.font.name = 'Arial'
-            run_text._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
+
+            # Direktor tasdiqladi (yuqorida)
+            if order.director_approved_at:
+                run_text.text = f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n"
+                run_text.font.size = Pt(10)
+                run_text.bold = True
 
             # Imzolar sarlavhasi
             if signatures.exists():
@@ -1072,19 +1080,13 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
                     fio = f"{last} {first} {middle}".strip()
 
-                    line = f"{i}. {fio}   {position}   {signed}\n"
+                    line = f"{i}. {fio}          {position}          {signed}\n"
                     run_line = p.add_run(line)
                     run_line.font.size = Pt(9.5)
 
             else:
                 p.add_run("\nImzolar mavjud emas").font.color.rgb = RGBColor(120, 120, 120)
 
-
-            # Direktor tasdiqladi
-            if order.director_approved_at:
-                run_text.text = f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n"
-
-            
     except Exception as e:
         print(f"Signature block error: {e}")
         import traceback
