@@ -969,8 +969,9 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     Word faylga QR kodlar joylash.
     
     - Header: Yuklab olish QR (kattaroq)
-    - Oxirgi qism: Tasdiqlash QR + yonida barcha imzolovchilarning 
-      to'liq ma'lumotlari (F.I.O., lavozim, sana) — PDF dagiga o'xshash
+    - Oxirgi qism: Tasdiqlash QR (o'ngga biroz surilgan) 
+      + yonida barcha imzolovchilarning to'liq ma'lumotlari 
+        (F.I.O., lavozim, imzo sanasi va vaqti) — PDF dagiga o'xshash
     """
     import tempfile
     import os
@@ -979,6 +980,7 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     from docx.shared import Inches, Pt, RGBColor
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.oxml.ns import qn
+    import qrcode
 
     # Nusxa yaratish
     fd, temp_docx = tempfile.mkstemp(suffix='.docx')
@@ -992,7 +994,7 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     if order.document_type == 'application' and order.director_approved:
         try:
             download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
-            qr = qrcode.QRCode(version=1, box_size=6, border=1)   # kattaroq
+            qr = qrcode.QRCode(version=1, box_size=6, border=1)
             qr.add_data(download_url)
             qr.make(fit=True)
             img = qr.make_image(fill='black', back_color='white')
@@ -1013,11 +1015,9 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
             hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
             run = hp.add_run()
-            run.add_picture(qr_path, width=Inches(1.0))          # ≈ 2.54 sm
+            run.add_picture(qr_path, width=Inches(1.0))  # ≈ 2.54 sm
         except Exception as e:
             print(f"Header QR error: {e}")
-
-
 
     # === 2. PASTKI QISM: Tasdiqlash QR + imzolovchilar ro'yxati ===
     try:
@@ -1026,18 +1026,17 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
         if order.director_approved:
             verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
 
-            # Bo'sh joy qoldirish (oxirgi sahifada pastga tushirish uchun)
+            # Oxirgi sahifada pastga tushirish uchun bo'sh joy
             for _ in range(2):
                 doc.add_paragraph()
 
-            # Yangi paragraf — QR va matn yonma-yon joylashishi uchun
             p = doc.add_paragraph()
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
-            # Chapda: QR kod (o'ngga biroz surish uchun oldin bo'sh run qo'shamiz)
-            p.add_run("   ")  # ← QR ni o'ngga surish uchun 3-4 ta bo'shliq (taxminan 0.5-1 sm)
+            # QR ni biroz o'ngga surish uchun bo'sh joy
+            p.add_run("     ")  # ← kerak bo'lsa 6-8 tagacha oshirish mumkin
 
-            # QR ni qo'shish
+            # QR kod
             qr = qrcode.QRCode(version=1, box_size=7, border=1)
             qr.add_data(verify_url)
             qr.make(fit=True)
@@ -1051,41 +1050,40 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             run_qr = p.add_run()
             run_qr.add_picture(qr_img_path, width=Inches(1.1))  # ≈ 2.8 sm
 
-            # QR dan keyin katta bo'shliq (matnni o'ngga surish)
-            p.add_run("          ")  # 10-12 ta bo'shliq ≈ 1.5-2 sm
-
-            # O'ngda: matn bloki (direktor + imzolovchilar)
-            run_text = p.add_run()
+            # QR va matn orasida bo'sh joy
+            p.add_run("            ")  # ← 12 ta bo'shliq ≈ 1.8-2 sm masofa
 
             # Direktor tasdiqladi (yuqorida)
             if order.director_approved_at:
-                run_text.text = f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n"
-                run_text.font.size = Pt(10)
-                run_text.bold = True
+                dir_text = p.add_run(f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n")
+                dir_text.font.size = Pt(10)
+                dir_text.bold = True
+                dir_text.font.color.rgb = RGBColor(0, 128, 0)  # yashil rang (ixtiyoriy)
 
             # Imzolar sarlavhasi
             if signatures.exists():
-                bold_run = p.add_run("Elektron imzolar (xodimlar):\n")
-                bold_run.bold = True
-                bold_run.font.size = Pt(10)
+                title_run = p.add_run("Elektron imzolar (xodimlar):\n")
+                title_run.bold = True
+                title_run.font.size = Pt(10)
 
                 # Har bir imzo uchun qator
                 for i, sig in enumerate(signatures, 1):
                     user = sig.user
-                    last   = user.last_name or ''
-                    first  = user.first_name or ''
-                    middle = getattr(user, 'middle_name', '') or ''
-                    position = user.position or '—'
-                    signed = sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '—'
+                    last_name   = user.last_name or ''
+                    first_name  = user.first_name or ''
+                    middle_name = getattr(user, 'middle_name', '') or ''
+                    position    = user.position or '—'
+                    signed_at   = sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '—'
 
-                    fio = f"{last} {first} {middle}".strip()
+                    fio = f"{last_name} {first_name} {middle_name}".strip()
 
-                    line = f"{i}. {fio}          {position}          {signed}\n"
-                    run_line = p.add_run(line)
-                    run_line.font.size = Pt(9.5)
+                    line = f"{i}. {fio:<35} {position:<25} {signed_at}\n"
+                    sig_run = p.add_run(line)
+                    sig_run.font.size = Pt(9.5)
 
             else:
-                p.add_run("\nImzolar mavjud emas").font.color.rgb = RGBColor(120, 120, 120)
+                no_sig = p.add_run("\nImzolar mavjud emas")
+                no_sig.font.color.rgb = RGBColor(140, 140, 140)
 
     except Exception as e:
         print(f"Signature block error: {e}")
@@ -1094,8 +1092,6 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
     doc.save(temp_docx)
     return temp_docx
-
-
 
 
 
