@@ -1054,11 +1054,12 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             p.add_run("            ")  # ← 12 ta bo'shliq ≈ 1.8-2 sm masofa
 
             # Direktor tasdiqladi (yuqorida)
-            if order.director_approved_at:
-                dir_text = p.add_run(f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n")
-                dir_text.font.size = Pt(10)
-                dir_text.bold = True
-                dir_text.font.color.rgb = RGBColor(0, 128, 0)  # yashil rang (ixtiyoriy)
+            # if order.director_approved_at:
+            #     dir_text = p.add_run(f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n")
+            #     dir_text.font.size = Pt(10)
+            #     dir_text.bold = True
+            #     dir_text.font.color.rgb = RGBColor(0, 128, 0)  
+                # yashil rang (ixtiyoriy)
 
             # Imzolar sarlavhasi
             if signatures.exists():
