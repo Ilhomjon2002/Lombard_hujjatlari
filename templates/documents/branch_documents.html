@@ -82,8 +82,8 @@
                 <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
                 <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Barchasi —</option>
-                    <option value="external" {% if selected_type == 'external' %}selected{% endif %}>SH/T</option>
-                    <option value="official" {% if selected_type == 'official' %}selected{% endif %}>Buyruq</option>
+                    <option value="external" {% if selected_type=='external' %}selected{% endif %}>SH/T</option>
+                    <option value="official" {% if selected_type=='official' %}selected{% endif %}>Buyruq</option>
                 </select>
             </form>
         </div>
@@ -94,11 +94,11 @@
                 <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
                 <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
                     <option value="">— Hammasi —</option>
-                    <option value="pending" {% if selected_status == 'yangi' %}selected{% endif %}>Yangi</option>
-                    <option value="partial" {% if selected_status == 'jarayonda' %}selected{% endif %}>Jarayonda</option>
-                    <option value="imzolangan" {% if selected_status == 'imzolangan' %}selected{% endif %}>Imzolangan
+                    <option value="pending" {% if selected_status=='yangi' %}selected{% endif %}>Yangi</option>
+                    <option value="partial" {% if selected_status=='jarayonda' %}selected{% endif %}>Jarayonda</option>
+                    <option value="imzolangan" {% if selected_status=='imzolangan' %}selected{% endif %}>Imzolangan
                         (faol)</option>
-                    <option value="tugatilgan" {% if selected_status == 'tugatilgan' %}selected{% endif %}>Tugatilgan
+                    <option value="tugatilgan" {% if selected_status=='tugatilgan' %}selected{% endif %}>Tugatilgan
                         (faol emas)</option>
                 </select>
                 {% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
@@ -187,10 +187,58 @@
                                     title="Tahrirlash">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <a href="{% url 'delete_order' doc.id %}" class="btn btn-sm btn-outline-danger"
-                                    title="O'chirish">
+                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal{{ doc.id }}" title="O'chirish">
                                     <i class="fa fa-trash"></i>
-                                </a>
+                                </button>
+
+                                
+                                <div class="modal fade" id="deleteModal{{ doc.id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-danger">
+                                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                                    Buyruqni o'chirish
+                                                </h5>
+                                                <button type="button" class="btn-close"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+
+                                            <div class="modal-body text-center">
+
+                                                <p class="mb-3">
+                                                    <strong>{{ doc.number }} - {{ doc.title }}</strong>
+                                                </p>
+
+                                                <p class="text-muted">
+                                                    Ushbu harakatni ortga qaytarib bo'lmaydi.
+                                                    Barcha tegishli hujjatlar va imzolar ham o‘chirilishi mumkin.
+                                                </p>
+
+                                            </div>
+
+                                            <div class="modal-footer justify-content-center">
+
+                                                <button class="btn btn-light border" data-bs-dismiss="modal">
+                                                    Bekor qilish
+                                                </button>
+
+                                                <form method="POST" action="{% url 'delete_order' doc.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fa fa-trash me-1"></i>
+                                                        Ha, o'chirilsin
+                                                    </button>
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {% endif %}
                             </td>
                         </tr>
