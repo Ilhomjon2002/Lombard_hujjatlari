@@ -1845,11 +1845,11 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         c.setFont("Helvetica", 8)
         
         for i, emp in enumerate(employee_data, 1):
-            c.drawString(text_x, float(current_text_y), f"{i}. F.I.O: {safe_str(emp.get('full_name'))}")
-            current_text_y -= 10.0
-            c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(emp.get('position'))}")
-            current_text_y -= 10.0
-            c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {safe_str(emp.get('date'))}")
+            c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(emp.get('full_name'))}       {safe_str(emp.get('position'))}       {safe_str(emp.get('date'))}")
+            # current_text_y -= 10.0
+            # c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(emp.get('position'))}")
+            # current_text_y -= 10.0
+            # c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {safe_str(emp.get('date'))}")
             current_text_y -= 15.0
         
     # Director / Main QR code (top left)
