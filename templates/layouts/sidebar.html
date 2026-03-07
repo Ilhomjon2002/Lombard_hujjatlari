@@ -15,47 +15,27 @@
             <i class="fas fa-tachometer-alt"></i>
             Bosh sahifa
         </a>
-        <a role="button" data-bs-toggle="collapse" data-bs-target="#branchesMenu" class="text-dark">
-            <i class="fas fa-building"></i>
-            <span>Lombardlar</span>
-            <i class="fas fa-angle-down ms-auto" style="font-size: 12px; margin-right: 0;"></i>
-        </a>
-        <div class="collapse" id="branchesMenu">
-            <a href="{% url 'create_branch' %}" class="d-block py-1 text-success fw-semibold"
-                style="padding-left: 42px;">
-                <i class="fas fa-plus me-1"></i> Yangi filial qo‘shish
-            </a>
-
-            {% for branch in sidebar_branches %}
-            {% if not branch.parent_branch %}
-
-            <!-- KATTA FILIAL -->
-            <a class="d-flex align-items-center text-dark fw-semibold py-1" data-bs-toggle="collapse"
-                href="#branch-{{ branch.id }}" role="button" aria-expanded="false" style="padding-left: 42px;">
-                <i class="fas fa-folder text-warning me-2" style="font-size: 14px; width:auto;"></i> {{ branch.name }}
-            </a>
-
-            <!-- ICHKI FILIALLAR -->
-            <div class="collapse ps-4" id="branch-{{ branch.id }}">
-
-                <a href="{% url 'branch_documents' branch.id %}" class="py-1 text-dark"
-                    style="padding-left: 60px;">
-                    <i class="fas fa-folder-open text-warning me-2" style="font-size: 12px; width:auto;"></i> Asosiy
-                </a>
-
-                {% for sub in branch.sub_branches.all %}
-                <a href="{% url 'branch_documents' sub.id %}" class="py-1 text-dark" style="padding-left: 60px;">
-                    <i class="fas fa-file-alt text-muted me-2" style="font-size: 12px; width:auto;"></i> {{ sub.name }}
-                </a>
-                {% endfor %}
-
-            </div>
-
-            {% endif %}
-            {% endfor %}
-
-
+        <div class="mt-4 mb-2 px-4 text-uppercase fw-bold text-secondary"
+            style="font-size: 10px; letter-spacing: 0.5px;">
+            Lombardlar
         </div>
+
+        <a href="{% url 'create_branch' %}" class="text-success fw-semibold">
+            <i class="fas fa-plus"></i> Yangi filial qo‘shish
+        </a>
+
+        {% for branch in sidebar_branches %}
+        <!-- BARCHA FILIALLAR -->
+        <a href="{% url 'branch_documents' branch.id %}" class="text-dark fw-semibold">
+            <i class="fas fa-folder text-warning"></i> {{ branch.name }}
+        </a>
+        {% endfor %}
+
+        <div class="mt-4 mb-2 px-4 text-uppercase fw-bold text-secondary"
+            style="font-size: 10px; letter-spacing: 0.5px;">
+            Hujjatlar
+        </div>
+
         <a href="{% url 'create_order' %}">
             <i class="fas fa-plus-circle"></i>
             Yangi Buyruq

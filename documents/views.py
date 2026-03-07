@@ -204,12 +204,12 @@ def create_document(request):
     employees = CustomUser.objects.values('id', 'first_name', 'last_name', 'middle_name', 'position', 'role')
     
     # Barcha mavjud unikal qo'shimcha hujjat shablonlarini olish
-    saved_doc_names = AdditionalDocumentTemplate.objects.filter(is_active=True).values_list('name', flat=True).order_by('name')
+    saved_doc_templates = AdditionalDocumentTemplate.objects.filter(is_active=True).order_by('name')
 
     context = {
         'branches': branches,
         'employees': employees,
-        'saved_doc_names': saved_doc_names,
+        'saved_doc_templates': saved_doc_templates,
     }
     return render(request, 'documents/create_document.html', context)
 
@@ -2169,6 +2169,27 @@ def delete_order(request, order_id):
         order.delete()
         messages.success(request, 'Hujjat muvaffaqiyatli o\'chirildi')
         return redirect('dashboard')
-        
     return render(request, 'documents/confirm_delete.html', {'order': order})
 
+@require_http_methods(["POST"])
+@login_required
+def rename_additional_document_template(request, template_id):
+    if request.user.role not in ['admin', 'director']:
+        messages.error(request, "Sizda ruxsat yo'q")
+        return redirect('dashboard')
+        
+    template = get_object_or_404(AdditionalDocumentTemplate, id=template_id)
+    new_name = request.POST.get('new_name', '').strip()
+    
+    if new_name and new_name != template.name:
+        old_name = template.name
+        template.name = new_name
+        template.save()
+        
+        # O'tmishda ishlatilgan fayllarning nomlarini ham o'zgartirish
+        AdditionalDocument.objects.filter(name=old_name).update(name=new_name)
+        messages.success(request, f"Hujjat shabloni '{new_name}' ga o'zgartirildi.")
+    else:
+        messages.warning(request, "Yangi nom kiritilmadi yoki eski nom bilan bir xil.")
+        
+    return redirect(request.META.get('HTTP_REFERER', 'create_order'))

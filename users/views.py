@@ -313,7 +313,7 @@ def edit_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     
     if request.method == 'POST':
-        form = UserUpdateForm(request.POST, instance=user)
+        form = UserUpdateForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, f"User {user.username} information updated")

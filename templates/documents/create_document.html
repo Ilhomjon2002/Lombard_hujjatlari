@@ -145,66 +145,136 @@
                                     tanlash:</label>
                                 <div class="row g-2"
                                     style="max-height: 250px; overflow-y: auto; background-color: #f8f9fa; padding: 10px;">
-                                    {% for doc_name in saved_doc_names %}
-                                    {% for employee in employees %}
-                                    <option value="{{ employee.id }}">{{ employee.last_name }}
-                                        {{ employee.first_name }} {{ employee.middle_name|default:"" }} -
-                                        {{ employee.position|default:"Lavozimi kiritilmagan" }}
-                                    </option>
+                                    {% for doc_template in saved_doc_templates %}
+                                    <div class="col-md-6 existing-doc-item">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <div class="input-group input-group-sm w-100">
+                                                <div class="input-group-text bg-white border-end-0">
+                                                    <input class="form-check-input mt-0" type="checkbox"
+                                                        name="selected_saved_doc_names" value="{{ doc_template.name }}">
+                                                </div>
+                                                <input type="text" class="form-control bg-white border-start-0 ps-0"
+                                                    value="{{ doc_template.name }}" readonly>
+                                                <!-- Rename Icon -->
+                                                <button type="button" class="btn btn-outline-warning border-start-0"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#renameTemplateModal{{ doc_template.id }}"
+                                                    title="Nomini o'zgartirish">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+
+                                            <select class="form-select form-select-sm"
+                                                name="saved_doc_signers_{{ doc_template.name }}"
+                                                style="max-width: 150px;">
+                                                <option value="">-- Imzolash ixtiyoriy --</option>
+                                                {% for employee in employees %}
+                                                <option value="{{ employee.id }}">{{ employee.last_name }}
+                                                    {{ employee.first_name }} {{ employee.middle_name|default:"" }} -
+                                                    {{ employee.position|default:"Lavozimi kiritilmagan" }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <!-- Rename Modal -->
+                                        <div class="modal fade" id="renameTemplateModal{{ doc_template.id }}"
+                                            tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content text-start">
+                                                    <div class="modal-header">
+                                                        <h6 class="modal-title">Shablon nomini o'zgartirish</h6>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <!-- Uses a generic form that does not prevent other form submissions -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="text-muted small text-center py-2">Avval foydalanilgan hujjat nomlari
+                                        topilmadi</div>
                                     {% endfor %}
-                                    </select>
                                 </div>
                             </div>
-                            {% empty %}
-                            <div class="text-muted small text-center py-2">Avval foydalanilgan hujjat nomlari
-                                topilmadi</div>
-                            {% endfor %}
+
+                            <div class="mb-2 p-3 bg-light rounded border">
+                                <label class="text-muted small mb-2 d-block">Yangi qo'shimcha hujjat nomi:</label>
+
+                                <div id="newAdditionalDocsContainer">
+                                    <div class="row mb-2 new-additional-doc-row align-items-center">
+                                        <div class="col-md-6 mb-2 mb-md-0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                name="new_additional_names"
+                                                placeholder="Hujjat nomi. Fayl keyinroq yuklanadi.">
+                                        </div>
+                                        <div class="col-md-4 mb-2 mb-md-0">
+                                            <select class="form-select form-select-sm" name="new_additional_signers">
+                                                <option value="">-- Imzolash ixtiyoriy --</option>
+                                                {% for employee in employees %}
+                                                <option value="{{ employee.id }}">{{ employee.last_name }}
+                                                    {{ employee.first_name }} {{ employee.middle_name|default:"" }} -
+                                                    {{ employee.position|default:"Lavozimi kiritilmagan" }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn"
+                                                style="display:none;" title="O'chirish"><i
+                                                    class="fas fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addNewDocBtn">
+                                    <i class="fas fa-plus"></i> Yana hujjat qo'shish
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="mb-2 p-3 bg-light rounded border">
-                        <label class="text-muted small mb-2 d-block">Yangi qo'shimcha hujjat nomi:</label>
-
-                        <div id="newAdditionalDocsContainer">
-                            <div class="row mb-2 new-additional-doc-row align-items-center">
-                                <div class="col-md-6 mb-2 mb-md-0">
-                                    <input type="text" class="form-control form-control-sm" name="new_additional_names"
-                                        placeholder="Hujjat nomi. Fayl keyinroq yuklanadi.">
-                                </div>
-                                <div class="col-md-4 mb-2 mb-md-0">
-                                    <select class="form-select form-select-sm" name="new_additional_signers">
-                                        <option value="">-- Imzolash ixtiyoriy --</option>
-                                        {% for employee in employees %}
-                                        <option value="{{ employee.id }}">{{ employee.last_name }}
-                                            {{ employee.first_name }} {{ employee.middle_name|default:"" }} -
-                                            {{ employee.position|default:"Lavozimi kiritilmagan" }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="button" class="btn btn-danger btn-sm w-100 remove-doc-btn"
-                                        style="display:none;" title="O'chirish"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addNewDocBtn">
-                            <i class="fas fa-plus"></i> Yana hujjat qo'shish
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Hujjatni yaratish
                         </button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Bekor qilish</a>
                     </div>
+                </form>
             </div>
         </div>
-        <div class="mt-4">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Hujjatni yaratish
-            </button>
-            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Bekor qilish</a>
-        </div>
-        </form>
     </div>
 </div>
+
+<!-- Render Modals for renaming templates outside the main form -->
+{% for doc_template in saved_doc_templates %}
+<div class="modal fade" id="renameTemplateModal{{ doc_template.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-start">
+            <div class="modal-header">
+                <h6 class="modal-title">Shablon nomini o'zgartirish</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'rename_additional_document_template' doc_template.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body text-dark fw-normal">
+                    <div class="mb-3">
+                        <label class="form-label">Yangi nomni kiriting:</label>
+                        <input type="text" name="new_name" class="form-control" value="{{ doc_template.name }}"
+                            required>
+                        <small class="text-muted d-block mt-2">Ushbu shablon asosida yaratilgan barcha oldingi hujjatlar
+                            nomi ham avtomatik o'zgaradi.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-</div>
+{% endfor %}
+
 {% endblock %}
 
 {% block extra_js %}
