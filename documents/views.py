@@ -2193,3 +2193,22 @@ def rename_additional_document_template(request, template_id):
         messages.warning(request, "Yangi nom kiritilmadi yoki eski nom bilan bir xil.")
         
     return redirect(request.META.get('HTTP_REFERER', 'create_order'))
+
+@require_http_methods(["POST"])
+@login_required
+def rename_additional_document(request, doc_id):
+    if request.user.role not in ['admin', 'director']:
+        messages.error(request, "Sizda ruxsat yo'q")
+        return redirect('dashboard')
+        
+    doc = get_object_or_404(AdditionalDocument, id=doc_id)
+    new_name = request.POST.get('new_name', '').strip()
+    
+    if new_name and new_name != doc.name:
+        doc.name = new_name
+        doc.save()
+        messages.success(request, f"Qo'shimcha hujjat nomi '{new_name}' ga o'zgartirildi.")
+    else:
+        messages.warning(request, "Yangi nom kiritilmadi yoki eski nom bilan bir xil.")
+        
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
