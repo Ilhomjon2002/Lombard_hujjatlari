@@ -199,8 +199,7 @@ def create_document(request):
 
         except Exception as e:
             messages.error(request, f'Xatolik yuz berdi: {str(e)}')
-
-    branches = Branch.objects.filter(parent_branch__isnull=True)
+    branches = Branch.objects.all()
     employees = CustomUser.objects.values('id', 'first_name', 'last_name', 'middle_name', 'position', 'role')
     
     # Barcha mavjud unikal qo'shimcha hujjat shablonlarini olish
