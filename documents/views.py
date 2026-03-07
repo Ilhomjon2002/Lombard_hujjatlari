@@ -1037,10 +1037,19 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
             # Jadval orqali yonma-yon joylashtirish (1 qator, 2 ustun)
             table = doc.add_table(rows=1, cols=2)
-            table.autofit = True
+            table.autofit = False
+            
+            # Aniq o'lcham beramiz, shunda matn QR tagiga tushmaydi
+            try:
+                table.columns[0].width = Inches(1.2)
+                table.columns[1].width = Inches(5.3)
+            except Exception:
+                pass
             
             cell_qr = table.cell(0, 0)
             cell_text = table.cell(0, 1)
+            cell_qr.width = Inches(1.2)
+            cell_text.width = Inches(5.3)
 
             # --- CHAP USTUN: QR KOD ---
             p_qr = cell_qr.paragraphs[0]
@@ -1057,17 +1066,13 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             img.save(qr_img_path, format='PNG')
 
             run_qr = p_qr.add_run()
-            run_qr.add_picture(qr_img_path, width=Inches(1.5))
+            run_qr.add_picture(qr_img_path, width=Inches(1.0))
 
             # --- O'NG USTUN: XODIMLAR MA'LUMOTLARI ---
             p_text = cell_text.paragraphs[0]
             p_text.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
             if signatures.exists():
-                title_run = p_text.add_run("Elektron imzolar (xodimlar):\n")
-                title_run.bold = True
-                title_run.font.size = Pt(10)
-
                 for i, sig in enumerate(signatures, 1):
                     user = sig.user
                     last_name   = user.last_name or ''
@@ -1078,9 +1083,12 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
                     fio = f"{last_name} {first_name} {middle_name}".strip()
 
-                    line = f"{i}. {fio}         {position}         {signed_at}\n"
+                    line = f"{i}. {fio}       {position}       {signed_at}"
                     sig_run = p_text.add_run(line)
                     sig_run.font.size = Pt(9.5)
+                    
+                    if i < signatures.count():
+                        p_text.add_run("\n")
             else:
                 no_sig = p_text.add_run("Imzolar mavjud emas")
                 no_sig.font.color.rgb = RGBColor(140, 140, 140)
@@ -1960,24 +1968,38 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         
         # We can implement 'next to' using a simple table in Word
         table = doc_obj.add_table(rows=1, cols=2)
-        table.autofit = True
+        table.autofit = False
         
-        cell_img = table.cell(0, 0)
+        try:
+            table.columns[0].width = Inches(1.2)
+            table.columns[1].width = Inches(5.3)
+        except Exception:
+            pass
+            
+        cell_qr = table.cell(0, 0)
         cell_text = table.cell(0, 1)
+        cell_qr.width = Inches(1.2)
+        cell_text.width = Inches(5.3)
         
         if bottom_qr_path and os.path.exists(bottom_qr_path):
-            p_img = cell_img.paragraphs[0]
+            p_img = cell_qr.paragraphs[0]
+            p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
             r_img = p_img.add_run()
-            r_img.add_picture(bottom_qr_path, width=Inches(1.5))
+            r_img.add_picture(bottom_qr_path, width=Inches(1.0))
             
         p_text = cell_text.paragraphs[0]
+        p_text.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        
         for i, emp in enumerate(employee_data, 1):
-            if emp.get('full_name'):
-                p_text.add_run(f"{i}. F.I.O: {emp.get('full_name')}\n").bold = True
-            if emp.get('position'):
-                p_text.add_run(f"    Lavozim: {emp.get('position')}\n")
-            if emp.get('date'):
-                p_text.add_run(f"    Sana: {emp.get('date')}\n\n")
+            full_name = str(emp.get('full_name') or '')
+            position = str(emp.get('position') or '—')
+            date_str = str(emp.get('date') or '—')
+            
+            line = f"{i}. {full_name}       {position}       {date_str}"
+            p_text.add_run(line).font.size = Pt(9.5)
+            
+            if i < len(employee_data):
+                p_text.add_run("\n")
         
     final_buffer = BytesIO()
     doc_obj.save(final_buffer)
