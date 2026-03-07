@@ -1030,13 +1030,22 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             for _ in range(2):
                 doc.add_paragraph()
 
-            p = doc.add_paragraph()
-            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            p_top = doc.add_paragraph()
+            # Oxirgi sahifada pastga tushirish uchun bo'sh joy
+            for _ in range(2):
+                doc.add_paragraph()
 
-            # QR ni biroz o'ngga surish uchun bo'sh joy
-            p.add_run("     ")  # ← kerak bo'lsa 6-8 tagacha oshirish mumkin
+            # Jadval orqali yonma-yon joylashtirish (1 qator, 2 ustun)
+            table = doc.add_table(rows=1, cols=2)
+            table.autofit = True
+            
+            cell_qr = table.cell(0, 0)
+            cell_text = table.cell(0, 1)
 
-            # QR kod
+            # --- CHAP USTUN: QR KOD ---
+            p_qr = cell_qr.paragraphs[0]
+            p_qr.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
             qr = qrcode.QRCode(version=1, box_size=7, border=1)
             qr.add_data(verify_url)
             qr.make(fit=True)
@@ -1047,27 +1056,18 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             temp_files.append(qr_img_path)
             img.save(qr_img_path, format='PNG')
 
-            run_qr = p.add_run()
-            run_qr.add_picture(qr_img_path, width=Inches(1.1))  # ≈ 2.8 sm
+            run_qr = p_qr.add_run()
+            run_qr.add_picture(qr_img_path, width=Inches(1.5))
 
-            # QR va matn orasida bo'sh joy
-            p.add_run("            ")  # ← 12 ta bo'shliq ≈ 1.8-2 sm masofa
+            # --- O'NG USTUN: XODIMLAR MA'LUMOTLARI ---
+            p_text = cell_text.paragraphs[0]
+            p_text.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
-            # Direktor tasdiqladi (yuqorida)
-            # if order.director_approved_at:
-            #     dir_text = p.add_run(f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}\n\n")
-            #     dir_text.font.size = Pt(10)
-            #     dir_text.bold = True
-            #     dir_text.font.color.rgb = RGBColor(0, 128, 0)  
-                # yashil rang (ixtiyoriy)
-
-            # Imzolar sarlavhasi
             if signatures.exists():
-                title_run = p.add_run("Elektron imzolar (xodimlar):\n")
+                title_run = p_text.add_run("Elektron imzolar (xodimlar):\n")
                 title_run.bold = True
                 title_run.font.size = Pt(10)
 
-                # Har bir imzo uchun qator
                 for i, sig in enumerate(signatures, 1):
                     user = sig.user
                     last_name   = user.last_name or ''
@@ -1078,12 +1078,11 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
                     fio = f"{last_name} {first_name} {middle_name}".strip()
 
-                    line = f"{i}. {fio:<35} {position:<25} {signed_at}\n"
-                    sig_run = p.add_run(line)
+                    line = f"{i}. {fio}         {position}         {signed_at}\n"
+                    sig_run = p_text.add_run(line)
                     sig_run.font.size = Pt(9.5)
-
             else:
-                no_sig = p.add_run("\nImzolar mavjud emas")
+                no_sig = p_text.add_run("Imzolar mavjud emas")
                 no_sig.font.color.rgb = RGBColor(140, 140, 140)
 
     except Exception as e:
