@@ -20,6 +20,8 @@ urlpatterns = [
     path('upload-additional-doc/<int:doc_id>/<int:order_id>/', views.upload_additional_document_file, name='upload_additional_document_file'),
     path('add-new-additional-doc/<int:order_id>/', views.add_new_additional_document, name='add_new_additional_document'),
 
+    path('rename-additional-doc/<int:doc_id>/', views.rename_additional_document, name='rename_additional_document'),
+
     # AJAX/API endpointlar
     path('api/document-types/',         views.get_document_types,   name='api_document_types'),
     path('api/branch-employees/',       views.get_branch_employees, name='api_branch_employees'),

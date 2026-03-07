@@ -22,16 +22,16 @@
     </div>
 
     {% if messages %}
-        <div class="row mb-4">
-            <div class="col-12">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
+    <div class="row mb-4">
+        <div class="col-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
         </div>
+    </div>
     {% endif %}
 
     <div class="row justify-content-center">
@@ -53,14 +53,8 @@
                                 <label for="name" class="form-label fw-bold required">
                                     Filial nomi <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" 
-                                       class="form-control form-control-lg" 
-                                       id="name" 
-                                       name="name" 
-                                       required 
-                                       maxlength="150"
-                                       placeholder="Masalan: Chilanzor filiali"
-                                       autofocus>
+                                <input type="text" class="form-control form-control-lg" id="name" name="name" required
+                                    maxlength="150" placeholder="Masalan: Chilanzor filiali" autofocus>
                                 <div class="invalid-feedback">
                                     Filial nomini kiriting
                                 </div>
@@ -94,36 +88,15 @@
                                        placeholder="Toshkent sh., Chilanzor tum., 45-uy">
                             </div> -->
 
-                            <!-- Yuqori filial (parent) -->
-                            <div class="col-md-12">
-                                <label for="parent_branch" class="form-label fw-bold">
-                                    Yuqori (asosiy) filial
-                                </label>
-                                <select class="form-select form-select-lg" 
-                                        id="parent_branch" 
-                                        name="parent_branch">
-                                    <option value="">— Asosiy filial (daraja 1) —</option>
-                                    {% for branch in main_branches %}
-                                        <option value="{{ branch.id }}">
-                                            {{ branch.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <div class="form-text text-muted mt-1">
-                                    Agar bu filial boshqa filialga bo'ysunsa, tanlang
-                                </div>
-                            </div>
-
+                            <!-- Yuqori filial olib tashlandi -->
                         </div>
 
                         <div class="mt-5 pt-4 border-top">
                             <div class="d-flex gap-3 justify-content-end">
-                                <a href="{% url 'dashboard' %}" 
-                                   class="btn btn-lg btn-outline-secondary px-5">
+                                <a href="{% url 'dashboard' %}" class="btn btn-lg btn-outline-secondary px-5">
                                     Bekor qilish
                                 </a>
-                                <button type="submit" 
-                                        class="btn btn-lg btn-primary px-5">
+                                <button type="submit" class="btn btn-lg btn-primary px-5">
                                     <i class="bi bi-check-circle me-2"></i>
                                     Filialni saqlash
                                 </button>
@@ -143,23 +116,23 @@
 
 {% block extra_js %}
 <script>
-// Bootstrap 5 form validation
-(function () {
-    'use strict'
+    // Bootstrap 5 form validation
+    (function () {
+        'use strict'
 
-    var forms = document.querySelectorAll('.needs-validation')
+        var forms = document.querySelectorAll('.needs-validation')
 
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
 
-                form.classList.add('was-validated')
-            }, false)
-        })
-})()
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
 </script>
 {% endblock %}

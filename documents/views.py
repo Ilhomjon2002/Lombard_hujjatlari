@@ -135,6 +135,13 @@ def create_document(request):
                     try:
                         signer_id = new_doc_signers[idx] if idx < len(new_doc_signers) else None
                         signer = CustomUser.objects.filter(id=signer_id).first() if signer_id else None
+                        
+                        # Use get_or_create to automatically save to the template for future reuse
+                        AdditionalDocumentTemplate.objects.get_or_create(
+                            name=name.strip(),
+                            defaults={'is_active': True}
+                        )
+                        
                         new_doc = AdditionalDocument.objects.create(
                             name=name.strip(),
                             file=None,
@@ -1936,7 +1943,8 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
     """
     import tempfile, os
     import docx
-    from docx.shared import Inches
+    from docx.shared import Inches, Pt
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
     from io import BytesIO
 
     fd, temp_word = tempfile.mkstemp(suffix='.docx')

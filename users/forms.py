@@ -55,8 +55,8 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            'first_name', 'last_name', 'email',
-            'role', 'branch', 'is_active',
+            'first_name', 'last_name', 'middle_name', 'email',
+            'role', 'branch', 'position', 'is_active',
             'profile_image', 'signature_image'
         ]
         widgets = {
@@ -64,6 +64,7 @@ class UserUpdateForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(),
             'profile_image': forms.FileInput(),
             'signature_image': forms.FileInput(),
+            'position': forms.TextInput(attrs={'placeholder': 'Masalan: Bosh hisobchi'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -88,8 +88,6 @@ def dashboard(request):
         all_orders = Order.objects.all().select_related('branch', 'created_by').order_by('-created_at')
         pending_orders = Order.objects.filter(status='pending').select_related('branch', 'created_by').order_by('-created_at')
         signed_orders = Order.objects.filter(status='signed').select_related('branch', 'created_by').order_by('-created_at')
-
-        main_branches = Branch.objects.filter(parent_branch__isnull=True)
         
         context = {
             'document_pending': document_pending,
@@ -412,23 +410,15 @@ def create_branch(request):
     
     if request.method == 'POST':
         name = request.POST.get('name')
-        parent_id = request.POST.get('parent_branch')
-        
-        parent = None
-        if parent_id:
-            parent = get_object_or_404(Branch, id=parent_id)
         
         branch = Branch.objects.create(
-            name=name,
-            parent_branch=parent
+            name=name
         )
         messages.success(request, f"Branch {branch.name} created successfully")
         return redirect('dashboard')
     
     branches = Branch.objects.all()
-    main_branches = Branch.objects.filter(parent_branch__isnull=True)
     context = {
-        'main_branches': main_branches,
         'branches': branches,
         'title': 'Add New Branch',
     }

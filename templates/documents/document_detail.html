@@ -84,9 +84,44 @@
                     style="background-color: #f8f9fa;">
 
                     <div>
-                        <h6 class="mb-1 text-dark fw-bold">
+                        <h6 class="mb-1 text-dark fw-bold d-flex align-items-center">
                             <i class="bi bi-file-earmark-text text-primary me-2"></i>
-                            {{ doc.name }}
+                            <span>{{ doc.name }}</span>
+                            <!-- Rename Icon -->
+                            {% if request.user.role in 'admin,director' or request.user == document.created_by %}
+                            <button type="button" class="btn btn-sm text-warning p-0 ms-2 border-0 bg-transparent"
+                                data-bs-toggle="modal" data-bs-target="#renameDocModal{{ doc.id }}"
+                                title="Nomini o'zgartirish">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <!-- Rename Modal -->
+                            <div class="modal fade" id="renameDocModal{{ doc.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content text-start">
+                                        <div class="modal-header">
+                                            <h6 class="modal-title">Hujjat nomini o'zgartirish</h6>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form action="{% url 'rename_additional_document' doc.id %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="modal-body text-dark fw-normal">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Yangi nomni kiriting:</label>
+                                                    <input type="text" name="new_name" class="form-control"
+                                                        value="{{ doc.name }}" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                    data-bs-dismiss="modal">Bekor qilish</button>
+                                                <button type="submit" class="btn btn-primary btn-sm">Saqlash</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
                         </h6>
 
                         <small class="text-muted">
