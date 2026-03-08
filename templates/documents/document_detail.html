@@ -434,7 +434,7 @@
                 <div class="mt-4">
                     <button type="button" class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="confirmSignAddDocBtn"
                         style="border-radius: var(--radius-md);">
-                        <i class="bi bi-check2-circle me-1"></i> Tasdiqlash (Simulyatsiya)
+                        <i class="bi bi-fingerprint me-1"></i> Barmoq izi bilan imzolash
                     </button>
                     <button type="button" class="btn btn-light px-4 py-2 border mt-2 w-100" data-bs-dismiss="modal"
                         style="border-radius: var(--radius-md);">
@@ -524,31 +524,74 @@
         $('#confirmSignAddDocBtn').click(function () {
             if (!currentAddDocId) return;
 
-            $(this).hide();
-            $('#signAddDocStatusMessage').show();
+            const btn = $(this);
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Agent bilan bog\'lanilmoqda...');
+            $('#signAddDocStatusMessage').show().html(
+                '<div class="spinner-border text-primary me-2" role="status" style="width:1.5rem;height:1.5rem;"></div>' +
+                '<strong>Barmoq izi skanerini tayyorlanmoqda...</strong>'
+            );
 
-            const url = "{% url 'sign_additional_doc_fingerprint' 0 %}".replace('0', currentAddDocId);
-
+            // Step 1: Agent'da barmoq izi olishni boshlash
             $.ajax({
-                url: url,
+                url: 'http://127.0.0.1:8001/api/fingerprint/start-capture',
                 type: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $('#signAddDocStatusMessage').html('<i class="bi bi-check-circle-fill text-success fs-4 me-2"></i><strong class="text-success">Muvaffaqiyatli imzolandi!</strong>');
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        alert('Xatolik: ' + response.message);
-                        $('#signAddDocModal').modal('hide');
-                    }
+                timeout: 8000,
+                success: function () {
+                    // Agent tayyor — foydalanuvchiga ko'rsatma berish
+                    $('#signAddDocStatusMessage').html(
+                        '<i class="bi bi-fingerprint fs-2 text-primary me-2"></i>' +
+                        '<strong>Barmog\'ingizni skaner ustiga bosing...</strong>'
+                    );
+                    btn.html('<i class="bi bi-fingerprint me-1"></i> Skanerlash...');
+
+                    // Step 2: Backend imzolash (Django o'zi capture va verify qiladi)
+                    setTimeout(function () {
+                        const signUrl = "{% url 'sign_additional_doc_fingerprint' 0 %}".replace('0', currentAddDocId);
+                        $.ajax({
+                            url: signUrl,
+                            type: 'POST',
+                            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                            success: function (response) {
+                                if (response.success) {
+                                    $('#signAddDocStatusMessage').html(
+                                        '<i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>' +
+                                        '<strong class="text-success">Muvaffaqiyatli imzolandi!</strong>'
+                                    );
+                                    btn.hide();
+                                    setTimeout(function () { location.reload(); }, 1200);
+                                } else {
+                                    const errType = response.error_type || '';
+                                    let icon = 'bi-exclamation-triangle-fill text-danger';
+                                    if (errType === 'agent_offline') icon = 'bi-wifi-off text-warning';
+                                    if (errType === 'no_fingerprint') icon = 'bi-person-x text-warning';
+                                    $('#signAddDocStatusMessage').html(
+                                        `<i class="bi ${icon} fs-4 me-2"></i>` +
+                                        `<strong class="text-danger">${response.error || 'Xatolik yuz berdi'}</strong>`
+                                    );
+                                    btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
+                                }
+                            },
+                            error: function (xhr) {
+                                let errMsg = 'Server bilan xatolik yuz berdi!';
+                                try {
+                                    const resp = JSON.parse(xhr.responseText);
+                                    if (resp.error) errMsg = resp.error;
+                                } catch (e) {}
+                                $('#signAddDocStatusMessage').html(
+                                    '<i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-2"></i>' +
+                                    `<strong class="text-danger">${errMsg}</strong>`
+                                );
+                                btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
+                            }
+                        });
+                    }, 800); // barmoq barmog'ini bosishiga kichik kutish
                 },
                 error: function () {
-                    alert('Server bilan xatolik yuz berdi!');
-                    $('#signAddDocModal').modal('hide');
+                    $('#signAddDocStatusMessage').html(
+                        '<i class="bi bi-wifi-off text-warning fs-4 me-2"></i>' +
+                        '<strong class="text-warning">Barmoq izi agenti topilmadi. Iltimos, agentni ishga tushiring.</strong>'
+                    );
+                    btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
                 }
             });
         });

@@ -16,6 +16,7 @@ from io import BytesIO
 from django.core.files import File
 import json
 import os
+import requests
 import copy
 
 # ReportLab imports for PDF generation
@@ -522,17 +523,92 @@ def sign_with_fingerprint(request, signature_id):
     return JsonResponse(response_data)
 
 
+# Fingerprint agent URL
+AGENT_BASE_URL = 'http://127.0.0.1:8001'
+
+
 @login_required
 @require_http_methods(["POST"])
 def sign_additional_doc_fingerprint(request, doc_id):
     """Barmoq izi orqali qo'shimcha hujjatni imzolash va QR kod yaratish"""
     doc = get_object_or_404(AdditionalDocument, id=doc_id, signer=request.user)
-    
+
     if doc.is_signed:
         return JsonResponse({'error': 'Bu hujjat allaqachon imzolangan', 'success': False}, status=400)
-    
-    # QR kod ma'lumotlari
+
+    # === BARMOQ IZI TEKSHIRUVI ===
     user = request.user
+    # Foydalanuvchida barmoq izi ro'yxatdan o'tganligini tekshirish
+    if not hasattr(user, 'scanner_fingerprint') or not user.scanner_fingerprint or not user.scanner_fingerprint.is_registered:
+        return JsonResponse({
+            'success': False,
+            'error': 'Barmoq izi ro\'yxatdan o\'tilmagan. Avval profilda barmoq izingizni ro\'yxatdan o\'ting.',
+            'error_type': 'no_fingerprint'
+        }, status=400)
+
+    # Agentdan barmoq izini olish
+    try:
+        capture_response = requests.get(f'{AGENT_BASE_URL}/api/fingerprint/capture', timeout=15)
+    except requests.ConnectionError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Barmoq izi agenti ishlamayapti. Iltimos, agentni ishga tushiring.',
+            'error_type': 'agent_offline'
+        }, status=503)
+    except requests.Timeout:
+        return JsonResponse({
+            'success': False,
+            'error': 'Barmoq izi skaneri javob bermadi. Qaytadan urinib ko\'ring.',
+            'error_type': 'timeout'
+        }, status=408)
+
+    if capture_response.status_code != 200:
+        return JsonResponse({
+            'success': False,
+            'error': 'Barmoq izi skanerdan olinmadi. Qaytadan urinib ko\'ring.',
+            'error_type': 'capture_failed'
+        }, status=400)
+
+    capture_data = capture_response.json()
+    quality = capture_data.get('quality', 0)
+    if quality < 50:
+        return JsonResponse({
+            'success': False,
+            'error': f'Barmoq izi sifati past ({quality}/100). Barmog\'ingizni qaytadan bosing.',
+            'error_type': 'low_quality'
+        }, status=400)
+
+    current_template = capture_data.get('template')
+
+    # Saqlangan shablon bilan solishtirish
+    stored_template = user.scanner_fingerprint.template_data.decode()
+    try:
+        verify_response = requests.post(
+            f'{AGENT_BASE_URL}/api/fingerprint/verify',
+            json={
+                'stored_template': stored_template,
+                'current_template': current_template,
+                'threshold': 90
+            },
+            timeout=10
+        )
+    except Exception:
+        return JsonResponse({
+            'success': False,
+            'error': 'Barmoq izi tekshirishda xatolik yuz berdi.',
+            'error_type': 'verify_error'
+        }, status=500)
+
+    if verify_response.status_code != 200 or not verify_response.json().get('match'):
+        similarity = verify_response.json().get('similarity_score', 0) if verify_response.status_code == 200 else 0
+        return JsonResponse({
+            'success': False,
+            'error': f'Barmoq izi mos kelmadi (o\'xshashlik: {similarity}%). Boshqa barmog\'ingizni yoki qaytadan urinib ko\'ring.',
+            'error_type': 'mismatch'
+        }, status=401)
+    # === TEKSHIRUV MUVAFFAQIYATLI ===
+
+    # QR kod ma'lumotlari
     full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
     signed_at = datetime.now()
     
