@@ -2060,6 +2060,9 @@ def api_director_approve(request, order_id):
     order.final_qr_code.save(f"final_qr_{order.id}.png", File(buffer), save=False)
     order.save()
     
+    # Hujjat statusini yangilash ("Kutilmoqda" dan "To'liq imzolangan" ga)
+    order.update_status()
+    
     # Asosiy buyruq uchun PDF generatsiya va QR larni yopishtirish
     # Odatda bu download paytida yaratiladi, lekin avtomatik qilish ham mumkin.
     # Bu yassi yerda hozircha asosiy order_pdf logic'ini o'zgarishsiz qoldiramiz 
