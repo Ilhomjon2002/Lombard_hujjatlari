@@ -126,12 +126,18 @@
                                 <td>{{ order.created_by.get_full_name|default:order.created_by.username }}</td>
                                 <td><small>{{ order.created_at|date:"d.m.Y" }}</small></td>
                                 <td>
-                                    {% if order.status == 'signed' %}
+                                    {% if order.status == 'completed' %}
                                     <span class="badge bg-success">Imzolangan</span>
                                     {% elif order.status == 'pending' %}
                                     <span class="badge bg-warning text-dark">Kutilmoqda</span>
+                                    {% elif order.status == 'partial' %}
+                                    {% if order.is_fully_signed and not order.director_approved %}
+                                    <span class="badge bg-warning text-dark">Tasdiq kutilmoqda</span>
                                     {% else %}
-                                    <span class="badge bg-secondary">{{ order.status }}</span>
+                                    <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count }}/{{ order.signatures_total_count }})</span>
+                                    {% endif %}
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ order.get_status_display }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-end">

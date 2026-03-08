@@ -81,13 +81,13 @@ def dashboard(request):
         employee_count = CustomUser.objects.filter(role='employee').count()
 
         document_pending = Order.objects.filter(status='pending').count()
-        document_signed = Order.objects.filter(status='signed').count()
+        document_signed = Order.objects.filter(status='completed').count()
         document_total = Order.objects.count()
 
         # Actual document lists for expandable panels
         all_orders = Order.objects.all().select_related('branch', 'created_by').order_by('-created_at')
         pending_orders = Order.objects.filter(status='pending').select_related('branch', 'created_by').order_by('-created_at')
-        signed_orders = Order.objects.filter(status='signed').select_related('branch', 'created_by').order_by('-created_at')
+        signed_orders = Order.objects.filter(status='completed').select_related('branch', 'created_by').order_by('-created_at')
         
         context = {
             'document_pending': document_pending,
