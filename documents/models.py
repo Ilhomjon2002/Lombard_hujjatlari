@@ -202,12 +202,8 @@ class Order(models.Model):
         elif signed_count == 0:
             self.status = 'pending'
         elif signed_count == total_signatures:
-            if not self.director_approved:
-                # Agar hamma imzolagan bo'lsa, lekin direktor tasdiqlamagan bo'lsa, qisman deb tursak bo'ladi 
-                # (yoki completed o'z holicha, pending_director kabi qo'shimcha status yo'q)
-                self.status = 'partial'
-            else:
-                self.status = 'completed'
+            # Barcha imzolar to'plangan — direktor tasdiqlaganmi yoki yo'qmi, baribir "completed"
+            self.status = 'completed'
         elif signed_count > 0:
             self.status = 'partial'
         else:
