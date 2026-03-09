@@ -212,9 +212,10 @@ class Order(models.Model):
         self.save()
 
     def is_fully_signed(self):
-        total_signers = self.signers.count()
+        """Barcha OrderSignature imzolari yig'ilganmi?"""
+        total_signatures = self.signatures.count()
         signed_count = self.signatures.filter(signed=True).count()
-        return total_signers > 0 and signed_count == total_signers
+        return total_signatures > 0 and signed_count == total_signatures
 
     def get_pending_signers(self):
         signed_users = self.signatures.filter(signed=True).values_list('user__id', flat=True)

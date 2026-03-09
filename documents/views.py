@@ -497,6 +497,9 @@ def sign_with_fingerprint(request, signature_id):
     
     signature.save()
     
+    # Buyruq statusini yangilash (partial → completed agar hamma imzolagan bo'lsa)
+    signature.order.update_status()
+    
     # Word faylga alohida QR kod qo'shish bekor qilindi (PDF qatlamda qo'yiladi)
     word_embedded = False
     
