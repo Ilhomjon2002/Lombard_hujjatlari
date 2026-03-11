@@ -115,10 +115,20 @@ def dashboard(request):
         total_count = Order.objects.count()
         
         # Director o'zi imzolashi kerak bo'lgan hujjatlar
-        my_pending = OrderSignature.objects.filter(
-            user=user, signed=False,
-            order__status__in=['pending', 'partial']
-        ).select_related('order', 'order__branch').order_by('-order__created_at')
+        pending_orders_qs = Order.objects.filter(
+            Q(signatures__user=user, signatures__signed=False) |
+            Q(additional_docs__signer=user, additional_docs__is_signed=False)
+        ).filter(status__in=['pending', 'partial']).distinct().select_related('branch').order_by('-created_at')
+
+        my_pending = []
+        for order in pending_orders_qs:
+            main_sig = OrderSignature.objects.filter(order=order, user=user, signed=False).first()
+            add_docs = order.additional_docs.filter(signer=user, is_signed=False)
+            my_pending.append({
+                'order': order,
+                'main_signature': main_sig,
+                'additional_docs_to_sign': add_docs,
+            })
         
         my_signed = OrderSignature.objects.filter(
             user=user, signed=True
@@ -138,11 +148,20 @@ def dashboard(request):
     
     else:
         # Employee dashboard
-        pending_signatures = OrderSignature.objects.filter(
-            user=user,
-            signed=False,
-            order__status__in=['pending', 'partial']
-        ).select_related('order', 'order__branch').order_by('-order__created_at')
+        pending_orders_qs = Order.objects.filter(
+            Q(signatures__user=user, signatures__signed=False) |
+            Q(additional_docs__signer=user, additional_docs__is_signed=False)
+        ).filter(status__in=['pending', 'partial']).distinct().select_related('branch').order_by('-created_at')
+
+        pending_items = []
+        for order in pending_orders_qs:
+            main_sig = OrderSignature.objects.filter(order=order, user=user, signed=False).first()
+            add_docs = order.additional_docs.filter(signer=user, is_signed=False)
+            pending_items.append({
+                'order': order,
+                'main_signature': main_sig,
+                'additional_docs_to_sign': add_docs,
+            })
         
         signed_documents = OrderSignature.objects.filter(
             user=user,
@@ -154,7 +173,7 @@ def dashboard(request):
         ).select_related('order').order_by('-created_at')[:10]
         
         context = {
-            'pending_signatures': pending_signatures,
+            'pending_items': pending_items,
             'signed_documents': signed_documents,
             'notifications': notifications_list,
             'unread_notifications': unread_notifications,

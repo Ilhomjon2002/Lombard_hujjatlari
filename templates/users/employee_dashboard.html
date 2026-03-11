@@ -13,7 +13,7 @@
                     Buyruqlar</h5>
             </div>
             <div class="card-body">
-                {% if pending_signatures %}
+                {% if pending_items %}
                 <div class="table-responsive px-2 pb-2">
                     <table class="table table-hover align-middle">
                         <thead>
@@ -28,26 +28,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for signature in pending_signatures %}
+                            {% for item in pending_items %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ signature.order.title }}</td>
-                                <td>{{ signature.order.branch.name }}</td>
-                                <td>{{ signature.order.created_at|date:"d.m.Y" }}</td>
+                                <td>{{ item.order.title }}</td>
+                                <td>{{ item.order.branch.name }}</td>
+                                <td>{{ item.order.created_at|date:"d.m.Y" }}</td>
                                 <td>
-                                    <span class="badge bg-info">{{ signature.order_number }}</span>
+                                    {% if item.main_signature %}
+                                    <span class="badge bg-info">{{ item.main_signature.order_number }}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Ilova</span>
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    {% if signature.order.deadline %}
-                                    {{ signature.order.deadline|date:"d.m.Y" }}
+                                    {% if item.order.deadline %}
+                                    {{ item.order.deadline|date:"d.m.Y" }}
                                     {% else %}
                                     <span class="text-muted">Muddat yo'q</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex gap-1 justify-content-end">
-                                        {% if signature.order.additional_docs.all %}
-                                        {% for add_doc in signature.order.additional_docs.all %}
+                                        {% if item.order.additional_docs.all %}
+                                        {% for add_doc in item.order.additional_docs.all %}
                                         {% if add_doc.stamped_file %}
                                         <a class="btn btn-sm btn-outline-success me-1 mb-1"
                                             href="{% url 'download_additional_doc' add_doc.id %}" target="_blank"
@@ -62,14 +66,24 @@
                                         {% endif %}
                                         {% endfor %}
                                         {% endif %}
-                                        <a href="{% url 'order_detail' signature.order.id %}"
-                                            class="btn btn-sm btn-info" title="Ko'rish">
+                                        <a href="{% url 'order_detail' item.order.id %}" class="btn btn-sm btn-info"
+                                            title="Ko'rish">
                                             <i class="fas fa-eye"></i> Ko'rish
                                         </a>
-                                        <a href="{% url 'sign_order' signature.id %}" class="btn btn-sm btn-primary"
-                                            title="Imzolash">
-                                            <i class="fas fa-signature"></i> Imzolash
+                                        {% if item.main_signature %}
+                                        <a href="{% url 'sign_order' item.main_signature.id %}"
+                                            class="btn btn-sm btn-primary" title="Asosiyni imzolash">
+                                            <i class="fas fa-signature"></i> Asosiyni imzolash
                                         </a>
+                                        {% endif %}
+                                        {% if item.additional_docs_to_sign %}
+                                        <a href="{% url 'order_detail' item.order.id %}"
+                                            class="btn btn-sm btn-warning text-dark" title="Ilovalarni imzolash">
+                                            <i class="bi bi-paperclip"></i> Ilovalarni imzolash
+                                            <span class="badge bg-danger ms-1">{{ item.additional_docs_to_sign.count
+                                                }}</span>
+                                        </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
