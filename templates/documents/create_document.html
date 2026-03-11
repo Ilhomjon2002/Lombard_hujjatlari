@@ -283,17 +283,69 @@
         let selectedEmployees = [];
         let availableEmployees = [];
 
-        // Initialize available employees from Django template
-        {% for employee in employees %}
-        availableEmployees.push({
-            id: "{{ employee.id }}",
-            first_name: "{{ employee.first_name }}",
-            last_name: "{{ employee.last_name }}",
-            middle_name: "{{ employee.middle_name|default:'' }}",
-            position: "{{ employee.position|default:'Lavozimi kiritilmagan' }}",
-            role: "Xodim"
+        // Hozirgi saqlangan shablonlar uchun form-select larni yangilash funktsiyasi
+        function updateSavedDocsSignerOptions() {
+            let optionsHtml = '<option value="">-- Imzolash ixtiyoriy --</option>';
+            availableEmployees.forEach(e => {
+                const text = `${e.last_name} ${e.first_name} ${e.middle_name} - ${e.position}`;
+                optionsHtml += `<option value="${e.id}">${text}</option>`;
+            });
+            // Hamma mavjud selectlarni yangilash
+            $('select[name^="saved_doc_signers_"]').html(optionsHtml);
+        }
+
+        // Filial o'zgarganda ishchilarni olib kelish
+        $('#branch').change(function () {
+            const branchId = $(this).val();
+
+            // Tanlanganlarni tozalash
+            selectedEmployees = [];
+            updateSelectedEmployees();
+            updateEmployeesInput();
+
+            // Asosiy selectni tozalash
+            const $empSelect = $('#employeeSelect');
+            $empSelect.empty().append('<option value="">Ishchini tanlang</option>');
+
+            if (branchId) {
+                $.ajax({
+                    url: "{% url 'api_branch_employees' %}",
+                    data: { 'branch_id': branchId },
+                    success: function (response) {
+                        availableEmployees = [];
+                        response.employees.forEach(function (emp) {
+                            // Backenddan kelgan ma'lumotlarni saqlash
+                            availableEmployees.push({
+                                id: emp.id,
+                                first_name: emp.first_name,
+                                last_name: emp.last_name,
+                                middle_name: emp.middle_name || '',
+                                position: emp.position || 'Lavozimi kiritilmagan',
+                                role: "Xodim"
+                            });
+
+                            // Asosiy dropdown ga qo'shish
+                            $empSelect.append(
+                                `<option value="${emp.id}">${emp.last_name} ${emp.first_name}</option>`
+                            );
+                        });
+                        // Qo'shimcha hujjat dropdown larini ham yangilash
+                        updateSavedDocsSignerOptions();
+                    },
+                    error: function () {
+                        alert("Ishchilarni yuklashda xatolik yuz berdi.");
+                    }
+                });
+            } else {
+                availableEmployees = [];
+                updateSavedDocsSignerOptions();
+            }
         });
-        {% endfor %}
+
+        // Boshlang'ich branch filter ishlashi uchun, agar sahifa refresh bo'lganda branch tanlangan bo'lsa
+        if ($('#branch').val()) {
+            $('#branch').trigger('change');
+        }
 
         // Add employee to selected list
         $('#addEmployeeBtn').click(function () {

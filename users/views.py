@@ -822,20 +822,20 @@ def import_employees_excel(request):
                 return result
             
             def make_username(fio):
-                """FIO dan username yaratish: familiya.ism formatida"""
+                """FIO dan username yaratish: familiya_ism formatida"""
                 parts = fio.strip().split()
                 if len(parts) >= 2:
-                    # Familiya + Ism
+                    # Familiya_Ism
                     surname = transliterate(parts[0])
                     name = transliterate(parts[1])
-                    username = f"{surname}.{name}"
+                    username = f"{surname}_{name}"
                 elif len(parts) == 1:
                     username = transliterate(parts[0])
                 else:
                     return None
                 
-                # Faqat harflar va nuqta
-                username = ''.join(c for c in username if c.isalnum() or c == '.')
+                # Faqat harflar, raqamlar va pastki chiziq
+                username = ''.join(c for c in username if c.isalnum() or c == '_')
                 return username.lower()
             
             created_users = []
@@ -871,32 +871,38 @@ def import_employees_excel(request):
                     username = f"{original_username}{counter}"
                     counter += 1
                 
-                # FIO ni ajratish
+                # FIO ni ajratish (Familiya Ism Otasining-ismi)
                 name_parts = fio.split()
                 last_name = name_parts[0] if len(name_parts) >= 1 else ''
                 first_name = name_parts[1] if len(name_parts) >= 2 else ''
+                middle_name = name_parts[2] if len(name_parts) >= 3 else ''
                 
-                # User yaratish
+                # User yaratish - parol username bilan bir xil
                 user = CustomUser.objects.create_user(
                     username=username,
-                    password='Ab123456',
+                    password=username,
                     first_name=first_name,
                     last_name=last_name,
                     role='employee',
                 )
                 
+                # Qolgan maydonlarni to'ldirish
+                user.middle_name = middle_name
+                user.position = position
+                user.save()
+                
                 # Filial/tashkilotni topish va bog'lash
                 if org_name:
                     branch, _ = Branch.objects.get_or_create(
                         name=org_name,
-                        defaults={'parent_branch': None}
+                        defaults={'address': '', 'phone': ''}
                     )
                     user.branch.add(branch)
                 
                 created_users.append({
                     'fio': fio,
                     'username': username,
-                    'password': 'Ab123456',
+                    'password': username,
                     'org': org_name,
                     'position': position,
                 })

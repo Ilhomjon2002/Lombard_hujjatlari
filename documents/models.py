@@ -108,7 +108,6 @@ class Order(models.Model):
     title = models.CharField(max_length=255, verbose_name="Buyruq nomi/sarlavhasi")
     number = models.CharField(
         max_length=50,
-        unique=True,
         verbose_name="Buyruq raqami",
         help_text="Masalan: 01-2025, BR-145/26 va h.k."
     )
@@ -181,6 +180,7 @@ class Order(models.Model):
         verbose_name = "Buyruq"
         verbose_name_plural = "Buyruqlar"
         ordering = ['-created_at']
+        unique_together = ('number', 'branch')
         indexes = [
             models.Index(fields=['status', 'created_at']),
             models.Index(fields=['created_by']),
