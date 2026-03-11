@@ -517,83 +517,81 @@
             const docName = $(this).data('doc-name');
             $('#signAddDocNameDisplay').text(docName);
             $('#signAddDocStatusMessage').hide();
-            $('#confirmSignAddDocBtn').show();
+            $('#confirmSignAddDocBtn').show().prop('disabled', false).html('<i class="bi bi-fingerprint me-1"></i> Agent orqali imzolash (QR kod)');
             $('#signAddDocModal').modal('show');
         });
 
-        $('#confirmSignAddDocBtn').click(function () {
+        $('#confirmSignAddDocBtn').click(async function () {
             if (!currentAddDocId) return;
 
             const btn = $(this);
-            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Agent bilan bog\'lanilmoqda...');
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Tekshirilmoqda...');
             $('#signAddDocStatusMessage').show().html(
                 '<div class="spinner-border text-primary me-2" role="status" style="width:1.5rem;height:1.5rem;"></div>' +
-                '<strong>Barmoq izi skanerini tayyorlanmoqda...</strong>'
+                '<strong>Barmog\'ingizni skanerga qo\'ying...</strong>'
             );
 
-            // Step 1: Agent'da barmoq izi olishni boshlash
-            $.ajax({
-                url: 'http://127.0.0.1:8001/api/fingerprint/start-capture',
-                type: 'POST',
-                timeout: 8000,
-                success: function () {
-                    // Agent tayyor — foydalanuvchiga ko'rsatma berish
-                    $('#signAddDocStatusMessage').html(
-                        '<i class="bi bi-fingerprint fs-2 text-primary me-2"></i>' +
-                        '<strong>Barmog\'ingizni skaner ustiga bosing...</strong>'
-                    );
-                    btn.html('<i class="bi bi-fingerprint me-1"></i> Skanerlash...');
+            try {
+                // Use the unified scanner client which handles local agent + backend stored template verification
+                const verified = await fingerprintScanner.verifyForSigning();
 
-                    // Step 2: Backend imzolash (Django o'zi capture va verify qiladi)
-                    setTimeout(function () {
-                        const signUrl = "{% url 'sign_additional_doc_fingerprint' 0 %}".replace('0', currentAddDocId);
-                        $.ajax({
-                            url: signUrl,
-                            type: 'POST',
-                            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-                            success: function (response) {
-                                if (response.success) {
-                                    $('#signAddDocStatusMessage').html(
-                                        '<i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>' +
-                                        '<strong class="text-success">Muvaffaqiyatli imzolandi!</strong>'
-                                    );
-                                    btn.hide();
-                                    setTimeout(function () { location.reload(); }, 1200);
-                                } else {
-                                    const errType = response.error_type || '';
-                                    let icon = 'bi-exclamation-triangle-fill text-danger';
-                                    if (errType === 'agent_offline') icon = 'bi-wifi-off text-warning';
-                                    if (errType === 'no_fingerprint') icon = 'bi-person-x text-warning';
-                                    $('#signAddDocStatusMessage').html(
-                                        `<i class="bi ${icon} fs-4 me-2"></i>` +
-                                        `<strong class="text-danger">${response.error || 'Xatolik yuz berdi'}</strong>`
-                                    );
-                                    btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
-                                }
-                            },
-                            error: function (xhr) {
-                                let errMsg = 'Server bilan xatolik yuz berdi!';
-                                try {
-                                    const resp = JSON.parse(xhr.responseText);
-                                    if (resp.error) errMsg = resp.error;
-                                } catch (e) {}
-                                $('#signAddDocStatusMessage').html(
-                                    '<i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-2"></i>' +
-                                    `<strong class="text-danger">${errMsg}</strong>`
-                                );
-                                btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
-                            }
-                        });
-                    }, 800); // barmoq barmog'ini bosishiga kichik kutish
-                },
-                error: function () {
+                if (!verified) {
                     $('#signAddDocStatusMessage').html(
-                        '<i class="bi bi-wifi-off text-warning fs-4 me-2"></i>' +
-                        '<strong class="text-warning">Barmoq izi agenti topilmadi. Iltimos, agentni ishga tushiring.</strong>'
+                        '<i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-2"></i>' +
+                        '<strong class="text-danger">Barmoq izi tasdiqlanmadi yoki bekor qilindi.</strong>'
                     );
                     btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
+                    return;
                 }
-            });
+
+                // Barmoq izi tasdiqlandi, endi backendga hujjatni imzolash uchun signal yuboramiz
+                $('#signAddDocStatusMessage').html(
+                    '<div class="spinner-border text-primary me-2" role="status" style="width:1.5rem;height:1.5rem;"></div>' +
+                    '<strong>Hujjat imzolanmoqda...</strong>'
+                );
+
+                const signUrl = "{% url 'sign_additional_doc_fingerprint' 0 %}".replace('0', currentAddDocId);
+                $.ajax({
+                    url: signUrl,
+                    type: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#signAddDocStatusMessage').html(
+                                '<i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>' +
+                                '<strong class="text-success">Muvaffaqiyatli imzolandi!</strong>'
+                            );
+                            btn.hide();
+                            setTimeout(function () { location.reload(); }, 1200);
+                        } else {
+                            $('#signAddDocStatusMessage').html(
+                                '<i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-2"></i>' +
+                                `<strong class="text-danger">${response.error || 'Xatolik yuz berdi'}</strong>`
+                            );
+                            btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
+                        }
+                    },
+                    error: function (xhr) {
+                        let errMsg = 'Server bilan xatolik yuz berdi!';
+                        try {
+                            const resp = JSON.parse(xhr.responseText);
+                            if (resp.error) errMsg = resp.error;
+                        } catch (e) { }
+                        $('#signAddDocStatusMessage').html(
+                            '<i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-2"></i>' +
+                            `<strong class="text-danger">${errMsg}</strong>`
+                        );
+                        btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
+                    }
+                });
+
+            } catch (error) {
+                $('#signAddDocStatusMessage').html(
+                    '<i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-2"></i>' +
+                    `<strong class="text-danger">Xatolik: ${error.message}</strong>`
+                );
+                btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-1"></i> Qaytadan urinish');
+            }
         });
     });
 </script>

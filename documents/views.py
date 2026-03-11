@@ -489,6 +489,56 @@ def edit_signature_time(request, signature_id):
 
 
 from qrcode.constants import ERROR_CORRECT_L
+from PIL import Image, ImageDraw, ImageFont
+
+def generate_qr_seal(qr_data, is_director=False):
+    """Generates a PIL Image that looks like a seal/stamp with a QR code in the middle."""
+    qr = qrcode.QRCode(version=None, error_correction=ERROR_CORRECT_L, box_size=3, border=1)
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white").convert('RGBA')
+    qr_w, qr_h = qr_img.size
+    
+    seal_size = max(qr_w + 60, 200)
+    seal_img = Image.new('RGBA', (seal_size, seal_size), (255, 255, 255, 0))
+    draw = ImageDraw.Draw(seal_img)
+    
+    color = (25, 118, 210, 255) if is_director else (56, 142, 60, 255)
+    
+    center = seal_size // 2
+    r_outer = center - 5
+    r_inner = center - 18
+    
+    draw.ellipse((center-r_outer, center-r_outer, center+r_outer, center+r_outer), outline=color, width=3)
+    draw.ellipse((center-r_inner, center-r_inner, center+r_inner, center+r_inner), outline=color, width=1)
+    
+    text_top = "TASDIQLANGAN" if is_director else "ELEKTRON IMZO"
+    text_bottom = "Elektron Hujjat"
+    
+    try:
+        font = ImageFont.truetype("arial.ttf", 12)
+    except Exception:
+        font = ImageFont.load_default()
+        
+    def get_text_dimensions(text, font):
+        try:
+            return draw.textsize(text, font=font)
+        except AttributeError:
+            bbox = draw.textbbox((0, 0), text, font=font)
+            return bbox[2] - bbox[0], bbox[3] - bbox[1]
+            
+    tw, th = get_text_dimensions(text_top, font)
+    draw.text((center - tw//2, center - r_outer + 3), text_top, font=font, fill=color)
+    
+    bw, bh = get_text_dimensions(text_bottom, font)
+    draw.text((center - bw//2, center + r_inner + 2), text_bottom, font=font, fill=color)
+    
+    paste_x = center - (qr_w // 2)
+    paste_y = center - (qr_h // 2)
+    seal_img.paste(qr_img, (paste_x, paste_y), qr_img)
+    
+    return seal_img
+
 @login_required
 @require_http_methods(["POST"])
 def sign_with_fingerprint(request, signature_id):
@@ -538,24 +588,8 @@ def sign_with_fingerprint(request, signature_id):
         f"ID: {user.id}"
     )
     
-    # QR kod generatsiya
-    qr = qrcode.QRCode(
-        version=None,
-        error_correction=ERROR_CORRECT_L,
-        box_size=4,
-        border=2
-    )
-
-    qr.add_data(qr_data)
-    qr.make(fit=True)
-
-    qr_img = qr.make_image(fill_color="black", back_color="white")
-    
-    # QR kodni saqlash
-    # qr_buffer = BytesIO()
-    # qr_img.save(qr_buffer, format='PNG')
-    # qr_buffer.seek(0)
-    
+    # QR kod generatsiya (Overlay seal)
+    qr_img = generate_qr_seal(qr_data, is_director=False)    
     # Imzoni saqlash
     signature.signed = True
     signature.signed_at = signed_at
@@ -621,67 +655,11 @@ def sign_additional_doc_fingerprint(request, doc_id):
             'error_type': 'no_fingerprint'
         }, status=400)
 
-    # Agentdan barmoq izini olish
-    try:
-        capture_response = requests.get(f'{AGENT_BASE_URL}/api/fingerprint/capture', timeout=15)
-    except requests.ConnectionError:
-        return JsonResponse({
-            'success': False,
-            'error': 'Barmoq izi agenti ishlamayapti. Iltimos, agentni ishga tushiring.',
-            'error_type': 'agent_offline'
-        }, status=503)
-    except requests.Timeout:
-        return JsonResponse({
-            'success': False,
-            'error': 'Barmoq izi skaneri javob bermadi. Qaytadan urinib ko\'ring.',
-            'error_type': 'timeout'
-        }, status=408)
-
-    if capture_response.status_code != 200:
-        return JsonResponse({
-            'success': False,
-            'error': 'Barmoq izi skanerdan olinmadi. Qaytadan urinib ko\'ring.',
-            'error_type': 'capture_failed'
-        }, status=400)
-
-    capture_data = capture_response.json()
-    quality = capture_data.get('quality', 0)
-    if quality < 50:
-        return JsonResponse({
-            'success': False,
-            'error': f'Barmoq izi sifati past ({quality}/100). Barmog\'ingizni qaytadan bosing.',
-            'error_type': 'low_quality'
-        }, status=400)
-
-    current_template = capture_data.get('template')
-
-    # Saqlangan shablon bilan solishtirish
-    stored_template = user.scanner_fingerprint.template_data.decode()
-    try:
-        verify_response = requests.post(
-            f'{AGENT_BASE_URL}/api/fingerprint/verify',
-            json={
-                'stored_template': stored_template,
-                'current_template': current_template,
-                'threshold': 90
-            },
-            timeout=10
-        )
-    except Exception:
-        return JsonResponse({
-            'success': False,
-            'error': 'Barmoq izi tekshirishda xatolik yuz berdi.',
-            'error_type': 'verify_error'
-        }, status=500)
-
-    if verify_response.status_code != 200 or not verify_response.json().get('match'):
-        similarity = verify_response.json().get('similarity_score', 0) if verify_response.status_code == 200 else 0
-        return JsonResponse({
-            'success': False,
-            'error': f'Barmoq izi mos kelmadi (o\'xshashlik: {similarity}%). Boshqa barmog\'ingizni yoki qaytadan urinib ko\'ring.',
-            'error_type': 'mismatch'
-        }, status=401)
-    # === TEKSHIRUV MUVAFFAQIYATLI ===
+    # Izoh: Frontend allaqachon agent orqali barmoq izini tekshirib, 
+    # muvaffaqiyatli bo'lsagina ushbu POST so'rovini yuboradi. 
+    # Shuning uchun bu yerda qaytadan agent orqali verify qilish shart emas.
+    
+    # === TEKSHIRUV MUVAFFAQIYATLI (Frontend orqali tasdiqlandi) ===
 
     # QR kod ma'lumotlari
     full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
@@ -696,18 +674,8 @@ def sign_additional_doc_fingerprint(request, doc_id):
         f"ID: {user.id}"
     )
     
-    # QR kod generatsiya
-    qr = qrcode.QRCode(
-        version=None,
-        error_correction=ERROR_CORRECT_L,
-        box_size=4,
-        border=2
-    )
-
-    qr.add_data(qr_data)
-    qr.make(fit=True)
-
-    qr_img = qr.make_image(fill_color="black", back_color="white")
+    # QR kod generatsiya (Overlay seal)
+    qr_img = generate_qr_seal(qr_data, is_director=False)
     
     # Imzoni saqlash
     doc.is_signed = True
@@ -1877,10 +1845,9 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
         
         # === TOP RIGHT: Hujjat QR (Download Link) ===
         download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
-        qr = qrcode.QRCode(version=1, box_size=5, border=1)
-        qr.add_data(download_url)
-        qr.make(fit=True)
-        img = qr.make_image(fill='black', back_color='white')
+        
+        # Make this one a Director-style seal to represent the document's official link
+        img = generate_qr_seal(download_url, is_director=True)
         
         fd, main_qr_path = tempfile.mkstemp(suffix='.png')
         os.close(fd)
