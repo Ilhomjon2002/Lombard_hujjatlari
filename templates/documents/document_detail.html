@@ -453,6 +453,8 @@
 {% endblock %}
 
 {% block extra_js %}
+{% load static %}
+<script src="{% static 'js/fingerprint-scanner.js' %}"></script>
 <script>
     function startPdfDownload(event, btn) {
         event.preventDefault();
