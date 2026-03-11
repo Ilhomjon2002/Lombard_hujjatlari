@@ -2172,7 +2172,7 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
             position = str(emp.get('position') or '—')
             date_str = str(emp.get('date') or '—')
             
-            line = f"{i}. {full_name}       {position}       {date_str}"
+            line = f"{full_name}       {position}       {date_str}"
             p_text.add_run(line).font.size = Pt(9.5)
             
             if i < len(employee_data):

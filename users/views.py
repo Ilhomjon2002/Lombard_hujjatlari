@@ -787,145 +787,181 @@ def fingerprint_remove_scanner(request):
 
 @login_required
 def import_employees_excel(request):
-    """Excel fayldan ishchilarni import qilish"""
+    """Excel fayldan ishchilarni import qilish.
+    
+    Excel ustunlari:
+      A - Организация (Lombard nomi)
+      B - ФИО сотрудника (To'liq ism: Familiya Ism Otasining_ismi)
+      C - Должность (Lavozim)
+    
+    Mantiq:
+      - Lombard mavjud bo'lmasa — avtomatik yaratiladi
+      - FIO "Familiya Ism OtaIsmi" formatida bo'lishi kerak
+      - Login = familiya_ism (lotin harflarda)
+      - Parol = familiya_ism (login bilan bir xil)
+    """
     if request.user.role != 'admin':
         messages.error(request, "Ruxsat yo'q")
         return redirect('dashboard')
-    
+
     if request.method == 'POST' and request.FILES.get('excel_file'):
         excel_file = request.FILES['excel_file']
-        
+
         if not excel_file.name.endswith(('.xlsx', '.xls')):
             messages.error(request, "Faqat Excel (.xlsx, .xls) fayllar qabul qilinadi")
             return redirect('import_employees')
-        
+
         try:
             import openpyxl
-            
+
             wb = openpyxl.load_workbook(excel_file)
             ws = wb.active
-            
-            # Transliteratsiya funksiyasi (kirill → lotin)
-            cyrillic_to_latin = {
-                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e',
-                'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k',
-                'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r',
-                'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
-                'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '',
+
+            # ----------------------------------------------------------------
+            # Transliteratsiya: Kirill → Lotin va O'zbek Lotin → ASCII
+            # ----------------------------------------------------------------
+            CYRILLIC_TO_LATIN = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+                'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
+                'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+                'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+                'у': 'u', 'ф': 'f', 'х': 'x', 'ц': 'ts', 'ч': 'ch',
+                'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'i', 'ь': '',
                 'э': 'e', 'ю': 'yu', 'я': 'ya',
+                # O'zbek qo'shimcha kirill harflari
+                'ў': 'o', 'қ': 'q', 'ғ': 'g', 'ҳ': 'h',
             }
-            
-            def transliterate(text):
+
+            # O'zbek lotin alifbosi maxsus belgilar → ASCII
+            UZBEK_LATIN_TO_ASCII = {
+                "o'": 'o', "o`": 'o', 'ö': 'o',
+                "g'": 'g', "g`": 'g',
+                'sh': 'sh', 'ch': 'ch', 'ng': 'ng',
+                'ʻ': '', ''': '', ''': '', '`': '',
+            }
+
+            def to_ascii(text):
+                """Har qanday yozuvdagi matnni ASCII username uchun belgilarga aylantirish."""
+                text = text.lower().strip()
+
+                # O'zbek lotin maxsus juft belgilari (avval uzunroqlarini almashtirish)
+                for src, dst in UZBEK_LATIN_TO_ASCII.items():
+                    text = text.replace(src, dst)
+
+                # Kirill belgilarini almashtirish
                 result = ''
-                for char in text.lower():
-                    result += cyrillic_to_latin.get(char, char)
+                for char in text:
+                    result += CYRILLIC_TO_LATIN.get(char, char)
+
+                # Faqat lotin harflari, raqamlar, pastki chiziq qoldirish
+                result = ''.join(c for c in result if c.isascii() and (c.isalnum() or c == '_'))
                 return result
-            
+
             def make_username(fio):
-                """FIO dan username yaratish: familiya_ism formatida"""
+                """FIO → familiya_ism (lotin, ASCII)."""
                 parts = fio.strip().split()
                 if len(parts) >= 2:
-                    # Familiya_Ism
-                    surname = transliterate(parts[0])
-                    name = transliterate(parts[1])
-                    username = f"{surname}_{name}"
+                    surname = to_ascii(parts[0])
+                    name = to_ascii(parts[1])
+                    if surname and name:
+                        return f"{surname}_{name}"
+                    elif surname:
+                        return surname
                 elif len(parts) == 1:
-                    username = transliterate(parts[0])
-                else:
-                    return None
-                
-                # Faqat harflar, raqamlar va pastki chiziq
-                username = ''.join(c for c in username if c.isalnum() or c == '_')
-                return username.lower()
-            
+                    return to_ascii(parts[0]) or None
+                return None
+
             created_users = []
             skipped_users = []
             errors = []
-            
-            # Sarlavha qatorini o'tkazib yuborish (1-qator)
+
+            # 1-qator sarlavha — o'tkazib yuboramiz
             rows = list(ws.iter_rows(min_row=2, values_only=True))
-            
+
             for i, row in enumerate(rows, start=2):
                 if not row or not any(row):
                     continue
-                
-                # Ustunlarni o'qish
-                org_name = str(row[0]).strip() if row[0] else ''
-                fio = str(row[1]).strip() if len(row) > 1 and row[1] else ''
-                position = str(row[2]).strip() if len(row) > 2 and row[2] else ''
-                
+
+                # Ustunlarni xavfsiz o'qish
+                org_name  = str(row[0]).strip() if len(row) > 0 and row[0] else ''
+                fio       = str(row[1]).strip() if len(row) > 1 and row[1] else ''
+                position  = str(row[2]).strip() if len(row) > 2 and row[2] else ''
+
                 if not fio:
-                    errors.append(f"Qator {i}: FIO bo'sh")
+                    errors.append(f"Qator {i}: FIO ustuni bo'sh")
                     continue
-                
-                # Username yaratish
-                username = make_username(fio)
-                if not username:
+
+                # Username generatsiya
+                base_username = make_username(fio)
+                if not base_username:
                     errors.append(f"Qator {i}: '{fio}' dan username yaratib bo'lmadi")
                     continue
-                
-                # Username takrorlanmasligini tekshirish
-                original_username = username
+
+                # Takrorlanmaslik — raqam qo'shish
+                username = base_username
                 counter = 1
                 while CustomUser.objects.filter(username=username).exists():
-                    username = f"{original_username}{counter}"
+                    username = f"{base_username}{counter}"
                     counter += 1
-                
-                # FIO ni ajratish (Familiya Ism Otasining-ismi)
+
+                # FIO ni ajratish: Familiya | Ism | OtaIsmi
                 name_parts = fio.split()
-                last_name = name_parts[0] if len(name_parts) >= 1 else ''
-                first_name = name_parts[1] if len(name_parts) >= 2 else ''
-                middle_name = name_parts[2] if len(name_parts) >= 3 else ''
-                
-                # User yaratish - parol username bilan bir xil
-                user = CustomUser.objects.create_user(
-                    username=username,
-                    password=username,
-                    first_name=first_name,
-                    last_name=last_name,
-                    role='employee',
-                )
-                
-                # Qolgan maydonlarni to'ldirish
-                user.middle_name = middle_name
-                user.position = position
-                user.save()
-                
-                # Filial/tashkilotni topish va bog'lash
+                last_name   = name_parts[0] if len(name_parts) >= 1 else ''
+                first_name  = name_parts[1] if len(name_parts) >= 2 else ''
+                middle_name = ' '.join(name_parts[2:]) if len(name_parts) >= 3 else ''
+
+                # Foydalanuvchi yaratish — parol = username
+                try:
+                    user = CustomUser.objects.create_user(
+                        username=username,
+                        password=username,
+                        first_name=first_name,
+                        last_name=last_name,
+                        role='employee',
+                    )
+                    user.middle_name = middle_name
+                    user.position = position
+                    user.save()
+                except Exception as e:
+                    errors.append(f"Qator {i}: Foydalanuvchi yaratishda xatolik — {e}")
+                    continue
+
+                # Lombard/filial topish yoki yaratish
+                branch_name_display = '—'
                 if org_name:
-                    branch, _ = Branch.objects.get_or_create(
+                    branch, created = Branch.objects.get_or_create(
                         name=org_name,
                         defaults={'address': '', 'phone': ''}
                     )
                     user.branch.add(branch)
-                
+                    branch_name_display = branch.name
+
                 created_users.append({
                     'fio': fio,
                     'username': username,
-                    'password': username,
-                    'org': org_name,
+                    'password': username,   # Ekranda ko'rsatish uchun
+                    'org': branch_name_display,
                     'position': position,
                 })
-            
+
+            # Natijalar
             if created_users:
                 messages.success(request, f"{len(created_users)} ta ishchi muvaffaqiyatli qo'shildi!")
             if skipped_users:
-                messages.warning(request, f"{len(skipped_users)} ta ishchi o'tkazib yuborildi")
+                messages.warning(request, f"{len(skipped_users)} ta qator o'tkazib yuborildi")
             if errors:
-                messages.warning(request, f"Xatoliklar: {'; '.join(errors[:5])}")
-            
+                messages.warning(request, f"{len(errors)} ta xatolik: {'; '.join(errors[:5])}")
+            if not created_users and not errors:
+                messages.info(request, "Import qilish uchun qatorlar topilmadi.")
+
             return render(request, 'users/import_result.html', {
                 'created_users': created_users,
                 'skipped_users': skipped_users,
                 'errors': errors,
             })
-            
+
         except Exception as e:
             messages.error(request, f"Excel faylni o'qishda xatolik: {str(e)}")
             return redirect('import_employees')
-    
+
     return render(request, 'users/import_employees.html')
-
-
-
-    
