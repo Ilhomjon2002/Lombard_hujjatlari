@@ -239,7 +239,6 @@ def document_detail(request, order_id):
             'position': sig.order_number,
             'signed': sig.signed,
             'signed_at': sig.signed_at,
-            'comment': sig.comment,
             'has_signature_image': bool(sig.signature_image),
             'has_qr_code': bool(sig.qr_code)
         }
@@ -280,7 +279,6 @@ def sign_document(request, signature_id):
         if 'signature_image' in request.FILES:
             signature.signature_image = request.FILES['signature_image']
 
-        signature.comment = request.POST.get('comment', '').strip()
         signature.signed = True
         signature.signed_at = datetime.now()
         signature.save()
@@ -344,7 +342,6 @@ def document_tracking(request, order_id):
             'position': sig.order_number,
             'status': 'Imzolandi' if sig.signed else 'Kutilmoqda',
             'signed_at': sig.signed_at.strftime('%Y-%m-%d %H:%M') if sig.signed_at else None,
-            'comment': sig.comment or '—',
         }
         for sig in signatures
     ]
@@ -440,7 +437,6 @@ def sign_with_fingerprint(request, signature_id):
     except json.JSONDecodeError:
         data = {}
     
-    comment = data.get('comment', '')
     custom_time_str = data.get('custom_time')
     
     if custom_time_str:
@@ -486,7 +482,6 @@ def sign_with_fingerprint(request, signature_id):
     # Imzoni saqlash
     signature.signed = True
     signature.signed_at = signed_at
-    signature.comment = comment
     
     # QR kodni ImageField ga saqlash
     qr_filename = f"qr_sign_{signature.order.number}_{user.username}_{signed_at.strftime('%Y%m%d%H%M%S')}.png"

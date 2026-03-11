@@ -16,8 +16,7 @@ class CustomUserForm(UserCreationForm):
         model = CustomUser
         fields = [
             'username', 'first_name', 'last_name', 'middle_name',
-            'role', 'branch', 'position',
-            'profile_image', 'signature_image'
+            'profile_image'
         ]
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'username (e.g., john_doe)'}),
@@ -27,7 +26,6 @@ class CustomUserForm(UserCreationForm):
             'role': forms.Select(attrs={'class': 'form-select'}),
             'position': forms.TextInput(attrs={'placeholder': 'Masalan: Bosh hisobchi'}),
             'profile_image': forms.FileInput(),
-            'signature_image': forms.FileInput(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -56,14 +54,12 @@ class UserUpdateForm(forms.ModelForm):
         model = CustomUser
         fields = [
             'first_name', 'last_name', 'middle_name', 'email',
-            'role', 'branch', 'position', 'is_active',
-            'profile_image', 'signature_image'
+            'profile_image'
         ]
         widgets = {
             'role': forms.Select(attrs={'class': 'form-select'}),
             'is_active': forms.CheckboxInput(),
             'profile_image': forms.FileInput(),
-            'signature_image': forms.FileInput(),
             'position': forms.TextInput(attrs={'placeholder': 'Masalan: Bosh hisobchi'}),
         }
 
@@ -96,10 +92,9 @@ class UserPasswordResetForm(forms.Form):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'profile_image', 'signature_image']
+        fields = ['first_name', 'last_name', 'email', 'profile_image']
         widgets = {
             'profile_image': forms.FileInput(attrs={'accept': 'image/*'}),
-            'signature_image': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
 

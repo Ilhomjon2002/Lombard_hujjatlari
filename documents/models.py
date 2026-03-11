@@ -8,23 +8,23 @@ from django.core.files import File
 
 
 # kerakmas
-class DocumentType(models.Model):
-    DOCUMENT_TYPES = (
-        ('internal', 'I/CH - Ichki hujjat'),
-        ('external', 'SH/T - Shartnoma/Tashqi hujjat'),
-    )
+# class DocumentType(models.Model):
+#     DOCUMENT_TYPES = (
+#         ('internal', 'I/CH - Ichki hujjat'),
+#         ('external', 'SH/T - Shartnoma/Tashqi hujjat'),
+#     )
     
-    name = models.CharField(max_length=50, choices=DOCUMENT_TYPES, verbose_name='Hujjat turi')
-    branch = models.ForeignKey('users.Branch', on_delete=models.CASCADE, related_name='document_types')
-    description = models.TextField(verbose_name='Izoh', blank=True)
+#     name = models.CharField(max_length=50, choices=DOCUMENT_TYPES, verbose_name='Hujjat turi')
+#     branch = models.ForeignKey('users.Branch', on_delete=models.CASCADE, related_name='document_types')
+#     description = models.TextField(verbose_name='Izoh', blank=True)
     
-    class Meta:
-        verbose_name = 'Hujjat turi'
-        verbose_name_plural = 'Hujjat turlari'
-        unique_together = ('name', 'branch')
+#     class Meta:
+#         verbose_name = 'Hujjat turi'
+#         verbose_name_plural = 'Hujjat turlari'
+#         unique_together = ('name', 'branch')
     
-    def __str__(self):
-        return f"{self.get_name_display()} - {self.branch.name}"
+#     def __str__(self):
+#         return f"{self.get_name_display()} - {self.branch.name}"
 
 class AdditionalDocumentTemplate(models.Model):
     name = models.CharField(max_length=255, verbose_name="Hujjat nomi")
@@ -144,10 +144,6 @@ class Order(models.Model):
         verbose_name="Holati"
     )
     
-    content = models.TextField(
-        blank=True,
-        verbose_name="Buyruq matni / mazmuni"
-    )
     
     file = models.FileField(
         upload_to='orders/files/%Y/%m/',
@@ -255,11 +251,11 @@ class OrderSigner(models.Model):
         verbose_name="Majburiy imzo"
     )
     
-    comment = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name="Izoh / lavozim"
-    )
+    # comment = models.CharField(
+    #     max_length=255,
+    #     blank=True,
+    #     verbose_name="Izoh / lavozim"
+    # )
 
     class Meta:
         verbose_name = "Imzolovchi"
@@ -278,7 +274,7 @@ class OrderSignature(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes/%Y/%m/%d/', null=True, blank=True)
     signed = models.BooleanField(default=False, verbose_name='Imzolandi')
     signed_at = models.DateTimeField(null=True, blank=True, verbose_name='Imzolangan vaqt')
-    comment = models.TextField(blank=True, verbose_name='Izoh')
+    # comment = models.TextField(blank=True, verbose_name='Izoh')
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

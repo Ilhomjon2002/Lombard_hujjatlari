@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count, Q
-from .models import CustomUser, Branch, Holiday, FingerprintCredential
+from .models import CustomUser, Branch, FingerprintCredential
 from documents.models import Notification, Order, OrderSigner, OrderSignature
 from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator
@@ -425,47 +425,6 @@ def create_branch(request):
     return render(request, 'users/create_branch.html', context)
 
 
-@login_required
-def manage_holidays(request):
-    if not request.user.role == 'admin':
-        messages.error(request, "You don't have access to this page")
-        return redirect('dashboard')
-    
-    holidays = Holiday.objects.all()
-    context = {
-        'holidays': holidays,
-    }
-    return render(request, 'users/manage_holidays.html', context)
-
-
-@login_required
-def create_holiday(request):
-    if not request.user.role == 'admin':
-        messages.error(request, "You don't have access to this page")
-        return redirect('dashboard')
-    
-    if request.method == 'POST':
-        date_str = request.POST.get('date')
-        description = request.POST.get('description')
-        branch_id = request.POST.get('branch')
-        
-        branch = None
-        if branch_id:
-            branch = get_object_or_404(Branch, id=branch_id)
-        
-        try:
-            date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            Holiday.objects.create(date=date, description=description, branch=branch)
-            messages.success(request, "Holiday added successfully")
-            return redirect('manage_holidays')
-        except ValueError:
-            messages.error(request, "Invalid date format")
-    
-    branches = Branch.objects.all()
-    context = {
-        'branches': branches,
-    }
-    return render(request, 'users/create_holiday.html', context)
 
 
 # ============================================================================

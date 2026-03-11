@@ -5,8 +5,8 @@ import json
 
 class Branch(models.Model):
     name = models.CharField(max_length=100, verbose_name='Branch Name')
-    # address = models.TextField(verbose_name='Address')
-    # phone = models.CharField(max_length=20, verbose_name='Phone')
+    address = models.TextField(verbose_name='Address')
+    phone = models.CharField(max_length=20, verbose_name='Phone')
     # parent_branch = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='sub_branches', verbose_name='Parent Branch')
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -17,18 +17,18 @@ class Branch(models.Model):
     def __str__(self):
         return self.name
 
-class Holiday(models.Model):
-    date = models.DateField(unique=True, verbose_name='Holiday Date')
-    description = models.CharField(max_length=255, blank=True, verbose_name='Description')
-    branch = models.ForeignKey(Branch, null=True, blank=True, on_delete=models.CASCADE, related_name='holidays', verbose_name='Branch (Optional)')
+# class Holiday(models.Model):
+#     date = models.DateField(unique=True, verbose_name='Holiday Date')
+#     description = models.CharField(max_length=255, blank=True, verbose_name='Description')
+#     branch = models.ForeignKey(Branch, null=True, blank=True, on_delete=models.CASCADE, related_name='holidays', verbose_name='Branch (Optional)')
     
-    class Meta:
-        verbose_name = 'Holiday'
-        verbose_name_plural = 'Holidays'
-        ordering = ['date']
+#     class Meta:
+#         verbose_name = 'Holiday'
+#         verbose_name_plural = 'Holidays'
+#         ordering = ['date']
     
-    def __str__(self):
-        return f"{self.date} - {self.description or 'Holiday'}"
+#     def __str__(self):
+#         return f"{self.date} - {self.description or 'Holiday'}"
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
@@ -44,7 +44,7 @@ class CustomUser(AbstractUser):
         blank=True
     )
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True)
-    signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
+    # signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
     fingerprint_enabled = models.BooleanField(default=False, verbose_name='Fingerprint Authentication Enabled')
     middle_name = models.CharField(max_length=100, blank=True, verbose_name='Otasining ismi')
     position = models.CharField(max_length=200, blank=True, verbose_name='Lavozim')

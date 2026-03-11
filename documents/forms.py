@@ -8,10 +8,7 @@ from users.models import Branch, CustomUser
 class EditSignatureForm(forms.ModelForm):
     class Meta:
         model = OrderSignature
-        fields = ['signed', 'comment']
-        widgets = {
-            'comment': forms.Textarea(attrs={'rows': 3}),
-        }
+        fields = ['signed']
 
 class OrderCreateForm(forms.ModelForm):
     """
@@ -29,11 +26,10 @@ class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'number', 'title', 'branch', 'content',
+            'number', 'title', 'branch',
             'file', 'signature_type', 'deadline'
         ]
         widgets = {
-            'content': forms.Textarea(attrs={'rows': 6}),
             'deadline': forms.DateInput(attrs={'type': 'date'}),
             'signature_type': forms.Select(attrs={'class': 'form-select'}),
             'file': forms.FileInput(),
@@ -48,10 +44,9 @@ class OrderCreateForm(forms.ModelForm):
 class OrderSignerForm(forms.ModelForm):
     class Meta:
         model = OrderSigner
-        fields = ['user', 'order_number', 'required', 'comment']
+        fields = ['user', 'order_number', 'required']
         widgets = {
             'user': forms.Select(attrs={'class': 'form-select'}),
-            'comment': forms.TextInput(),
         }
 
 
@@ -61,10 +56,9 @@ class OrderSignatureAdminForm(forms.ModelForm):
     """
     class Meta:
         model = OrderSignature
-        fields = ['signed', 'signed_at', 'comment']
+        fields = ['signed', 'signed_at']
         widgets = {
             'signed_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'comment': forms.Textarea(attrs={'rows': 3}),
         }
 
 
