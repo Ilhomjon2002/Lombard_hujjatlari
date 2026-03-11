@@ -83,7 +83,9 @@
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label for="number" class="form-label">Hujjat raqami *</label>
-                            <input type="text" class="form-control" id="number" name="number" required>
+                            <input type="text" class="form-control" id="number" name="number" required
+                                autocomplete="off">
+                            <div id="numberCheckMsg" style="display:none; margin-top:4px; font-size:0.85em;"></div>
                         </div>
                         <div class="col-md-6">
                             <label for="file" class="form-label">Fayl (PDF yoki DOCX) *</label>
@@ -347,6 +349,47 @@
             $('#branch').trigger('change');
         }
 
+        // Real-time buyruq raqami unikalligi tekshiruvi
+        let numberCheckTimer = null;
+        function checkOrderNumber() {
+            const number = $('#number').val().trim();
+            const branchId = $('#branch').val();
+            const msgEl = $('#numberCheckMsg');
+
+            if (!number || !branchId) {
+                msgEl.hide();
+                return;
+            }
+
+            clearTimeout(numberCheckTimer);
+            numberCheckTimer = setTimeout(function () {
+                $.ajax({
+                    url: "{% url 'api_check_order_number' %}",
+                    data: { number: number, branch_id: branchId },
+                    success: function (resp) {
+                        if (resp.exists) {
+                            msgEl.show().html(
+                                '<span style="color:#dc3545;"><i class="fas fa-exclamation-circle"></i> ' +
+                                'Bu raqam ushbu filialda allaqachon mavjud!</span>'
+                            );
+                            $('#number').addClass('is-invalid');
+                        } else {
+                            msgEl.show().html(
+                                '<span style="color:#198754;"><i class="fas fa-check-circle"></i> Raqam bo\'sh, ishlatish mumkin.</span>'
+                            );
+                            $('#number').removeClass('is-invalid').addClass('is-valid');
+                        }
+                    }
+                });
+            }, 500); // 500ms debounce
+        }
+
+        $('#number').on('input', checkOrderNumber);
+        $('#branch').on('change', function () {
+            // branch o'zgarganda raqamni ham qayta tekshirish
+            checkOrderNumber();
+        });
+
         // Add employee to selected list
         $('#addEmployeeBtn').click(function () {
             const employeeId = $('#employeeSelect').val();
@@ -492,6 +535,12 @@
             if (selectedEmployees.length === 0) {
                 isValid = false;
                 errorMessage += "- Kamida bitta ishchini tanlashingiz kerak\n";
+            }
+
+            // Check if order number is duplicate
+            if ($('#number').hasClass('is-invalid')) {
+                isValid = false;
+                errorMessage += "- Buyruq raqami bu filialda allaqachon mavjud\n";
             }
 
             if (!isValid) {

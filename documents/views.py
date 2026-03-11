@@ -107,6 +107,18 @@ def create_document(request):
 
             branch = get_object_or_404(Branch, id=branch_id)
 
+            # Unikal buyruq raqami tekshiruvi
+            if Order.objects.filter(number=number, branch=branch).exists():
+                messages.error(request, f"'{number}' raqamli buyruq '{branch.name}' filialida allaqachon mavjud! Boshqa raqam kiriting.")
+                branches = Branch.objects.all()
+                saved_doc_templates = AdditionalDocumentTemplate.objects.filter(is_active=True).order_by('name')
+                return render(request, 'documents/create_document.html', {
+                    'branches': branches,
+                    'employees': CustomUser.objects.values('id', 'first_name', 'last_name', 'middle_name', 'position', 'role'),
+                    'saved_doc_templates': saved_doc_templates,
+                    'form_data': request.POST,
+                })
+
             deadline = None
             if deadline_str:
                 try:
@@ -298,6 +310,19 @@ def sign_document(request, signature_id):
 
     return render(request, 'documents/sign_document.html', {'signature': signature})
 
+
+@login_required
+def sign_additional_document(request, doc_id):
+    """Qo'shimcha hujjatni imzolash sahifasi (sign_document ga o'xshash)."""
+    doc = get_object_or_404(AdditionalDocument, id=doc_id, signer=request.user)
+
+    if doc.is_signed:
+        messages.warning(request, "Bu qo'shimcha hujjat allaqachon imzolangan.")
+        return redirect('dashboard')
+
+    return render(request, 'documents/sign_additional_document.html', {'doc': doc})
+
+
 @login_required
 def get_document_types(request):
     branch_id = request.GET.get('branch_id')
@@ -318,9 +343,26 @@ def get_branch_employees(request):
     employees = CustomUser.objects.filter(
         branch__id=branch_id,
         role='employee'
-    ).distinct().values('id', 'first_name', 'last_name', 'username', 'role')  # Rol qo'shildi
+    ).distinct().values('id', 'first_name', 'last_name', 'middle_name', 'position', 'username')
 
     return JsonResponse({'employees': list(employees)})
+
+
+@login_required
+def check_order_number_unique(request):
+    """AJAX: Buyruq raqami ushbu filialda mavjudligini tekshirish."""
+    number = request.GET.get('number', '').strip()
+    branch_id = request.GET.get('branch_id', '').strip()
+    order_id = request.GET.get('order_id', '').strip()  # edit holatida o'zini chiqarish uchun
+
+    if not number or not branch_id:
+        return JsonResponse({'exists': False})
+
+    qs = Order.objects.filter(number=number, branch_id=branch_id)
+    if order_id:
+        qs = qs.exclude(id=order_id)
+
+    return JsonResponse({'exists': qs.exists()})
 
 @login_required
 def document_tracking(request, order_id):

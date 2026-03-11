@@ -22,9 +22,11 @@ urlpatterns = [
 
     path('rename-additional-doc/<int:doc_id>/', views.rename_additional_document, name='rename_additional_document'),
     path('rename-additional-doc-template/<int:template_id>/', views.rename_additional_document_template, name='rename_additional_document_template'),
+    path('sign-additional-doc/<int:doc_id>/', views.sign_additional_document, name='sign_additional_document'),
 
     # AJAX/API endpointlar
     path('api/branch-employees/',       views.get_branch_employees, name='api_branch_employees'),
+    path('api/check-order-number/',     views.check_order_number_unique, name='api_check_order_number'),
     path('api/sign-fingerprint/<int:signature_id>/', views.sign_with_fingerprint, name='sign_with_fingerprint'),
     path('api/sign-additional-doc-fingerprint/<int:doc_id>/', views.sign_additional_doc_fingerprint, name='sign_additional_doc_fingerprint'),
     path('api/approve-fingerprint/<int:order_id>/',  views.api_director_approve,  name='api_director_approve'),
