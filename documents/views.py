@@ -363,9 +363,26 @@ def edit_order(request, order_id):
 
     if request.method == 'POST':
         title = request.POST.get('title')
+        number = request.POST.get('number')
+        created_at_str = request.POST.get('created_at')
         deadline_str = request.POST.get('deadline')
 
-        order.title = title
+        if title:
+            order.title = title
+        if number:
+            order.number = number
+
+        if created_at_str:
+            try:
+                # Update the creation date
+                created_date = datetime.strptime(created_at_str, '%Y-%m-%d')
+                order.created_at = order.created_at.replace(
+                    year=created_date.year, 
+                    month=created_date.month, 
+                    day=created_date.day
+                )
+            except ValueError:
+                messages.warning(request, "Yaratish sanasi noto'g'ri formatda kiritildi, saqlanmadi")
 
         if deadline_str:
             try:
@@ -376,11 +393,71 @@ def edit_order(request, order_id):
             order.deadline = None
 
         order.save()
+
+        # Handle removing existing additional documents that are no longer selected
+        existing_doc_ids_to_keep = request.POST.getlist('existing_additional_docs')
+        for doc in order.additional_docs.all():
+            if str(doc.id) not in existing_doc_ids_to_keep:
+                order.additional_docs.remove(doc)
+                doc.delete()
+
+        # Qo'shimcha hujjatlarni nomlari orqali yaratish (yangi va shablondan)
+        new_doc_names = request.POST.getlist('new_additional_names')
+        new_doc_signers = request.POST.getlist('new_additional_signers')
+        selected_saved_names = request.POST.getlist('selected_saved_doc_names')
+        
+        branch = order.branch
+
+        # Yangi kiritilgan nomlarni saqlash
+        for idx, name in enumerate(new_doc_names):
+            if name.strip():
+                try:
+                    signer_id = new_doc_signers[idx] if idx < len(new_doc_signers) else None
+                    signer = CustomUser.objects.filter(id=signer_id).first() if signer_id else None
+                    
+                    # Use get_or_create to automatically save to the template for future reuse
+                    AdditionalDocumentTemplate.objects.get_or_create(
+                        name=name.strip(),
+                        defaults={'is_active': True}
+                    )
+                    
+                    new_doc = AdditionalDocument.objects.create(
+                        name=name.strip(),
+                        file=None,
+                        branch=branch,
+                        signer=signer
+                    )
+                    order.additional_docs.add(new_doc)
+                except Exception as e:
+                    print(f"Error saving new additional document name in edit_order: {e}")
+
+        # Avvalgi saqlangan nomlarni (shablonlarni) saqlash
+        for name in selected_saved_names:
+            if name.strip():
+                try:
+                    signer_id = request.POST.get(f'saved_doc_signers_{name}')
+                    signer = CustomUser.objects.filter(id=signer_id).first() if signer_id else None
+                    new_doc = AdditionalDocument.objects.create(
+                        name=name.strip(),
+                        file=None,
+                        branch=branch,
+                        signer=signer
+                    )
+                    order.additional_docs.add(new_doc)
+                except Exception as e:
+                    print(f"Error saving selected additional document name in edit_order: {e}")
+
+
         messages.success(request, 'Hujjat muvaffaqiyatli yangilandi')
         return redirect('document_detail', document_id=order.id)
 
+    saved_doc_templates = AdditionalDocumentTemplate.objects.filter(is_active=True).order_by('name')
+    employees = CustomUser.objects.filter(role='employee', is_active=True)
+
     context = {
         'order': order,
+        'saved_doc_templates': saved_doc_templates,
+        'employees': employees,
     }
     return render(request, 'documents/edit_order.html', context)
 

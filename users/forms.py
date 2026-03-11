@@ -16,7 +16,7 @@ class CustomUserForm(UserCreationForm):
         model = CustomUser
         fields = [
             'username', 'first_name', 'last_name', 'middle_name',
-            'profile_image'
+            'profile_image', 'role', 'position'
         ]
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'username (e.g., john_doe)'}),
@@ -54,7 +54,7 @@ class UserUpdateForm(forms.ModelForm):
         model = CustomUser
         fields = [
             'first_name', 'last_name', 'middle_name', 'email',
-            'profile_image'
+            'profile_image', 'role', 'position', 'is_active'
         ]
         widgets = {
             'role': forms.Select(attrs={'class': 'form-select'}),

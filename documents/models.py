@@ -152,7 +152,8 @@ class Order(models.Model):
         verbose_name="Ilova qilingan fayl (PDF va boshq.)"
     )
     
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan vaqti")
+    from django.utils import timezone
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Yaratilgan vaqti")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="O‘zgartirilgan vaqti")
     
     deadline = models.DateField(
