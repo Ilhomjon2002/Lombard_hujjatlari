@@ -1958,8 +1958,10 @@ def director_approve_page(request, order_id):
 
 def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None, employee_info_list=None):
     """
-    Helper to stamp a PDF with an employee QR code(s) at the bottom left, 
-    and optionally director QR codes at the top left.
+    Helper to stamp a PDF with an employee QR code.
+
+    Agar hujjatda "qr_imzo" matni bo'lsa — o'sha koordinataga QR cod joylashtiriladi.
+    Aks holda eski joy (pastga, chapga) saqlanadi.
     Returns a BytesIO buffer with the stamped PDF.
     """
     import tempfile, os
@@ -1968,103 +1970,159 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
     from PyPDF2 import PdfReader, PdfWriter
     from io import BytesIO
 
-    fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
-    os.close(fd)
-    
-    with open(temp_pdf, 'wb') as f:
-        f.write(original_file.read())
-        
-    original_file.seek(0)
-    
-    overlay_buffer = BytesIO()
-    c = rl_canvas.Canvas(overlay_buffer, pagesize=A4)
-    width, height = A4
-    
-    # Increase QR Size
-    qr_size = 90.0
-    margin = 30.0
-    
-    # Employee QR codes (bottom left)
-    # the user wants ONE QR code at the bottom left with text stacked next to it.
+    PLACEHOLDER = 'qr_imzo'
+
     employee_data = employee_info_list if employee_info_list else []
-    
-    # We will draw the FIRST employee's QR code (or the only one) at the bottom left.
     bottom_qr_path = employee_qr_path
     if not bottom_qr_path and employee_data and employee_data[0].get('qr_path'):
         bottom_qr_path = employee_data[0]['qr_path']
-        
-    x_pos_emp = float(margin)
-    y_pos_emp = float(margin)
-    
-    if bottom_qr_path and os.path.exists(bottom_qr_path):
-        c.drawImage(bottom_qr_path, x_pos_emp, y_pos_emp, width=qr_size, height=qr_size)
-    
-    # Draw text next to the BOTTOM QR
-    text_x = x_pos_emp + qr_size + 15.0
-    current_text_y = y_pos_emp + qr_size - 10.0
-    
+
+    # --- PDF faylini vaqtinchalik saqlash ---
+    fd, temp_pdf = tempfile.mkstemp(suffix='.pdf')
+    os.close(fd)
+    with open(temp_pdf, 'wb') as f:
+        f.write(original_file.read())
+    original_file.seek(0)
+
+    # --- pdfminer orqali "qr_imzo" matni koordinatalarini topish ---
+    def find_placeholder_coords(pdf_path, placeholder):
+        """
+        har bir sahifa uchun placeholder so'zining (x0, y0, x1, y1, page_num) tuple-ini qaytaradi.
+        Koordinatalar PDF koordinata tizimida (y pastdan yuqoriga).
+        Topilmasa — bo'sh list qaytariladi.
+        """
+        results = []
+        try:
+            from pdfminer.high_level import extract_pages
+            from pdfminer.layout import LTTextBox, LTTextLine, LTChar, LTAnon
+
+            for page_num, page_layout in enumerate(extract_pages(pdf_path)):
+                page_h = page_layout.height
+                for element in page_layout:
+                    if not isinstance(element, LTTextBox):
+                        continue
+                    for line in element:
+                        if not isinstance(line, LTTextLine):
+                            continue
+                        line_text = line.get_text().strip()
+                        if placeholder.lower() in line_text.lower():
+                            x0, y0, x1, y1 = line.bbox
+                            results.append((x0, y0, x1, y1, page_num, page_h))
+        except Exception as e:
+            print(f"pdfminer qr_imzo search error: {e}")
+        return results
+
+    placeholder_coords = find_placeholder_coords(temp_pdf, PLACEHOLDER)
+
+    # --- Overlay canvas yaratish (barcha sahifalar uchun bir xil) ---
+    qr_size_default = 90.0
+    margin = 30.0
+
     def safe_str(s):
         return str(s or '').encode('latin-1', 'replace').decode('latin-1')
-        
-    if employee_data:
-        c.setFont("Helvetica-Bold", 8)
-        c.drawString(text_x, float(current_text_y), "Elektron imzolar (Xodimlar):")
-        current_text_y -= 12.0
-        c.setFont("Helvetica", 8)
-        
-        for i, emp in enumerate(employee_data, 1):
-            c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(emp.get('full_name'))}       {safe_str(emp.get('position'))}       {safe_str(emp.get('date'))}")
-            # current_text_y -= 10.0
-            # c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(emp.get('position'))}")
-            # current_text_y -= 10.0
-            # c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {safe_str(emp.get('date'))}")
-            current_text_y -= 15.0
-        
-    # Director / Main QR code (top left)
-    if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
-        x_pos_dir = float(margin)
-        y_pos_dir = float(height) - float(qr_size) - float(margin)
-        c.drawImage(director_qr_paths[0], x_pos_dir, y_pos_dir, width=qr_size, height=qr_size)
-        
-        c.setFont("Helvetica-Bold", 12)
-        text_str = "Maqullandi"
-        text_width = c.stringWidth(text_str, "Helvetica-Bold", 12)
-        text_x = x_pos_dir + (qr_size - text_width) / 2
-        text_y = y_pos_dir - 15.0
-        c.drawString(text_x, text_y, text_str)
 
-    c.save()
-    overlay_buffer.seek(0)
-    
-    overlay_reader = PdfReader(overlay_buffer)
-    overlay_page = overlay_reader.pages[0]
-    
-    pdf_writer = PdfWriter()
+    # Har sahifa uchun overlay yaratib, original bilan merge qilamiz
     original_reader = PdfReader(temp_pdf)
-    
-    for page_num in range(len(original_reader.pages)):
+    total_pages = len(original_reader.pages)
+    pdf_writer = PdfWriter()
+
+    for page_num in range(total_pages):
         page = original_reader.pages[page_num]
-        if page_num == 0:
-            page.merge_page(overlay_page)
+
+        # Bu sahifada qr_imzo bor-yo'qligini topish
+        coords_for_page = [c for c in placeholder_coords if c[4] == page_num]
+
+        overlay_buffer = BytesIO()
+
+        # Sahifa o'lchamini PDF dan olamiz
+        try:
+            page_w = float(page.mediabox.width)
+            page_h = float(page.mediabox.height)
+        except Exception:
+            page_w, page_h = A4
+
+        c = rl_canvas.Canvas(overlay_buffer, pagesize=(page_w, page_h))
+
+        if coords_for_page and bottom_qr_path and os.path.exists(bottom_qr_path):
+            # =============== qr_imzo TOPILDI — o'sha joyga QR joylash ===============
+            for (x0, y0, x1, y1, _pn, _ph) in coords_for_page:
+                # Placeholder matnini QR bilan almashtirish uchun o'lchamni hisoblash
+                box_w = max(float(x1 - x0), qr_size_default)
+                qr_size = min(box_w, 120.0)  # maksimum 120pt
+
+                # PDF koordinata tizimi: y0 pastdan, biz QR ni placeholder joylashgan qatordan boshlash
+                qr_x = float(x0)
+                # placeholder matni y0-y1 oralig'ini yopamiz,
+                # QR ni o'sha oralikdan pastroqdan boshlaymiz (1 satr balandligi ≈12pt)
+                qr_y = float(y0) - qr_size + (float(y1 - y0))
+
+                c.drawImage(bottom_qr_path, qr_x, qr_y,
+                            width=qr_size, height=qr_size,
+                            preserveAspectRatio=True, mask='auto')
+        else:
+            # =============== qr_imzo TOPILMADI — eski joy (pastga, chapga) ===============
+            if page_num == 0:
+                x_pos_emp = float(margin)
+                y_pos_emp = float(margin)
+
+                if bottom_qr_path and os.path.exists(bottom_qr_path):
+                    c.drawImage(bottom_qr_path, x_pos_emp, y_pos_emp,
+                                width=qr_size_default, height=qr_size_default)
+
+                text_x = x_pos_emp + qr_size_default + 15.0
+                current_text_y = y_pos_emp + qr_size_default - 10.0
+
+                if employee_data:
+                    c.setFont("Helvetica-Bold", 8)
+                    c.drawString(text_x, float(current_text_y), "Elektron imzolar (Xodimlar):")
+                    current_text_y -= 12.0
+                    c.setFont("Helvetica", 8)
+                    for i, emp in enumerate(employee_data, 1):
+                        c.drawString(text_x, float(current_text_y),
+                                     f"{i}. {safe_str(emp.get('full_name'))}   "
+                                     f"{safe_str(emp.get('position'))}   "
+                                     f"{safe_str(emp.get('date'))}")
+                        current_text_y -= 15.0
+
+                # Director QR (faqat koordinata topilmagan holda)
+                if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
+                    x_pos_dir = float(margin)
+                    y_pos_dir = float(page_h) - qr_size_default - float(margin)
+                    c.drawImage(director_qr_paths[0], x_pos_dir, y_pos_dir,
+                                width=qr_size_default, height=qr_size_default)
+                    c.setFont("Helvetica-Bold", 12)
+                    text_str = "Maqullandi"
+                    text_width = c.stringWidth(text_str, "Helvetica-Bold", 12)
+                    c.drawString(x_pos_dir + (qr_size_default - text_width) / 2,
+                                 y_pos_dir - 15.0, text_str)
+
+        c.save()
+        overlay_buffer.seek(0)
+
+        overlay_reader = PdfReader(overlay_buffer)
+        overlay_page = overlay_reader.pages[0]
+        page.merge_page(overlay_page)
         pdf_writer.add_page(page)
-        
+
     final_buffer = BytesIO()
     pdf_writer.write(final_buffer)
     final_buffer.seek(0)
-    
+
     if os.path.exists(temp_pdf):
         try:
             os.remove(temp_pdf)
         except Exception:
             pass
-            
+
     return final_buffer
+
 
 def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None, all_employee_qrs=None, employee_info_list=None):
     """
     Helper to stamp a Word document with QR codes.
-    Appends the employee QR codes at the end.
-    If director QR is given, adds it at the beginning.
+
+    Agar hujjatda "qr_imzo" matni bo'lsa — o'sha joyga QR kod joylashtiriladi.
+    Aks holda eski xatti-harakat: oxiriga qo'shiladi.
     Returns a BytesIO buffer.
     """
     import tempfile, os
@@ -2073,82 +2131,123 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from io import BytesIO
 
+    PLACEHOLDER = 'qr_imzo'
+
     fd, temp_word = tempfile.mkstemp(suffix='.docx')
     os.close(fd)
-    
+
     with open(temp_word, 'wb') as f:
         f.write(original_file.read())
-        
+
     original_file.seek(0)
-    
+
     doc_obj = docx.Document(temp_word)
-    
-    # Prepend director QR
-    if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
-        p_top = doc_obj.paragraphs[0].insert_paragraph_before()
-        r_top = p_top.add_run()
-        r_top.add_picture(director_qr_paths[0], width=Inches(1.5))
-        r_top.add_break()
-        r_maq = p_top.add_run("Maqullandi")
-        r_maq.bold = True
-        p_top.add_run(" | Elektron Nusxa (Umumiy Tasdiq)")
-    
-    # Append employee info next to one QR
+
+    # --- Yordamchi: paragraph-ni tozalab, QR rasm qo'yish ---
+    def replace_paragraph_with_qr(para, qr_path, width_inches=1.0):
+        """Paragraf matnini o'chirib, uning o'rniga QR rasmini joylaydi."""
+        for run in para.runs:
+            run.text = ''
+        para.clear()
+        run = para.add_run()
+        if qr_path and os.path.exists(qr_path):
+            run.add_picture(qr_path, width=Inches(width_inches))
+
+    # --- qr_imzo platseholderini topish (paragraflar + jadval katakchalari) ---
+    def find_and_replace_placeholders(doc, qr_path):
+        """
+        Hujjatdagi barcha 'qr_imzo' matnlarini QR rasm bilan almashtiradi.
+        Topilgan placeholder soni qaytariladi.
+        """
+        found = 0
+
+        # Oddiy paragraflar
+        for para in doc.paragraphs:
+            if PLACEHOLDER in para.text:
+                replace_paragraph_with_qr(para, qr_path)
+                found += 1
+
+        # Jadval katakchalari
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for para in cell.paragraphs:
+                        if PLACEHOLDER in para.text:
+                            replace_paragraph_with_qr(para, qr_path)
+                            found += 1
+
+        return found
+
     employee_data = employee_info_list if employee_info_list else []
-    
+
     bottom_qr_path = employee_qr_path
     if not bottom_qr_path and employee_data and employee_data[0].get('qr_path'):
         bottom_qr_path = employee_data[0]['qr_path']
-        
-    if employee_data or bottom_qr_path:
-        doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
-        
-        # We can implement 'next to' using a simple table in Word
-        table = doc_obj.add_table(rows=1, cols=2)
-        table.autofit = False
-        
-        try:
-            table.columns[0].width = Inches(1.2)
-            table.columns[1].width = Inches(5.3)
-        except Exception:
-            pass
-            
-        cell_qr = table.cell(0, 0)
-        cell_text = table.cell(0, 1)
-        cell_qr.width = Inches(1.2)
-        cell_text.width = Inches(5.3)
-        
-        if bottom_qr_path and os.path.exists(bottom_qr_path):
-            p_img = cell_qr.paragraphs[0]
-            p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            r_img = p_img.add_run()
-            r_img.add_picture(bottom_qr_path, width=Inches(1.0))
-            
-        p_text = cell_text.paragraphs[0]
-        p_text.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        
-        for i, emp in enumerate(employee_data, 1):
-            full_name = str(emp.get('full_name') or '')
-            position = str(emp.get('position') or '—')
-            date_str = str(emp.get('date') or '—')
-            
-            line = f"{full_name}       {position}       {date_str}"
-            p_text.add_run(line).font.size = Pt(9.5)
-            
-            if i < len(employee_data):
-                p_text.add_run("\n")
-        
+
+    # qr_imzo ni almashtirish
+    placed = find_and_replace_placeholders(doc_obj, bottom_qr_path)
+
+    # Agar placeholder topilmagan bo'lsa — eski xatti-harakat
+    if placed == 0:
+        # Prepend director QR
+        if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
+            p_top = doc_obj.paragraphs[0].insert_paragraph_before()
+            r_top = p_top.add_run()
+            r_top.add_picture(director_qr_paths[0], width=Inches(1.5))
+            r_top.add_break()
+            r_maq = p_top.add_run("Maqullandi")
+            r_maq.bold = True
+            p_top.add_run(" | Elektron Nusxa (Umumiy Tasdiq)")
+
+        if employee_data or bottom_qr_path:
+            doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
+
+            table = doc_obj.add_table(rows=1, cols=2)
+            table.autofit = False
+
+            try:
+                table.columns[0].width = Inches(1.2)
+                table.columns[1].width = Inches(5.3)
+            except Exception:
+                pass
+
+            cell_qr = table.cell(0, 0)
+            cell_text = table.cell(0, 1)
+            cell_qr.width = Inches(1.2)
+            cell_text.width = Inches(5.3)
+
+            if bottom_qr_path and os.path.exists(bottom_qr_path):
+                p_img = cell_qr.paragraphs[0]
+                p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                r_img = p_img.add_run()
+                r_img.add_picture(bottom_qr_path, width=Inches(1.0))
+
+            p_text = cell_text.paragraphs[0]
+            p_text.alignment = WD_ALIGN_PARAGRAPH.LEFT
+
+            for i, emp in enumerate(employee_data, 1):
+                full_name = str(emp.get('full_name') or '')
+                position = str(emp.get('position') or '—')
+                date_str = str(emp.get('date') or '—')
+
+                line = f"{full_name}       {position}       {date_str}"
+                p_text.add_run(line).font.size = Pt(9.5)
+
+                if i < len(employee_data):
+                    p_text.add_run("\n")
+
     final_buffer = BytesIO()
     doc_obj.save(final_buffer)
     final_buffer.seek(0)
-    
+
     if os.path.exists(temp_word):
         try:
             os.remove(temp_word)
         except Exception:
             pass
-            
+
     return final_buffer
+
 
 @require_http_methods(["POST"])
 @login_required
