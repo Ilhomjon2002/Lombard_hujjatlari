@@ -1979,6 +1979,13 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         x_pos_dir = float(margin)
         y_pos_dir = float(height) - float(qr_size) - float(margin)
         c.drawImage(director_qr_paths[0], x_pos_dir, y_pos_dir, width=qr_size, height=qr_size)
+        
+        c.setFont("Helvetica-Bold", 12)
+        text_str = "Maqullandi"
+        text_width = c.stringWidth(text_str, "Helvetica-Bold", 12)
+        text_x = x_pos_dir + (qr_size - text_width) / 2
+        text_y = y_pos_dir - 15.0
+        c.drawString(text_x, text_y, text_str)
 
     c.save()
     overlay_buffer.seek(0)
@@ -2035,7 +2042,10 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         p_top = doc_obj.paragraphs[0].insert_paragraph_before()
         r_top = p_top.add_run()
         r_top.add_picture(director_qr_paths[0], width=Inches(1.5))
-        p_top.add_run(" Elektron Nusxa (Umumiy Tasdiq)")
+        r_top.add_break()
+        r_maq = p_top.add_run("Maqullandi")
+        r_maq.bold = True
+        p_top.add_run(" | Elektron Nusxa (Umumiy Tasdiq)")
     
     # Append employee info next to one QR
     employee_data = employee_info_list if employee_info_list else []
