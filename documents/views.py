@@ -534,52 +534,12 @@ from qrcode.constants import ERROR_CORRECT_L
 from PIL import Image, ImageDraw, ImageFont
 
 def generate_qr_seal(qr_data, is_director=False):
-    """Generates a PIL Image that looks like a seal/stamp with a QR code in the middle."""
-    qr = qrcode.QRCode(version=None, error_correction=ERROR_CORRECT_L, box_size=3, border=1)
+    """Oddiy QR kod rasmi yaratish (muhr, ayon va qo'shimcha matnlarsiz)."""
+    qr = qrcode.QRCode(version=None, error_correction=ERROR_CORRECT_L, box_size=4, border=2)
     qr.add_data(qr_data)
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="black", back_color="white").convert('RGBA')
-    qr_w, qr_h = qr_img.size
-    
-    seal_size = max(qr_w + 60, 200)
-    seal_img = Image.new('RGBA', (seal_size, seal_size), (255, 255, 255, 0))
-    draw = ImageDraw.Draw(seal_img)
-    
-    color = (25, 118, 210, 255) if is_director else (56, 142, 60, 255)
-    
-    center = seal_size // 2
-    r_outer = center - 5
-    r_inner = center - 18
-    
-    draw.ellipse((center-r_outer, center-r_outer, center+r_outer, center+r_outer), outline=color, width=3)
-    draw.ellipse((center-r_inner, center-r_inner, center+r_inner, center+r_inner), outline=color, width=1)
-    
-    text_top = "TASDIQLANGAN" if is_director else "ELEKTRON IMZO"
-    text_bottom = "Elektron Hujjat"
-    
-    try:
-        font = ImageFont.truetype("arial.ttf", 12)
-    except Exception:
-        font = ImageFont.load_default()
-        
-    def get_text_dimensions(text, font):
-        try:
-            return draw.textsize(text, font=font)
-        except AttributeError:
-            bbox = draw.textbbox((0, 0), text, font=font)
-            return bbox[2] - bbox[0], bbox[3] - bbox[1]
-            
-    tw, th = get_text_dimensions(text_top, font)
-    draw.text((center - tw//2, center - r_outer + 3), text_top, font=font, fill=color)
-    
-    bw, bh = get_text_dimensions(text_bottom, font)
-    draw.text((center - bw//2, center + r_inner + 2), text_bottom, font=font, fill=color)
-    
-    paste_x = center - (qr_w // 2)
-    paste_y = center - (qr_h // 2)
-    seal_img.paste(qr_img, (paste_x, paste_y), qr_img)
-    
-    return seal_img
+    return qr_img
 
 @login_required
 @require_http_methods(["POST"])

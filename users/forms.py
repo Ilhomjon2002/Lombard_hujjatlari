@@ -47,14 +47,14 @@ class UserUpdateForm(forms.ModelForm):
         queryset=Branch.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        label="Branch(es)"
+        label="Filial(lar)"
     )
 
     class Meta:
         model = CustomUser
         fields = [
             'first_name', 'last_name', 'middle_name', 'email',
-            'profile_image', 'role', 'position', 'is_active'
+            'profile_image', 'role', 'position', 'is_active', 'branch'
         ]
         widgets = {
             'role': forms.Select(attrs={'class': 'form-select'}),
@@ -68,6 +68,14 @@ class UserUpdateForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.fields['branch'].initial = self.instance.branch.all()
 
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            # M2M ni branch orqali saqlash
+            if 'branch' in self.cleaned_data:
+                user.branch.set(self.cleaned_data['branch'])
+        return user
 
 class UserPasswordResetForm(forms.Form):
     new_password1 = forms.CharField(
