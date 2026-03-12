@@ -2041,10 +2041,12 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
     
     pdf_writer = PdfWriter()
     original_reader = PdfReader(temp_pdf)
+    last_page_index = len(original_reader.pages) - 1
     
     for page_num in range(len(original_reader.pages)):
         page = original_reader.pages[page_num]
-        if page_num == 0:
+        # QR imzolarni oxirgi sahifaning pastiga qo'yish (birinchi sahifaga emas)
+        if page_num == last_page_index:
             page.merge_page(overlay_page)
         pdf_writer.add_page(page)
         
