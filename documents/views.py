@@ -1153,14 +1153,8 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
         if order.director_approved:
             verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
 
-            # Oxirgi sahifada pastga tushirish uchun bo'sh joy
-            for _ in range(2):
-                doc.add_paragraph()
-
-            p_top = doc.add_paragraph()
-            # Oxirgi sahifada pastga tushirish uchun bo'sh joy
-            for _ in range(2):
-                doc.add_paragraph()
+            # Hujjatdan keyin bitta ajratuvchi qator (yangi sahifaga o'tmasligi uchun ko'p bo'sh joy qo'shmaymiz)
+            doc.add_paragraph()
 
             # Jadval orqali yonma-yon joylashtirish (1 qator, 2 ustun)
             table = doc.add_table(rows=1, cols=2)
