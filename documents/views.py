@@ -1118,6 +1118,54 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     doc = Document(temp_docx)
 
     # === 1. HEADER: Yuklab olish QR kodi (kattaroq) ===
+    # === 0. TEPADA: MAQULLANDI + direktor ma'lumotlari (faqat ariza turi) ===
+    if order.document_type == 'application' and order.director_approved:
+        try:
+            from docx.shared import Pt, RGBColor
+            from documents.models import Order
+            director = None
+            from users.models import CustomUser
+            directors = CustomUser.objects.filter(role='director').first()
+            if directors:
+                director = directors
+            # Birinchi sahifa boshiga qo'shish
+            first_para = doc.paragraphs[0] if doc.paragraphs else doc.add_paragraph()
+            from docx.oxml.ns import qn as _qn
+            import copy as _copy
+            # Yangi paragraf qo'shib, birinchi sahifa boshida ko'rsatish
+            from docx.enum.text import WD_ALIGN_PARAGRAPH
+            from docx.oxml import OxmlElement
+
+            # Direktor ma'lumotlari: Familiya I.O., lavozim
+            if director:
+                fn = director.first_name or ''
+                mn = getattr(director, 'middle_name', '') or ''
+                ln = director.last_name or ''
+                fi = fn[0].upper() + '.' if fn else ''
+                mi = mn[0].upper() + '.' if mn else ''
+                director_fio = f"{ln} {fi}{mi}".strip()
+                director_pos = director.position or 'Direktor'
+            else:
+                director_fio = ''
+                director_pos = 'Direktor'
+
+            # Tepaga qo'shish: "MAQULLANDI" qatori
+            new_para1 = OxmlElement('w:p')
+            new_para2 = OxmlElement('w:p')
+            new_para3 = OxmlElement('w:p')
+            first_para._p.addprevious(new_para3._element if hasattr(new_para3, '_element') else new_para3)
+            first_para._p.addprevious(new_para2._element if hasattr(new_para2, '_element') else new_para2)
+            first_para._p.addprevious(new_para1._element if hasattr(new_para1, '_element') else new_para1)
+
+            # Oddiy usul — hujjat boshidan keyin qo'shish
+            p_maq = doc.paragraphs[0]
+            p_maq.insert_paragraph_before('')
+            p_maq.insert_paragraph_before(f"{director_pos}")
+            p_maq.insert_paragraph_before(f"{director_fio}")
+            p_maq.insert_paragraph_before('MAQULLANDI')
+        except Exception as e:
+            print(f"Director header error: {e}")
+
     if order.document_type == 'application' and order.director_approved:
         try:
             download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
@@ -1200,14 +1248,15 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
                     first_name  = user.first_name or ''
                     middle_name = getattr(user, 'middle_name', '') or ''
                     position    = user.position or '—'
-                    signed_at   = sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '—'
+                    # Ism va otasining ismi faqat bosh harf: Familiya I.O.
+                    fi = (first_name[0].upper() + '.' if first_name else '')
+                    mi = (middle_name[0].upper() + '.' if middle_name else '')
+                    fio = f"{last_name} {fi}{mi}".strip()
 
-                    fio = f"{last_name} {first_name} {middle_name}".strip()
-
-                    line = f"{i}. {fio}       {position}       {signed_at}"
+                    line = f"{i}. {fio}       {position}"
                     sig_run = p_text.add_run(line)
                     sig_run.font.size = Pt(9.5)
-                    
+
                     if i < signatures.count():
                         p_text.add_run("\n")
             else:

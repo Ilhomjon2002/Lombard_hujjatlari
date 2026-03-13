@@ -17,12 +17,12 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-# Configure logging — use exe directory when frozen, else script directory
+# Configure logging — use APPDATA when frozen (Program Files is read-only), else script directory
 if getattr(sys, 'frozen', False):
-    LOG_DIR = Path(sys.executable).parent / "logs"
+    LOG_DIR = Path(os.environ.get('APPDATA', os.path.expanduser('~'))) / 'InventorAgent' / 'logs'
 else:
     LOG_DIR = Path(__file__).parent / "logs"
-LOG_DIR.mkdir(exist_ok=True)
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

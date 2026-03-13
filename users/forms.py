@@ -53,7 +53,7 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [
-            'first_name', 'last_name', 'middle_name', 'email',
+            'first_name', 'last_name', 'middle_name',
             'profile_image', 'role', 'position', 'is_active', 'branch'
         ]
         widgets = {

@@ -1,0 +1,34 @@
+2026-03-13 17:02:54,305 - __main__ - INFO - ZKFPScanner created
+2026-03-13 17:02:54,306 - __main__ - INFO - ============================================================
+2026-03-13 17:02:54,307 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-03-13 17:02:54,307 - __main__ - INFO - ============================================================
+2026-03-13 17:02:54,307 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-03-13 17:02:54,680 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-03-13 17:02:54,680 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-03-13 17:02:54,680 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-03-13 17:02:54,692 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-03-13 17:02:54,693 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-03-13 17:03:16,344 - __main__ - INFO - ZKFPScanner created
+2026-03-13 17:03:16,346 - __main__ - INFO - ============================================================
+2026-03-13 17:03:16,346 - __main__ - INFO - Fingerprint Authentication Agent v2.0 (pyzkfp)
+2026-03-13 17:03:16,347 - __main__ - INFO - ============================================================
+2026-03-13 17:03:16,347 - __main__ - INFO - Initializing ZKFP2 SDK...
+2026-03-13 17:03:16,644 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-03-13 17:03:16,644 - __main__ - WARNING - SDK initialization failed. Make sure ZKFinger SDK is installed.
+2026-03-13 17:03:16,644 - __main__ - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-03-13 17:03:16,655 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-03-13 17:03:16,656 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-03-13 17:04:11,800 - werkzeug - INFO - 127.0.0.1 - - [13/Mar/2026 17:04:11] "GET /api/status HTTP/1.1" 200 -
+2026-03-13 17:04:11,817 - __main__ - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-03-13 17:04:11,818 - werkzeug - INFO - 127.0.0.1 - - [13/Mar/2026 17:04:11] "[33mGET /api/scanner/detect HTTP/1.1[0m" 404 -
+2026-03-13 17:27:09,613 - agent - INFO - ZKFPScanner created
+2026-03-13 17:27:09,614 - agent - INFO - Initializing Agent via Webview Launcher...
+2026-03-13 17:27:09,916 - agent - ERROR - Failed to initialize ZKFP2: Failed to initialize the algorithm library
+2026-03-13 17:27:09,917 - agent - INFO - Starting Fingerprint Agent on http://127.0.0.1:8001
+2026-03-13 17:27:09,924 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8001
+2026-03-13 17:27:09,924 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-03-13 17:27:30,212 - agent - INFO - Agent dasturi webview orqali yopilmoqda...
+2026-03-13 17:27:30,213 - agent - INFO - Scanner closed

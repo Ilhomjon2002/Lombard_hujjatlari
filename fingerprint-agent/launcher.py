@@ -61,7 +61,7 @@ if __name__ == '__main__':
     time.sleep(1)
     
     # Read config for site URL
-    site_url = 'http://127.0.0.1:8000/'
+    site_url = 'https://lombard-hujjatlari.onrender.com'
     exe_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(exe_dir, 'config.json')
     
@@ -84,11 +84,11 @@ if __name__ == '__main__':
 
     # Create native window embedding the website
     window = webview.create_window(
-        title='Inventor System',
+        title='UzLombard',
         url=site_url,
-        width=1200,
-        height=800,
-        min_size=(800, 600),
+        width=1280,
+        height=850,
+        min_size=(900, 600),
         text_select=True,
         zoomable=True,
         maximized=True
