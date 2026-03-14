@@ -21,18 +21,6 @@
                             <label class="form-label">Foydalanuvchi nomi</label>
                             <input type="text" class="form-control" value="{{ user.username }}" readonly>
                         </div>
-
-                        <div class="col-md-6">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">
-                                Email manzil *
-                            </label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.email.errors.0 }}
-                            </div>
-                            {% endif %}
-                        </div>
                     </div>
 
                     <div class="row mb-3">

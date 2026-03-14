@@ -100,7 +100,7 @@ class UserPasswordResetForm(forms.Form):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'profile_image']
+        fields = ['first_name', 'last_name', 'profile_image']
         widgets = {
             'profile_image': forms.FileInput(attrs={'accept': 'image/*'}),
         }

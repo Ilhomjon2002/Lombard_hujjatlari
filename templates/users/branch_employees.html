@@ -110,7 +110,6 @@
                             <th style="width: 28%">F.I.O</th>
                             <th style="width: 20%">Lavozim</th>
                             <th style="width: 18%">Telefon</th>
-                            <th style="width: 22%">Email</th>
                             <th style="width: 7%">Amallar</th>
                         </tr>
                     </thead>
@@ -145,15 +144,7 @@
                                 —
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if emp.email %}
-                                <a href="mailto:{{ emp.email }}" class="text-decoration-none">
-                                    {{ emp.email }}
-                                </a>
-                                {% else %}
-                                —
-                                {% endif %}
-                            </td>
+                            
                             <td class="text-end">
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
