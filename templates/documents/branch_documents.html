@@ -75,246 +75,247 @@
 
     <!-- Filtrlar qatori -->
     <div class="row g-3 mb-4 align-items-end">
+        <div class="col-12 col-md-auto">
+            <form method="get" class="d-flex flex-wrap align-items-center gap-3">
+                <input type="hidden" name="tab" value="{{ active_tab }}">
 
-        <!-- Hujjat turi -->
-        <div class="col-auto">
-            <form method="get" class="d-flex align-items-center gap-2">
-                <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
-                <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
-                    <option value="">— Barchasi —</option>
-                    <option value="external" {% if selected_type == 'external' %}selected{% endif %}>SH/T</option>
-                    <option value="official" {% if selected_type == 'official' %}selected{% endif %}>Buyruq</option>
-                </select>
+                <!-- Hujjat turi -->
+                <div class="d-flex align-items-center gap-2">
+                    <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
+                    <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
+                        <option value="">— Barchasi —</option>
+                        <option value="internal" {% if selected_type=='internal' %}selected{% endif %}>I/CH (Ichki)
+                        </option>
+                        <option value="external" {% if selected_type=='external' %}selected{% endif %}>SH/T (Tashqi)
+                        </option>
+                        <option value="official" {% if selected_type=='official' %}selected{% endif %}>Buyruq</option>
+                        <option value="application" {% if selected_type=='application' %}selected{% endif %}>Ariza
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Holat filtri -->
+                <div class="d-flex align-items-center gap-2">
+                    <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
+                    <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
+                        <option value="">— Hammasi —</option>
+                        <option value="pending" {% if selected_status=='pending' %}selected{% endif %}>Yangi</option>
+                        <option value="partial" {% if selected_status=='partial' %}selected{% endif %}>Jarayonda
+                        </option>
+                        <option value="imzolangan" {% if selected_status=='imzolangan' %}selected{% endif %}>Imzolangan
+                            (faol)</option>
+                        <option value="tugatilgan" {% if selected_status=='tugatilgan' %}selected{% endif %}>Tugatilgan
+                            (faol emas)</option>
+                    </select>
+                </div>
+
+                {% if selected_type or selected_status %}
+                <a href="{% url 'branch_documents' branch.id %}?tab={{ active_tab }}"
+                    class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-times"></i> Tozalash
+                </a>
+                {% endif %}
             </form>
         </div>
 
-        <!-- Holat filtri -->
-        <div class="col-auto">
-            <form method="get" class="d-flex align-items-center gap-2">
-                <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
-                <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
-                    <option value="">— Hammasi —</option>
-                    <option value="pending" {% if selected_status == 'yangi' %}selected{% endif %}>Yangi</option>
-                    <option value="partial" {% if selected_status == 'jarayonda' %}selected{% endif %}>Jarayonda</option>
-                    <option value="imzolangan" {% if selected_status == 'imzolangan' %}selected{% endif %}>Imzolangan
-                        (faol)</option>
-                    <option value="tugatilgan" {% if selected_status == 'tugatilgan' %}selected{% endif %}>Tugatilgan
-                        (faol emas)</option>
-                </select>
-                {% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
-                {% if request.GET.tab %}<input type="hidden" name="tab" value="{{ request.GET.tab }}">{% endif %}
-            </form>
-        </div>
-
-        <!-- Qo'shimcha joy (masalan qidiruv yoki sana oralig'i keyinchalik qo'shilishi mumkin) -->
-        <div class="col"></div>
-
-        <!-- Yangi hujjat tugmasi (mobil uchun) -->
-        <div class="col-auto d-lg-none">
-            <a href="{% url 'create_order' %}" class="btn btn-primary">
-                <i class="fa fa-plus-lg"></i> Yangi
-            </a>
-        </div>
-    </div>
-
-    <!-- Jadval -->
-    {% if documents %}
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Nomi / Raqami</th>
-                            <th>Tur</th>
-                            <th>Yaratgan</th>
-                            <th>Sana</th>
-                            <th>Imzolar</th>
-                            <th>Holati</th>
-                            <th class="text-end">Amallar</th>
-                            <!-- <th></th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for doc in documents %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>
-                                <div class="fw-medium">{{ doc.title }}</div>
-                                <small class="text-muted">{{ doc.number|default:"—" }}</small>
-                            </td>
-                            <td>{{ doc.document_type.name }}</td>
-                            <td>{{ doc.created_by.get_full_name|default:doc.created_by.username }}</td>
-                            <td><small>{{ doc.created_at|date:"d.m.Y H:i" }}</small></td>
-                            <td>
-                                <span class="badge bg-light text-dark border">
-                                    {{ doc.signatures.count }} / {{ doc.required_signatures|default:"—" }}
-                                </span>
-                            </td>
-                            <td>
-                                {% if doc.is_fully_signed %}
-                                <span class="badge bg-success">Imzolangan</span>
-                                {% elif doc.signatures.count > 0 %}
-                                <span class="badge bg-warning">Jarayonda</span>
-                                {% else %}
-                                <span class="badge bg-secondary">Yangi</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-end">
-                                {% if doc.additional_docs.all %}
-                                {% for add_doc in doc.additional_docs.all %}
-                                {% if add_doc.stamped_file %}
-                                <a class="btn btn-sm btn-outline-success me-1 mb-1"
-                                    href="{% url 'download_additional_doc' add_doc.id %}" target="_blank"
-                                    title="{{ add_doc.name }} ni yuklab olish">
-                                    <i class="fa fa-file-earmark-check"></i> {{ add_doc.name }} (QR)
-                                </a>
-                                {% else %}
-                                <span class="btn btn-sm btn-outline-secondary disabled me-1 mb-1"
-                                    title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
-                                    <i class="fa fa-file-earmark"></i> {{ add_doc.name }}
-                                </span>
-                                {% endif %}
-                                {% endfor %}
-                                {% endif %}
-                                <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary"
-                                    title="Ko'rish">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                                {% if request.user == doc.created_by or request.user.role == 'admin' %}
-                                <a href="{% url 'order_update' doc.id %}" class="btn btn-sm btn-outline-secondary"
-                                    title="Tahrirlash">
-                                    <i class="fa fa-pencil"></i>
-                                </a>
-                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ doc.id }}" title="O'chirish">
-                                    <i class="fa fa-trash"></i>
-                                </button>
+        <!-- Jadval -->
+        {% if documents %}
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Nomi / Raqami</th>
+                                <th>Tur</th>
+                                <th>Yaratgan</th>
+                                <th>Sana</th>
+                                <th>Imzolar</th>
+                                <th>Holati</th>
+                                <th class="text-end">Amallar</th>
+                                <!-- <th></th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doc in documents %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="fw-medium">{{ doc.title }}</div>
+                                    <small class="text-muted">{{ doc.number|default:"—" }}</small>
+                                </td>
+                                <td>{{ doc.document_type.name }}</td>
+                                <td>{{ doc.created_by.get_full_name|default:doc.created_by.username }}</td>
+                                <td><small>{{ doc.created_at|date:"d.m.Y H:i" }}</small></td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        {{ doc.signatures.count }} / {{ doc.required_signatures|default:"—" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if doc.is_fully_signed %}
+                                    <span class="badge bg-success">Imzolangan</span>
+                                    {% elif doc.signatures.count > 0 %}
+                                    <span class="badge bg-warning">Jarayonda</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Yangi</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    {% if doc.additional_docs.all %}
+                                    {% for add_doc in doc.additional_docs.all %}
+                                    {% if add_doc.stamped_file %}
+                                    <a class="btn btn-sm btn-outline-success me-1 mb-1"
+                                        href="{% url 'download_additional_doc' add_doc.id %}" target="_blank"
+                                        title="{{ add_doc.name }} ni yuklab olish">
+                                        <i class="fa fa-file-earmark-check"></i> {{ add_doc.name }} (QR)
+                                    </a>
+                                    {% else %}
+                                    <span class="btn btn-sm btn-outline-secondary disabled me-1 mb-1"
+                                        title="Hali to'liq imzolangan yoki tasdiqlangan nusxasi yo'q">
+                                        <i class="fa fa-file-earmark"></i> {{ add_doc.name }}
+                                    </span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                    <a href="{% url 'order_detail' doc.id %}" class="btn btn-sm btn-outline-primary"
+                                        title="Ko'rish">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    {% if request.user == doc.created_by or request.user.role == 'admin' %}
+                                    <a href="{% url 'order_update' doc.id %}" class="btn btn-sm btn-outline-secondary"
+                                        title="Tahrirlash">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ doc.id }}" title="O'chirish">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
 
 
-                                <div class="modal fade" id="deleteModal{{ doc.id }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
+                                    <div class="modal fade" id="deleteModal{{ doc.id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
 
-                                            <div class="modal-header">
-                                                <h5 class="modal-title text-danger">
-                                                    <i class="bi bi-exclamation-triangle me-2"></i>
-                                                    Buyruqni o'chirish
-                                                </h5>
-                                                <button type="button" class="btn-close"
-                                                    data-bs-dismiss="modal"></button>
-                                            </div>
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-danger">
+                                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                                        Buyruqni o'chirish
+                                                    </h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
 
-                                            <div class="modal-body text-center">
+                                                <div class="modal-body text-center">
 
-                                                <p class="mb-3">
-                                                    <strong>{{ doc.number }} - {{ doc.title }}</strong>
-                                                </p>
+                                                    <p class="mb-3">
+                                                        <strong>{{ doc.number }} - {{ doc.title }}</strong>
+                                                    </p>
 
-                                                <p class="text-muted">
-                                                    Ushbu harakatni ortga qaytarib bo'lmaydi.
-                                                    Barcha tegishli hujjatlar va imzolar ham o‘chirilishi mumkin.
-                                                </p>
+                                                    <p class="text-muted">
+                                                        Ushbu harakatni ortga qaytarib bo'lmaydi.
+                                                        Barcha tegishli hujjatlar va imzolar ham o‘chirilishi mumkin.
+                                                    </p>
 
-                                            </div>
+                                                </div>
 
-                                            <div class="modal-footer justify-content-center">
+                                                <div class="modal-footer justify-content-center">
 
-                                                <button class="btn btn-light border" data-bs-dismiss="modal">
-                                                    Bekor qilish
-                                                </button>
-
-                                                <form method="POST" action="{% url 'delete_order' doc.id %}">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-danger">
-                                                        <i class="fa fa-trash me-1"></i>
-                                                        Ha, o'chirilsin
+                                                    <button class="btn btn-light border" data-bs-dismiss="modal">
+                                                        Bekor qilish
                                                     </button>
-                                                </form>
+
+                                                    <form method="POST" action="{% url 'delete_order' doc.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="fa fa-trash me-1"></i>
+                                                            Ha, o'chirilsin
+                                                        </button>
+                                                    </form>
+
+                                                </div>
 
                                             </div>
-
                                         </div>
                                     </div>
-                                </div>
 
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                Tanlangan filtrlar bo‘yicha hujjat topilmadi
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-muted">
+                                    Tanlangan filtrlar bo‘yicha hujjat topilmadi
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+        {% else %}
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+            Ushbu filial uchun hali hujjatlar mavjud emas yoki tanlangan filtrlar bo‘yicha mos keladigan hujjat yo‘q.
+            <br><a href="{% url 'create_order' %}" class="btn btn-primary mt-3">
+                Birinchi hujjatni yaratish
+            </a>
+        </div>
+        {% endif %}
+
+        {% endif %} <!-- documents tab tugashi -->
+
+        <!-- Ishchilar bo'limi (faqat employees tab faol bo'lganda) -->
+        {% if active_tab == 'employees' %}
+        <div class="alert alert-secondary text-center py-5">
+            <h4 class="mb-3">Ishchilar ro‘yxati tez orada qo‘shiladi</h4>
+            <p class="text-muted">Bu yerda filialga biriktirilgan xodimlar, lavozimlari va kontaktlari ko‘rinadi.</p>
+        </div>
+        <!-- Keyinchalik employees jadvali yoki cards qo'shishingiz mumkin -->
+        {% endif %}
+
     </div>
-    {% else %}
-    <div class="alert alert-info text-center py-5">
-        <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
-        Ushbu filial uchun hali hujjatlar mavjud emas yoki tanlangan filtrlar bo‘yicha mos keladigan hujjat yo‘q.
-        <br><a href="{% url 'create_order' %}" class="btn btn-primary mt-3">
-            Birinchi hujjatni yaratish
-        </a>
-    </div>
-    {% endif %}
 
-    {% endif %} <!-- documents tab tugashi -->
+    {% endblock %}
 
-    <!-- Ishchilar bo'limi (faqat employees tab faol bo'lganda) -->
-    {% if active_tab == 'employees' %}
-    <div class="alert alert-secondary text-center py-5">
-        <h4 class="mb-3">Ishchilar ro‘yxati tez orada qo‘shiladi</h4>
-        <p class="text-muted">Bu yerda filialga biriktirilgan xodimlar, lavozimlari va kontaktlari ko‘rinadi.</p>
-    </div>
-    <!-- Keyinchalik employees jadvali yoki cards qo'shishingiz mumkin -->
-    {% endif %}
-
-</div>
-
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    .nav-tabs .nav-link {
-        padding: 0.75rem 1.25rem;
-        font-weight: 500;
-    }
-
-    .nav-tabs .nav-link.active {
-        border-bottom: 3px solid #0d6efd;
-    }
-
-    .table th,
-    .table td {
-        vertical-align: middle;
-    }
-
-    .badge {
-        font-weight: 500;
-    }
-
-    @media (max-width: 576px) {
-        .nav-tabs {
-            overflow-x: auto;
-            flex-wrap: nowrap;
+    {% block extra_css %}
+    <style>
+        .nav-tabs .nav-link {
+            padding: 0.75rem 1.25rem;
+            font-weight: 500;
         }
-    }
-</style>
-{% endblock %}
 
-{% block extra_js %}
-<script>
-    // Tablar o'zgarganda URLni toza saqlash uchun (ixtiyoriy)
-    document.querySelectorAll('.nav-tabs a').forEach(link => {
-        link.addEventListener('click', function (e) {
-            // Agar server tarafda tabni qayta ishlash kerak bo'lmasa, bu qismni o'chirib qo'yish mumkin
+        .nav-tabs .nav-link.active {
+            border-bottom: 3px solid #0d6efd;
+        }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+
+        .badge {
+            font-weight: 500;
+        }
+
+        @media (max-width: 576px) {
+            .nav-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+    {% endblock %}
+
+    {% block extra_js %}
+    <script>
+        // Tablar o'zgarganda URLni toza saqlash uchun (ixtiyoriy)
+        document.querySelectorAll('.nav-tabs a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                // Agar server tarafda tabni qayta ishlash kerak bo'lmasa, bu qismni o'chirib qo'yish mumkin
+            });
         });
-    });
-</script>
-{% endblock %}
+    </script>
+    {% endblock %}

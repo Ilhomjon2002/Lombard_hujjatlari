@@ -72,7 +72,7 @@ def dashboard(request):
     
     if user.role == 'admin':
         # Admin dashboard
-        branches = Branch.objects.all()
+        branches = Branch.objects.annotate(order_count=Count('orders'))
         recent_orders = Order.objects.all().order_by('-created_at')[:10]
         
         # User statistics

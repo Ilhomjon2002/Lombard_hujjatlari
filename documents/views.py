@@ -55,12 +55,27 @@ def branch_documents(request, branch_id):
     branch = get_object_or_404(Branch, id=branch_id)
 
     selected_type = request.GET.get('type')
+    selected_status = request.GET.get('status')
+    active_tab = request.GET.get('tab', 'documents')
 
     orders = Order.objects.filter(branch=branch)
 
-    # Tur bo‘yicha filter (I/CH, SH/T, buyruq)
-    if selected_type in ['internal', 'external', 'official']:
+    # Tur bo‘yicha filter (internal, external, official, application)
+    if selected_type in ['internal', 'external', 'official', 'application']:
         orders = orders.filter(document_type=selected_type)
+
+    # Holat bo'yicha filter
+    if selected_status:
+        if selected_status == 'pending':
+            orders = orders.filter(status='pending')
+        elif selected_status == 'partial':
+            orders = orders.filter(status='partial')
+        elif selected_status == 'imzolangan':
+            orders = orders.filter(status='completed')
+        elif selected_status == 'tugatilgan':
+            # Taxmin: tugatilgan - direktor tasdiqlagan yoki tahrirlanmaydigan holat
+            # Agar modelda tushuncha boshqacha bo'lsa, moslashtirish mumkin
+            orders = orders.filter(status='completed', director_approved=True)
 
     orders = orders.select_related(
         'branch',
@@ -73,6 +88,8 @@ def branch_documents(request, branch_id):
         'branch': branch,
         'documents': orders,
         'selected_type': selected_type,
+        'selected_status': selected_status,
+        'active_tab': active_tab,
     }
 
     return render(request, 'documents/branch_documents.html', context)
