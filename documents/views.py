@@ -1249,8 +1249,8 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
                     middle_name = getattr(user, 'middle_name', '') or ''
                     position    = user.position or '—'
                     # Ism va otasining ismi faqat bosh harf: Familiya I.O.
-                    fi = (first_name[0].upper() + '.' if first_name else '')
-                    mi = (middle_name[0].upper() + '.' if middle_name else '')
+                    fi = (first_name + ' ' if first_name else '')
+                    mi = (middle_name + ' ' if middle_name else '')
                     fio = f"{last_name} {fi}{mi}".strip()
 
                     line = f"{i}. {fio}       {position}"
@@ -1944,7 +1944,7 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                 middle_name = user.middle_name if hasattr(user, 'middle_name') else ''
                 position = user.position or '-'
                 
-                c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}         {safe_str(position)}         {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
+                c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}         {safe_str(position)}")
                 # current_text_y -= 10.0
                 # c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(position)}")
                 # current_text_y -= 10.0
@@ -2136,7 +2136,21 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         r_top.add_break()
         r_maq = p_top.add_run("Maqullandi")
         r_maq.bold = True
-        p_top.add_run(" | Elektron Nusxa (Umumiy Tasdiq)")
+        
+        # Add director name: I.O. Surname
+        try:
+            from users.models import CustomUser
+            director = CustomUser.objects.filter(role='director').first()
+            if director:
+                fn = director.first_name[0].upper() + '.' if director.first_name else ''
+                mn = (getattr(director, 'middle_name', '') or '')
+                mi = mn[0].upper() + '.' if mn else ''
+                director_name = f"{fn}{mi} {director.last_name}"
+                p_top.add_run(f"\n{director_name}")
+        except Exception as e:
+            print(f"Error adding director name to DOCX stamp: {e}")
+        
+        # p_top.add_run("Elektron Nusxa (Umumiy Tasdiq)")
     
     # Append employee info next to one QR
     employee_data = employee_info_list if employee_info_list else []
@@ -2146,7 +2160,7 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         bottom_qr_path = employee_data[0]['qr_path']
         
     if employee_data or bottom_qr_path:
-        doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
+        # doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
         
         # We can implement 'next to' using a simple table in Word
         table = doc_obj.add_table(rows=1, cols=2)
@@ -2175,9 +2189,9 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         for i, emp in enumerate(employee_data, 1):
             full_name = str(emp.get('full_name') or '')
             position = str(emp.get('position') or '—')
-            date_str = str(emp.get('date') or '—')
+            # date_str = str(emp.get('date') or '—')
             
-            line = f"{full_name}       {position}       {date_str}"
+            line = f"{full_name}       {position}"
             p_text.add_run(line).font.size = Pt(9.5)
             
             if i < len(employee_data):
