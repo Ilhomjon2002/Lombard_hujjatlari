@@ -491,7 +491,7 @@ def edit_order(request, order_id):
 
 
         messages.success(request, 'Hujjat muvaffaqiyatli yangilandi')
-        return redirect('document_detail', document_id=order.id)
+        return redirect('order_detail', order_id=order.id)
 
     saved_doc_templates = AdditionalDocumentTemplate.objects.filter(is_active=True).order_by('name')
     employees = CustomUser.objects.filter(role='employee', is_active=True)
@@ -519,7 +519,7 @@ def edit_signature_time(request, signature_id):
             signature.qr_code.delete(save=False)
             signature.save()  # save() ichida QR generatsiya qilinadi
             messages.success(request, 'Imzolangan vaqt o\'zgartirildi va QR kod yangilandi')
-            return redirect('document_detail', document_id=signature.order.id)
+            return redirect('order_detail', order_id=signature.order.id)
     else:
         form = EditSignatureForm(instance=signature)
     

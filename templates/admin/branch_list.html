@@ -33,8 +33,6 @@
                                 <th>Filial nomi</th>
                                 <th>Kompaniya</th>
                                 <th>Hujjat turlari</th>
-                                <th>Manzil</th>
-                                <th>Telefon</th>
                                 <th>Harakatlar</th>
                             </tr>
                         </thead>
@@ -51,8 +49,6 @@
                                 <td>
                                     <span class="badge bg-primary">{{ branch.documenttype_set.count }}</span>
                                 </td>
-                                <td>{{ branch.address|truncatechars:30 }}</td>
-                                <td>{{ branch.phone }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="{% url 'branch_detail' branch.id %}" class="btn btn-outline-primary">
@@ -165,14 +161,6 @@
                                 <option value="{{ company.id }}">{{ company.name }}</option>
                                 {% endfor %}
                             </select>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label for="address" class="form-label">Manzil</label>
-                            <textarea class="form-control" id="address" name="address" rows="2"></textarea>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Telefon</label>
-                            <input type="tel" class="form-control" id="phone" name="phone">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="email" class="form-label">Email</label>

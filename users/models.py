@@ -5,8 +5,8 @@ import json
 
 class Branch(models.Model):
     name = models.CharField(max_length=100, verbose_name='Branch Name')
-    address = models.TextField(verbose_name='Address')
-    phone = models.CharField(max_length=20, verbose_name='Phone')
+    # address = models.TextField(verbose_name='Address')
+    # phone = models.CharField(max_length=20, verbose_name='Phone')
     # parent_branch = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='sub_branches', verbose_name='Parent Branch')
     created_at = models.DateTimeField(auto_now_add=True)
     

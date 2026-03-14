@@ -134,7 +134,8 @@
                                     {% if order.is_fully_signed and not order.director_approved %}
                                     <span class="badge bg-warning text-dark">Tasdiq kutilmoqda</span>
                                     {% else %}
-                                    <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count }}/{{ order.signatures_total_count }})</span>
+                                    <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count
+                                        }}/{{ order.signatures_total_count }})</span>
                                     {% endif %}
                                     {% else %}
                                     <span class="badge bg-secondary">{{ order.get_status_display }}</span>
@@ -320,8 +321,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nomi</th>
-                                <th>Manzil</th>
-                                <th>Telefon</th>
                                 <th class="text-end">Amallar</th>
                             </tr>
                         </thead>
@@ -330,8 +329,6 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td class="fw-medium">{{ branch.name }}</td>
-                                <td>{{ branch.address|default:"—"|truncatechars:40 }}</td>
-                                <td>{{ branch.phone|default:"—" }}</td>
                                 <td class="text-end">
                                     <a href="{% url 'branch_documents' branch.id %}"
                                         class="btn btn-sm btn-outline-primary">Hujjatlar</a>

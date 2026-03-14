@@ -429,13 +429,9 @@ def create_branch(request):
     
     if request.method == 'POST':
         name = request.POST.get('name')
-        phone = request.POST.get('phone', '')
-        address = request.POST.get('address', '')
         
         branch = Branch.objects.create(
-            name=name,
-            phone=phone,
-            address=address
+            name=name
         )
         messages.success(request, f"Branch {branch.name} created successfully")
         return redirect('dashboard')
