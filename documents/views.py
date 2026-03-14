@@ -1944,7 +1944,7 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                 middle_name = user.middle_name if hasattr(user, 'middle_name') else ''
                 position = user.position or '-'
                 
-                c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}         {safe_str(position)}")
+                c.drawString(text_x, float(current_text_y), f"{safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}         {safe_str(position)}")
                 # current_text_y -= 10.0
                 # c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(position)}")
                 # current_text_y -= 10.0
@@ -2051,16 +2051,11 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         
     if employee_data:
         c.setFont("Helvetica-Bold", 8)
-        c.drawString(text_x, float(current_text_y), "Elektron imzolar (Xodimlar):")
         current_text_y -= 12.0
         c.setFont("Helvetica", 8)
         
         for i, emp in enumerate(employee_data, 1):
-            c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(emp.get('full_name'))}       {safe_str(emp.get('position'))}       {safe_str(emp.get('date'))}")
-            # current_text_y -= 10.0
-            # c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(emp.get('position'))}")
-            # current_text_y -= 10.0
-            # c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {safe_str(emp.get('date'))}")
+            c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(emp.get('full_name'))}       {safe_str(emp.get('position'))}")
             current_text_y -= 15.0
         
     # Director / Main QR code (top left)
@@ -2075,6 +2070,28 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         text_x = x_pos_dir + (qr_size - text_width) / 2
         text_y = y_pos_dir - 15.0
         c.drawString(text_x, text_y, text_str)
+
+        # Add director name: I.O. Surname
+        try:
+            from users.models import CustomUser
+            director = CustomUser.objects.filter(role='director').first()
+            if director:
+                # Use Arial if available for better character support
+                if _font_registered:
+                    c.setFont("Arial", 10)
+                else:
+                    c.setFont("Helvetica", 10)
+                
+                fn = director.first_name[0].upper() + '.' if director.first_name else ''
+                mn = (getattr(director, 'middle_name', '') or '')
+                mi = mn[0].upper() + '.' if mn else ''
+                director_name = f"{fn}{mi} {director.last_name}"
+                
+                name_width = c.stringWidth(director_name, "Arial" if _font_registered else "Helvetica", 10)
+                name_x = x_pos_dir + (qr_size - name_width) / 2
+                c.drawString(name_x, text_y - 12.0, director_name)
+        except Exception as e:
+            print(f"Error adding director name to PDF stamp: {e}")
 
     c.save()
     overlay_buffer.seek(0)
