@@ -134,8 +134,7 @@
                                     {% if order.is_fully_signed and not order.director_approved %}
                                     <span class="badge bg-warning text-dark">Tasdiq kutilmoqda</span>
                                     {% else %}
-                                    <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count
-                                        }}/{{ order.signatures_total_count }})</span>
+                                    <span class="badge bg-warning text-dark">Qisman ({{ order.signatures_signed_count }}/{{ order.signatures_total_count }})</span>
                                     {% endif %}
                                     {% else %}
                                     <span class="badge bg-secondary">{{ order.get_status_display }}</span>
@@ -161,8 +160,7 @@
                                                 </a>
                                                 {% else %}
                                                 <span class="dropdown-item text-muted">
-                                                    <i class="bi bi-exclamation-triangle me-2 text-warning"></i>{{
-                                                    add_doc.name }} (Fayl yo'q)
+                                                    <i class="bi bi-exclamation-triangle me-2 text-warning"></i>{{ add_doc.name }} (Fayl yo'q)
                                                 </span>
                                                 {% endif %}
                                             </li>
@@ -190,8 +188,7 @@
     <div class="collapse" id="panelPending" data-bs-parent="#detailPanels">
         <div class="card shadow-sm border-0 mb-2">
             <div class="card-header bg-white py-2">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-clock text-warning me-2"></i>Kutilayotgan Buyruqlar ({{
-                    document_pending }})</h6>
+                <h6 class="mb-0 fw-bold"><i class="fas fa-clock text-warning me-2"></i>Kutilayotgan Buyruqlar ({{ document_pending }})</h6>
             </div>
             <div class="card-body p-0 detail-panel">
                 <div class="table-responsive">
@@ -251,8 +248,7 @@
     <div class="collapse" id="panelSigned" data-bs-parent="#detailPanels">
         <div class="card shadow-sm border-0 mb-2">
             <div class="card-header bg-white py-2">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-check-circle text-success me-2"></i>Imzolangan Buyruqlar ({{
-                    document_signed }})</h6>
+                <h6 class="mb-0 fw-bold"><i class="fas fa-check-circle text-success me-2"></i>Imzolangan Buyruqlar ({{ document_signed }})</h6>
             </div>
             <div class="card-body p-0 detail-panel">
                 <div class="table-responsive">
@@ -311,8 +307,7 @@
     <div class="collapse" id="panelBranches" data-bs-parent="#detailPanels">
         <div class="card shadow-sm border-0 mb-2">
             <div class="card-header bg-white py-2">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-building text-primary me-2"></i>Lombardlar ({{ branches.count
-                    }})</h6>
+                <h6 class="mb-0 fw-bold"><i class="fas fa-building text-primary me-2"></i>Lombardlar ({{ branches.count }})</h6>
             </div>
             <div class="card-body p-0 detail-panel">
                 <div class="table-responsive">
