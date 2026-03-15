@@ -84,12 +84,12 @@
                     <label for="type" class="form-label mb-0 fw-medium">Tur:</label>
                     <select name="type" id="type" class="form-select w-auto" onchange="this.form.submit()">
                         <option value="">— Barchasi —</option>
-                        <option value="internal" {% if selected_type == 'internal' %}selected{% endif %}>I/CH (Ichki)
+                        <option value="internal" {% if selected_type=='internal' %}selected{% endif %}>I/CH (Ichki)
                         </option>
-                        <option value="official" {% if selected_type == 'official' %}selected{% endif %}>SH/T (Tashqi)
+                        <option value="official" {% if selected_type=='official' %}selected{% endif %}>SH/T (Tashqi)
                         </option>
-                        <option value="external" {% if selected_type == 'external' %}selected{% endif %}>Buyruq</option>
-                        <option value="application" {% if selected_type == 'application' %}selected{% endif %}>Ariza
+                        <option value="external" {% if selected_type=='external' %}selected{% endif %}>Buyruq</option>
+                        <option value="application" {% if selected_type=='application' %}selected{% endif %}>Ariza
                         </option>
                     </select>
                 </div>
@@ -99,12 +99,12 @@
                     <label for="status" class="form-label mb-0 fw-medium">Holati:</label>
                     <select name="status" id="status" class="form-select w-auto" onchange="this.form.submit()">
                         <option value="">— Hammasi —</option>
-                        <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Yangi</option>
-                        <option value="partial" {% if selected_status == 'partial' %}selected{% endif %}>Jarayonda
+                        <option value="pending" {% if selected_status=='pending' %}selected{% endif %}>Yangi</option>
+                        <option value="partial" {% if selected_status=='partial' %}selected{% endif %}>Jarayonda
                         </option>
-                        <option value="imzolangan" {% if selected_status == 'imzolangan' %}selected{% endif %}>Imzolangan
+                        <option value="imzolangan" {% if selected_status=='imzolangan' %}selected{% endif %}>Imzolangan
                             (faol)</option>
-                        <option value="tugatilgan" {% if selected_status == 'tugatilgan' %}selected{% endif %}>Tugatilgan
+                        <option value="tugatilgan" {% if selected_status=='tugatilgan' %}selected{% endif %}>Tugatilgan
                             (faol emas)</option>
                     </select>
                 </div>
@@ -145,7 +145,7 @@
                                     <div class="fw-medium">{{ doc.title }}</div>
                                     <small class="text-muted">{{ doc.number|default:"—" }}</small>
                                 </td>
-                                <td>{{ doc.document_type.name }}</td>
+                                <td>{{ doc.get_document_type_display }}</td>
                                 <td>{{ doc.created_by.get_full_name|default:doc.created_by.username }}</td>
                                 <td><small>{{ doc.created_at|date:"d.m.Y H:i" }}</small></td>
                                 <td>
