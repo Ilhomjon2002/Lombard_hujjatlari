@@ -2071,8 +2071,8 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         current_text_y -= 12.0
         c.setFont("Helvetica", 8)
         
-        for i, emp in enumerate(employee_data, 1):
-            c.drawString(text_x, float(current_text_y), f"{i}. {safe_str(emp.get('full_name'))}       {safe_str(emp.get('position'))}")
+        for emp in employee_data:
+            c.drawString(text_x, float(current_text_y), f"{safe_str(emp.get('full_name'))}       {safe_str(emp.get('position'))}")
             current_text_y -= 15.0
         
     # Director / Main QR code (top left)
@@ -2082,7 +2082,7 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         c.drawImage(director_qr_paths[0], x_pos_dir, y_pos_dir, width=qr_size, height=qr_size)
         
         c.setFont("Helvetica-Bold", 12)
-        text_str = "Maqullandi"
+        text_str = "Maqulladim"
         text_width = c.stringWidth(text_str, "Helvetica-Bold", 12)
         text_x = x_pos_dir + (qr_size - text_width) / 2
         text_y = y_pos_dir - 15.0
@@ -2168,7 +2168,7 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         r_top = p_top.add_run()
         r_top.add_picture(director_qr_paths[0], width=Inches(1.5))
         r_top.add_break()
-        r_maq = p_top.add_run("Maqullandi")
+        r_maq = p_top.add_run("Maqulladim")
         r_maq.bold = True
         
         # Add director name: I.O. Surname
