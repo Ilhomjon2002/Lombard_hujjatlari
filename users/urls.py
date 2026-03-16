@@ -7,13 +7,15 @@ urlpatterns = [
     # Auth
     path('',                                views.login_view,                   name='login'),
     path('logout/',                         views.logout_view,                  name='logout'),
-    
-    # Scanner-based fingerprint authentication (USB ZKTeco)
-    path('scanner/register/',                              views.scanner_register_page,            name='scanner_register'),
-    path('api/auth/scanner/status',                        views.scanner_status,                   name='scanner_status'),
-    path('api/auth/fingerprint/register/start',            views.fingerprint_register_start_scanner, name='fingerprint_register_start_scanner'),
-    path('api/auth/fingerprint/capture',                   views.fingerprint_capture,              name='fingerprint_capture'),
     path('api/auth/fingerprint/register/complete',         views.fingerprint_register_complete_scanner, name='fingerprint_register_complete_scanner'),
+    path('api/auth/fingerprint/authenticate',              views.fingerprint_authenticate_scanner, name='fingerprint_authenticate_scanner'),
+    path('api/auth/fingerprint/auth/confirm',              views.fingerprint_auth_confirm,         name='fingerprint_auth_confirm'),
+    path('api/auth/fingerprint/remove',                    views.fingerprint_remove_scanner,       name='fingerprint_remove_scanner'),
+    path('api/auth/fingerprint/verify-signing',            views.fingerprint_verify_for_signing,   name='fingerprint_verify_for_signing'),
+    
+    # E-IMZO Authentication
+    path('api/auth/eimzo/login',                           views.eimzo_login_api,                  name='eimzo_login'),
+
     path('api/auth/fingerprint/authenticate',              views.fingerprint_authenticate_scanner, name='fingerprint_authenticate_scanner'),
     path('api/auth/fingerprint/auth/confirm',              views.fingerprint_auth_confirm,         name='fingerprint_auth_confirm'),
     path('api/auth/fingerprint/remove',                    views.fingerprint_remove_scanner,       name='fingerprint_remove_scanner'),

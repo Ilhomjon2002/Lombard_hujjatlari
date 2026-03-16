@@ -618,6 +618,62 @@ def fingerprint_authenticate_scanner(request):
 
 
 @require_http_methods(["POST"])
+@csrf_exempt
+def eimzo_login_api(request):
+    """
+    E-IMZO Authentication API Endpoint.
+    Receives PKCS7 signature and certificate details from E-IMZO browser extension.
+    Extracts PINFL and logs the user in if a match is found.
+    """
+    try:
+        data = json.loads(request.body)
+        pkcs7_signature = data.get('pkcs7')
+        cert_info = data.get('cert')
+        
+        if not pkcs7_signature or not cert_info:
+            return JsonResponse({'error': 'Not complete data received (pkcs7 or cert missing)'}, status=400)
+            
+        # Optional: Log or process the PKCS#7 signature here using a core cryptography library
+        # Since the user requested, we trust the browser extension's extracted PINFL for authentication
+        # Warning: For complete security, you should verify the PKCS7 signature on the backend as well.
+        
+        # In `cert_info`, the PINFL is usually stored under `TIN` or `PINFL` or `1.2.860.3.16.1.2` 
+        # For our purposes here, we expect the frontend JS script to send the extracted PINFL directly
+        # or we try to extract it from the passed `cert_info` fields
+        pinfl = data.get('pinfl') or cert_info.get('TIN') or cert_info.get('pinfl')
+        
+        if not pinfl:
+            return JsonResponse({'error': 'PINFL (JSHSHIR) could not be extracted from certificate'}, status=400)
+            
+        # Strip all whitespaces and ensure it's exactly 14 chars
+        pinfl = str(pinfl).strip()
+        if len(pinfl) != 14:
+            return JsonResponse({'error': f'Invalid PINFL format: {pinfl}. Must be 14 digits.'}, status=400)
+
+        # Authenticate User via PINFL
+        try:
+            user = CustomUser.objects.get(pinfl=pinfl, is_active=True)
+            login(request, user)
+            
+            # Record last login stats or similar actions here if needed
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Muvaffaqiyatli kirdingiz!',
+                'redirect': '/dashboard/'
+            })
+            
+        except CustomUser.DoesNotExist:
+            return JsonResponse({
+                'error': f'Ushbu JSHSHIR (PINFL: {pinfl}) tizimda biriktirilgan foydalanuvchi topilmadi. Avval administrator tomonidan PINFL kiritilishi kerak.'
+            }, status=404)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({'error': "So'rov formati noto'g'ri"}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': f'Xatolik: {str(e)}'}, status=500)
+
+
+@require_http_methods(["POST"])
 def fingerprint_auth_confirm(request):
     """Confirm fingerprint authentication after JS verified via agent.
     

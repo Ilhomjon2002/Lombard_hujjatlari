@@ -48,6 +48,7 @@ class CustomUser(AbstractUser):
     fingerprint_enabled = models.BooleanField(default=False, verbose_name='Fingerprint Authentication Enabled')
     middle_name = models.CharField(max_length=100, blank=True, verbose_name='Otasining ismi')
     position = models.CharField(max_length=200, blank=True, verbose_name='Lavozim')
+    pinfl = models.CharField(max_length=14, unique=True, null=True, blank=True, verbose_name="JSHSHIR (PINFL)")
     
     class Meta:
         verbose_name = 'User'

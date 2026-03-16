@@ -43,6 +43,13 @@
                                 <i class="fa fa-fingerprint me-2"></i>Barmoq izi
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="eimzo-tab" data-bs-toggle="tab"
+                                data-bs-target="#eimzo-tab-pane" type="button" role="tab"
+                                aria-controls="eimzo-tab-pane" aria-selected="false">
+                                <i class="fa fa-key me-2"></i>E-IMZO
+                            </button>
+                        </li>
                     </ul>
 
                     <!-- Tab Content -->
@@ -132,6 +139,45 @@
                                 USB barmoq izi skaneri ulangan bo'lishi kerak
                             </p>
                         </div>
+
+                        <!-- E-IMZO Tab -->
+                        <div class="tab-pane fade" id="eimzo-tab-pane" role="tabpanel" aria-labelledby="eimzo-tab" tabindex="0">
+                            <div class="text-center mb-4">
+                                <div class="fingerprint-icon-large mb-3">
+                                    <i class="fa fa-key" style="font-size: 64px; color: #198754;"></i>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="eimzo-key-select" class="form-label fw-semibold">E-IMZO kalitni tanlang</label>
+                                <select class="form-select form-select-lg" id="eimzo-key-select">
+                                    <option value="" disabled selected>Kalitlar yuklanmoqda...</option>
+                                </select>
+                            </div>
+
+                            <div id="eimzo-status" class="alert alert-info d-none" role="alert">
+                                <i class="fas fa-spinner fa-spin me-2"></i>
+                                <span id="eimzo-status-text">Kutilmoqda...</span>
+                            </div>
+
+                            <div id="eimzo-error" class="alert alert-danger d-none" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <span id="eimzo-error-text"></span>
+                            </div>
+
+                            <div id="eimzo-success" class="alert alert-success d-none" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span id="eimzo-success-text"></span>
+                            </div>
+
+                            <button type="button" class="btn btn-success btn-lg w-100 mb-3" id="eimzoLoginBtn">
+                                <i class="fa fa-sign-in-alt me-2"></i>E-IMZO orqali kirish
+                            </button>
+
+                            <p class="text-center text-muted small">
+                                <a href="https://e-imzo.uz" target="_blank">E-IMZO dasturi</a> kompyuteringizda o'rnatilgan va ishga tushirilgan bo'lishi kerak.
+                            </p>
+                        </div>
                     </div>
 
                 </div>
@@ -148,6 +194,8 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/e-imzo.js' %}"></script>
+<script src="{% static 'js/e-imzo-client.js' %}"></script>
 <script src="{% static 'js/fingerprint-scanner.js' %}"></script>
 <script>
     // Toggle password visibility
@@ -234,5 +282,132 @@
             });
         }, false);
     })();
+</script>
+<script>
+    // E-IMZO Login Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const eimzoTab = document.getElementById('eimzo-tab');
+        let keysLoaded = false;
+
+        eimzoTab.addEventListener('shown.bs.tab', function () {
+            if (!keysLoaded) {
+                loadEimzoKeys();
+            }
+        });
+
+        async function loadEimzoKeys() {
+            const selectEl = document.getElementById('eimzo-key-select');
+            const errorDiv = document.getElementById('eimzo-error');
+            const errorText = document.getElementById('eimzo-error-text');
+            const btn = document.getElementById('eimzoLoginBtn');
+            
+            errorDiv.classList.add('d-none');
+            selectEl.innerHTML = '<option value="" disabled selected>Kalitlar izlanmoqda...</option>';
+            btn.disabled = true;
+
+            try {
+                await EIMZOClient.ping(); // Check if proxy is running
+                const keys = await EIMZOClient.listAllUserKeys();
+                
+                if (keys && keys.length > 0) {
+                    selectEl.innerHTML = '<option value="" disabled selected>Kalitni tanlang</option>';
+                    keys.forEach(key => {
+                        const info = EIMZOClient.extractKeyInfo(key);
+                        const option = document.createElement('option');
+                        option.value = key.vo.serialNumber; // or some identity
+                        // Store the full cert or alias in dataset for later use
+                        option.dataset.alias = key.alias;
+                        option.dataset.pinfl = info.pinfl;
+                        option.text = `${info.name} (PINFL: ${info.pinfl}, INN: ${info.inn})`;
+                        selectEl.appendChild(option);
+                    });
+                    keysLoaded = true;
+                    btn.disabled = false;
+                } else {
+                    selectEl.innerHTML = '<option value="" disabled selected>Kalitlar topilmadi</option>';
+                    errorDiv.classList.remove('d-none');
+                    errorText.textContent = "E-IMZO kalitlari topilmadi. Flask disk yoki ID kartani tekshiring.";
+                }
+            } catch (error) {
+                selectEl.innerHTML = '<option value="" disabled selected>Xatolik yuz berdi</option>';
+                errorDiv.classList.remove('d-none');
+                errorText.innerHTML = "E-IMZO ilovasi bilan ulanib bo'lmadi. <br>Iltimos E-IMZO kompyuteringizda yoniqligini tekshiring.";
+                console.error("E-IMZO error:", error);
+            }
+        }
+
+        document.getElementById('eimzoLoginBtn').addEventListener('click', async function() {
+            const selectEl = document.getElementById('eimzo-key-select');
+            const errorDiv = document.getElementById('eimzo-error');
+            const statusDiv = document.getElementById('eimzo-status');
+            const successDiv = document.getElementById('eimzo-success');
+
+            errorDiv.classList.add('d-none');
+            statusDiv.classList.add('d-none');
+            successDiv.classList.add('d-none');
+
+            if (!selectEl.value || selectEl.selectedIndex === 0) {
+                errorDiv.classList.remove('d-none');
+                document.getElementById('eimzo-error-text').textContent = "Iltimos kalitni tanlang!";
+                return;
+            }
+
+            const selectedOption = selectEl.options[selectEl.selectedIndex];
+            const alias = selectedOption.dataset.alias;
+            const certId = selectedOption.value;
+            const pinfl = selectedOption.dataset.pinfl;
+            
+            this.disabled = true;
+            statusDiv.classList.remove('d-none');
+            document.getElementById('eimzo-status-text').textContent = "Kalitga ulanmoqda va parol so'ralmoqda...";
+
+            try {
+                // We create a random challenge for the user to sign
+                const challenge = "SignForLogin-" + Date.now().toString() + "-" + Math.random().toString(36).substring(7);
+                
+                // Call E-IMZO createPkcs7 to sign the challenge
+                const pkcs7 = await EIMZOClient.createPkcs7(certId, challenge);
+                
+                document.getElementById('eimzo-status-text').textContent = "Imzo tekshirilmoqda...";
+
+                // Send to backend
+                const response = await fetch('/api/auth/eimzo/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        pkcs7: pkcs7,
+                        pinfl: pinfl,
+                        cert: {
+                            pinfl: pinfl, // Fallback fields
+                            serialNumber: certId
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.classList.add('d-none');
+                    successDiv.classList.remove('d-none');
+                    document.getElementById('eimzo-success-text').textContent = "Muvaffaqiyatli kirdingiz! Yo'naltirilmoqda...";
+                    window.location.href = data.redirect || '/dashboard/';
+                } else {
+                    statusDiv.classList.add('d-none');
+                    errorDiv.classList.remove('d-none');
+                    document.getElementById('eimzo-error-text').textContent = data.error || "Xatolik yuz berdi.";
+                    this.disabled = false;
+                }
+
+            } catch (error) {
+                statusDiv.classList.add('d-none');
+                errorDiv.classList.remove('d-none');
+                document.getElementById('eimzo-error-text').textContent = "Imzolashda kod xato kiritildi yoki bekor qilindi.";
+                console.error("Signature error:", error);
+                this.disabled = false;
+            }
+        });
+    });
 </script>
 {% endblock %}
