@@ -16,7 +16,7 @@ class CustomUserForm(UserCreationForm):
         model = CustomUser
         fields = [
             'username', 'first_name', 'last_name', 'middle_name',
-            'profile_image', 'role', 'position'
+            'profile_image', 'role', 'position', 'pinfl'
         ]
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'username (e.g., john_doe)'}),
@@ -25,6 +25,7 @@ class CustomUserForm(UserCreationForm):
             'middle_name': forms.TextInput(attrs={'placeholder': 'Otasining ismi'}),
             'role': forms.Select(attrs={'class': 'form-select'}),
             'position': forms.TextInput(attrs={'placeholder': 'Masalan: Bosh hisobchi'}),
+            'pinfl': forms.TextInput(attrs={'placeholder': '14 xonali JSHSHIR', 'maxlength': '14'}),
             'profile_image': forms.FileInput(),
         }
 
@@ -54,13 +55,14 @@ class UserUpdateForm(forms.ModelForm):
         model = CustomUser
         fields = [
             'first_name', 'last_name', 'middle_name',
-            'profile_image', 'role', 'position', 'is_active', 'branch'
+            'profile_image', 'role', 'position', 'pinfl', 'is_active', 'branch'
         ]
         widgets = {
             'role': forms.Select(attrs={'class': 'form-select'}),
             'is_active': forms.CheckboxInput(),
             'profile_image': forms.FileInput(),
             'position': forms.TextInput(attrs={'placeholder': 'Masalan: Bosh hisobchi'}),
+            'pinfl': forms.TextInput(attrs={'placeholder': '14 xonali JSHSHIR', 'maxlength': '14'}),
         }
 
     def __init__(self, *args, **kwargs):
