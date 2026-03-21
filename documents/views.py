@@ -235,10 +235,13 @@ def create_document(request):
     # Barcha mavjud unikal qo'shimcha hujjat shablonlarini olish
     saved_doc_templates = AdditionalDocumentTemplate.objects.filter(is_active=True).order_by('name')
 
+    document_type = request.GET.get('type', 'external')
+
     context = {
         'branches': branches,
         'employees': employees,
         'saved_doc_templates': saved_doc_templates,
+        'document_type': document_type,
     }
     return render(request, 'documents/create_document.html', context)
 

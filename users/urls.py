@@ -24,6 +24,7 @@ urlpatterns = [
     # User pages
     path('dashboard/',      views.dashboard,            name='dashboard'),
     path('profile/',        views.profile,              name='profile'),
+    path('profile/scanner-register/', views.scanner_register, name='scanner_register'),
     path('notifications/',  views.notifications,        name='notifications'),
 
     # Admin / User management

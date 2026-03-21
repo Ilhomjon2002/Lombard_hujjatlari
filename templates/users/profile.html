@@ -83,7 +83,7 @@
                     <i class="fa fa-check-circle"></i> Barmoq izi autentifikatsiyasi yoqilgan
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'fingerprint_authenticate_scanner' %}" class="btn btn-warning btn-sm">
+                    <a href="{% url 'scanner_register' %}" class="btn btn-warning btn-sm">
                         <i class="fa fa-sync"></i> Qayta ro'yxatdan o'tkazish
                     </a>
                     <button type="button" class="btn btn-danger btn-sm" id="removeFingerprintBtn">
@@ -94,7 +94,7 @@
                 <div class="alert alert-info py-1 mb-2" role="alert" style="font-size:14px;">
                     <i class="fa fa-info-circle"></i> Barmoq izi autentifikatsiyasi hali yoqilmagan
                 </div>
-                <a href="{% url 'fingerprint_authenticate_scanner' %}" class="btn btn-primary btn-sm">
+                <a href="{% url 'scanner_register' %}" class="btn btn-primary btn-sm">
                     <i class="fa fa-fingerprint"></i> Ro'yxatdan o'tkazish
                 </a>
                 {% endif %}

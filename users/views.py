@@ -499,6 +499,12 @@ def fingerprint_capture(request):
 
 
 @login_required
+def scanner_register(request):
+    """Render the fingerprint registration page for the scanner"""
+    return render(request, 'users/scanner_register.html')
+
+
+@login_required
 @require_http_methods(["POST"])
 def fingerprint_register_complete_scanner(request):
     """Complete fingerprint registration — JS agent'dan template oladi va shu yerga yuboradi"""

@@ -59,7 +59,7 @@
 
                     <div class="row mb-3">
                         <!-- Document Type and Title -->
-                        <input type="hidden" name="document_type" value="official">
+                        <input type="hidden" name="document_type" value="{{ document_type|default:'external' }}">
                         <div class="col-md-6">
                             <label for="title" class="form-label" id="titleLabel">Sarlavha/Nom</label>
                             <input type="text" class="form-control" id="title" name="title" required>
