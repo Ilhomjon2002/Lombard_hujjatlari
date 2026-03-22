@@ -101,7 +101,6 @@ class Order(models.Model):
     DOCUMENT_TYPES = (
         ('internal', 'Buyruq I/CH - Ichki hujjat'),
         ('external', 'Buyruq SH/T - Shartnoma/Tashqi hujjat'),
-        ('official', 'Buyruq'),
         ('application', 'Ariza'),
     )
 
@@ -180,7 +179,7 @@ class Order(models.Model):
         verbose_name = "Buyruq"
         verbose_name_plural = "Buyruqlar"
         ordering = ['-created_at']
-        unique_together = ('number', 'branch')
+        unique_together = ('number', 'branch', 'document_type')
         indexes = [
             models.Index(fields=['status', 'created_at']),
             models.Index(fields=['created_by']),

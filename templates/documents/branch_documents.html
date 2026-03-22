@@ -43,17 +43,12 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="newDocumentDropdown">
                     <li>
-                        <a class="dropdown-item" href="{% url 'create_order' %}?type=external">
-                            <i class="fa fa-file-earmark-check me-2 text-primary"></i> Buyruq
-                        </a>
-                    </li>
-                    <li>
                         <a class="dropdown-item" href="{% url 'create_order' %}?type=internal">
                             <i class="fa fa-arrow-left-right me-2 text-success"></i> Ichki / Chiqim (I/CH)
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{% url 'create_order' %}?type=official">
+                        <a class="dropdown-item" href="{% url 'create_order' %}?type=external">
                             <i class="fa fa-arrow-right-square me-2 text-info"></i> SH/T (Shartnoma/Talab)
                         </a>
                     </li>
@@ -86,9 +81,8 @@
                         <option value="">— Barchasi —</option>
                         <option value="internal" {% if selected_type == 'internal' %}selected{% endif %}>I/CH (Ichki)
                         </option>
-                        <option value="official" {% if selected_type == 'official' %}selected{% endif %}>SH/T (Tashqi)
+                        <option value="external" {% if selected_type == 'external' %}selected{% endif %}>SH/T (Tashqi)
                         </option>
-                        <option value="external" {% if selected_type == 'external' %}selected{% endif %}>Buyruq</option>
                         <option value="application" {% if selected_type == 'application' %}selected{% endif %}>Ariza
                         </option>
                     </select>

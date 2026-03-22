@@ -60,8 +60,8 @@ def branch_documents(request, branch_id):
 
     orders = Order.objects.filter(branch=branch)
 
-    # Tur bo‘yicha filter (internal, external, official, application)
-    if selected_type in ['internal', 'external', 'official', 'application']:
+    # Tur bo‘yicha filter (internal, external, application)
+    if selected_type in ['internal', 'external', 'application']:
         orders = orders.filter(document_type=selected_type)
 
     # Holat bo'yicha filter
@@ -125,7 +125,7 @@ def create_document(request):
             branch = get_object_or_404(Branch, id=branch_id)
 
             # Unikal buyruq raqami tekshiruvi
-            if Order.objects.filter(number=number, branch=branch).exists():
+            if Order.objects.filter(number=number, branch=branch, document_type=document_type).exists():
                 messages.error(request, f"'{number}' raqamli buyruq '{branch.name}' filialida allaqachon mavjud! Boshqa raqam kiriting.")
                 branches = Branch.objects.all()
                 saved_doc_templates = AdditionalDocumentTemplate.objects.filter(is_active=True).order_by('name')
@@ -374,11 +374,14 @@ def check_order_number_unique(request):
     number = request.GET.get('number', '').strip()
     branch_id = request.GET.get('branch_id', '').strip()
     order_id = request.GET.get('order_id', '').strip()  # edit holatida o'zini chiqarish uchun
+    document_type = request.GET.get('document_type', '').strip()
 
     if not number or not branch_id:
         return JsonResponse({'exists': False})
 
     qs = Order.objects.filter(number=number, branch_id=branch_id)
+    if document_type:
+        qs = qs.filter(document_type=document_type)
     if order_id:
         qs = qs.exclude(id=order_id)
 
@@ -2196,7 +2199,57 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
     if not bottom_qr_path and employee_data and employee_data[0].get('qr_path'):
         bottom_qr_path = employee_data[0]['qr_path']
         
-    if employee_data or bottom_qr_path:
+    qr_inserted = False
+    if bottom_qr_path and os.path.exists(bottom_qr_path):
+        def process_paragraph(p):
+            if 'QR kod' in p.text or 'QR-kod' in p.text or 'QR_kod' in p.text or 'QR_KOD' in p.text or 'QR Kod' in p.text:
+                rep_str = 'QR kod'
+                for v in ['QR kod', 'QR-kod', 'QR_kod', 'QR_KOD', 'QR Kod']:
+                    if v in p.text: rep_str = v; break
+
+                text_replaced = False
+                for run in p.runs:
+                    if rep_str in run.text:
+                        run.text = run.text.replace(rep_str, '')
+                        run.add_picture(bottom_qr_path, width=Inches(1.0))
+                        text_replaced = True
+                
+                if not text_replaced:
+                    new_text = p.text.replace(rep_str, '')
+                    for run in p.runs: run.text = ''
+                    if p.runs:
+                        p.runs[0].text = new_text
+                        p.runs[0].add_picture(bottom_qr_path, width=Inches(1.0))
+                    else:
+                        r = p.add_run(new_text)
+                        r.add_picture(bottom_qr_path, width=Inches(1.0))
+                
+                if employee_data:
+                    for i, emp in enumerate(employee_data):
+                        full_name = str(emp.get('full_name') or '')
+                        position = str(emp.get('position') or '')
+                        p.add_run(f" {full_name} {position}").font.size = Pt(9.5)
+                return True
+            return False
+
+        for paragraph in doc_obj.paragraphs:
+            if process_paragraph(paragraph):
+                qr_inserted = True
+                break
+
+        if not qr_inserted:
+            for table in doc_obj.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            if process_paragraph(paragraph):
+                                qr_inserted = True
+                                break
+                        if qr_inserted: break
+                    if qr_inserted: break
+                if qr_inserted: break
+
+    if (employee_data or bottom_qr_path) and not qr_inserted:
         # doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
         
         # We can implement 'next to' using a simple table in Word

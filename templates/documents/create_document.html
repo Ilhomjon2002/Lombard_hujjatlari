@@ -361,11 +361,13 @@
                 return;
             }
 
+            const documentType = $('input[name="document_type"]').val() || 'external';
+
             clearTimeout(numberCheckTimer);
             numberCheckTimer = setTimeout(function () {
                 $.ajax({
                     url: "{% url 'api_check_order_number' %}",
-                    data: { number: number, branch_id: branchId },
+                    data: { number: number, branch_id: branchId, document_type: documentType },
                     success: function (resp) {
                         if (resp.exists) {
                             msgEl.show().html(
