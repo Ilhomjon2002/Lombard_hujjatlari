@@ -2167,17 +2167,119 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
     original_file.seek(0)
     
     doc_obj = docx.Document(temp_word)
-    
-    # Prepend director QR
+
+    # --- Build a 2-column top table: left = Director QR, right = existing header paragraphs ---
     if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
-        p_top = doc_obj.paragraphs[0].insert_paragraph_before()
-        r_top = p_top.add_run()
-        r_top.add_picture(director_qr_paths[0], width=Inches(1.5))
-        r_top.add_break()
-        r_maq = p_top.add_run("Maqulladim")
+        from docx.oxml.ns import qn
+        from docx.oxml import OxmlElement
+        import copy
+
+        # How many leading paragraphs belong to the "recipient / top-right" block 
+        # We'll move the first N right-aligned / centre paragraphs into the right cell.
+        # Strategy: take the FIRST non-empty paragraph group at top (up to 8 paras) into right cell.
+        TOP_PARA_LIMIT = 8
+        body = doc_obj.element.body
+
+        # Collect the first TOP_PARA_LIMIT body-level paragraphs
+        top_paras = []
+        for child in list(body):
+            if child.tag.endswith('}p'):
+                top_paras.append(child)
+                if len(top_paras) >= TOP_PARA_LIMIT:
+                    break
+            else:
+                break  # stop at first non-paragraph (e.g., a table)
+
+        # Create a 1x2 table via raw XML so we have full control
+        tbl = OxmlElement('w:tbl')
+        # tblPr
+        tblPr = OxmlElement('w:tblPr')
+        tblStyle = OxmlElement('w:tblStyle')
+        tblStyle.set(qn('w:val'), 'TableNormal')
+        tblPr.append(tblStyle)
+        tblBorders = OxmlElement('w:tblBorders')
+        for side in ('top','left','bottom','right','insideH','insideV'):
+            el = OxmlElement(f'w:{side}')
+            el.set(qn('w:val'), 'none')
+            tblBorders.append(el)
+        tblPr.append(tblBorders)
+        # Width
+        tblW = OxmlElement('w:tblW')
+        tblW.set(qn('w:w'), '9360')  # ~16.5 cm in twips (1 inch=1440)
+        tblW.set(qn('w:type'), 'dxa')
+        tblPr.append(tblW)
+        tbl.append(tblPr)
+
+        # tblGrid
+        tblGrid = OxmlElement('w:tblGrid')
+        for w in ('2016', '7344'):  # ~3.5 cm left, ~12.8 cm right
+            gridCol = OxmlElement('w:gridCol')
+            gridCol.set(qn('w:w'), w)
+            tblGrid.append(gridCol)
+        tbl.append(tblGrid)
+
+        # Row
+        tr = OxmlElement('w:tr')
+
+        # Left cell — QR image + director name
+        tcL = OxmlElement('w:tc')
+        tcPrL = OxmlElement('w:tcPr')
+        tcWL = OxmlElement('w:tcW')
+        tcWL.set(qn('w:w'), '2016'); tcWL.set(qn('w:type'), 'dxa')
+        tcPrL.append(tcWL)
+        vAlignL = OxmlElement('w:vAlign')
+        vAlignL.set(qn('w:val'), 'top')
+        tcPrL.append(vAlignL)
+        tcL.append(tcPrL)
+
+        # Build a placeholder paragraph for the left cell (we'll write into it via python-docx later)
+        p_placeholder = OxmlElement('w:p')
+        p_placeholder.set(qn('w:rsidR'), '00000000')  # dummy rsid
+        tcL.append(p_placeholder)
+        tr.append(tcL)
+
+        # Right cell — existing top paragraphs
+        tcR = OxmlElement('w:tc')
+        tcPrR = OxmlElement('w:tcPr')
+        tcWR = OxmlElement('w:tcW')
+        tcWR.set(qn('w:w'), '7344'); tcWR.set(qn('w:type'), 'dxa')
+        tcPrR.append(tcWR)
+        vAlignR = OxmlElement('w:vAlign')
+        vAlignR.set(qn('w:val'), 'top')
+        tcPrR.append(vAlignR)
+        tcR.append(tcPrR)
+
+        # Move original header paragraphs into the right cell (deep-copy preserves formatting)
+        for orig_p in top_paras:
+            tcR.append(copy.deepcopy(orig_p))
+
+        tr.append(tcR)
+        tbl.append(tr)
+
+        # Insert the new table before the first paragraph / at body start
+        first_child = body[0] if len(body) else None
+        if first_child is not None:
+            body.insert(0, tbl)
+        else:
+            body.append(tbl)
+
+        # Remove the original top paragraphs from the body (they now live inside the table)
+        for orig_p in top_paras:
+            if orig_p in list(body):
+                body.remove(orig_p)
+
+        # Now write the QR image + label into the left cell via python-docx paragraph API
+        # Find the placeholder paragraph in the left cell
+        from docx.text.paragraph import Paragraph as DocxParagraph
+        left_cell_para = DocxParagraph(p_placeholder, doc_obj)
+        left_cell_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r_qr = left_cell_para.add_run()
+        r_qr.add_picture(director_qr_paths[0], width=Inches(1.4))
+        r_qr.add_break()
+        r_maq = left_cell_para.add_run("Maqulladim")
         r_maq.bold = True
-        
-        # Add director name: I.O. Surname
+
+        # Add director name below
         try:
             from users.models import CustomUser
             director = CustomUser.objects.filter(role='director').first()
@@ -2186,15 +2288,13 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
                 mn = (getattr(director, 'middle_name', '') or '')
                 mi = mn[0].upper() + '.' if mn else ''
                 director_name = f"{fn}{mi} {director.last_name}"
-                p_top.add_run(f"\n{director_name}")
+                left_cell_para.add_run(f"\n{director_name}").font.size = Pt(9)
         except Exception as e:
             print(f"Error adding director name to DOCX stamp: {e}")
-        
-        # p_top.add_run("Elektron Nusxa (Umumiy Tasdiq)")
-    
+
     # Append employee info next to one QR
     employee_data = employee_info_list if employee_info_list else []
-    
+
     bottom_qr_path = employee_qr_path
     if not bottom_qr_path and employee_data and employee_data[0].get('qr_path'):
         bottom_qr_path = employee_data[0]['qr_path']
@@ -2354,10 +2454,10 @@ def api_director_approve(request, order_id):
     from reportlab.pdfgen import canvas as rl_canvas
     from PyPDF2 import PdfReader, PdfWriter
     
-    additional_docs = order.additional_docs.filter(is_signed=True).exclude(file='')
+    additional_docs = order.additional_docs.filter(file__isnull=False).exclude(file='')
     for doc in additional_docs:
-        # doc.file, doc.qr_code, order.final_qr_code bor
-        if not doc.qr_code or not order.final_qr_code:
+        # doc.file must exist; include doc QR if available
+        if not order.final_qr_code:
             continue
             
         temp_files_doc = []
