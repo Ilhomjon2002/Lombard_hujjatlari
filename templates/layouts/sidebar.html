@@ -31,15 +31,10 @@
         </a>
         {% endfor %}
 
-        <div class="mt-4 mb-2 px-4 text-uppercase fw-bold text-secondary"
+        <!-- <div class="mt-4 mb-2 px-4 text-uppercase fw-bold text-secondary"
             style="font-size: 10px; letter-spacing: 0.5px;">
             Hujjatlar
-        </div>
-
-        <a href="{% url 'create_order' %}">
-            <i class="fas fa-plus-circle"></i>
-            Yangi Buyruq
-        </a>
+        </div> -->
         {% else %}
         <a href="{% url 'dashboard' %}"
             class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
