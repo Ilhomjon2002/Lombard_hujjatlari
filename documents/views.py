@@ -634,6 +634,47 @@ def sign_with_fingerprint(request, signature_id):
     # Word faylga alohida QR kod qo'shish bekor qilindi (PDF qatlamda qo'yiladi)
     word_embedded = False
     
+    # === Avtomatik barcha qo'shimcha hujjatlarni imzolash ===
+    pending_docs = signature.order.additional_docs.filter(signer=user, is_signed=False)
+    for d in pending_docs:
+        d_signed_at = datetime.now()
+        qr_data_add = (
+            f"QO'SHIMCHA HUJJAT IMZOLANGAN\n"
+            f"F.I.O: {full_name}\n"
+            f"Lavozim: {user.position or '-'}\n"
+            f"Hujjat nomi: {d.name}\n"
+            f"Imzolangan: {d_signed_at.strftime('%d.%m.%Y %H:%M:%S')}\n"
+            f"ID: {user.id}"
+        )
+        qr_img_add = generate_qr_seal(qr_data_add, is_director=False)
+        d.is_signed = True
+        d.signed_at = d_signed_at
+        
+        qr_filename_add = f"qr_add_doc_{d.id}_{user.username}_{d_signed_at.strftime('%Y%m%d%H%M%S')}.png"
+        qr_save_buffer_add = BytesIO()
+        qr_img_add.save(qr_save_buffer_add, format='PNG')
+        qr_save_buffer_add.seek(0)
+        d.qr_code.save(qr_filename_add, File(qr_save_buffer_add), save=False)
+        d.save()
+        
+        if d.file:
+            try:
+                is_pdf_d = d.file.name.lower().endswith('.pdf')
+                is_word_d = d.file.name.lower().endswith(('.doc', '.docx'))
+                final_buffer_d = None
+                if is_pdf_d:
+                    final_buffer_d = stamp_pdf_with_qrs(d.file, d.qr_code.path)
+                    stamped_filename_d = f"stamped_doc_{d.id}_employee.pdf"
+                elif is_word_d:
+                    final_buffer_d = stamp_word_with_qrs(d.file, d.qr_code.path)
+                    stamped_filename_d = f"stamped_doc_{d.id}_employee.docx"
+                    
+                if final_buffer_d:
+                    d.stamped_file.save(stamped_filename_d, File(final_buffer_d), save=False)
+                    d.save()
+            except Exception as e:
+                print(f"Error generating stamped additional doc (employee only) {d.id}: {e}")
+                
     # Adminlarga xabar yuborish
     admins = CustomUser.objects.filter(role='admin')
     for admin in admins:
@@ -686,54 +727,61 @@ def sign_additional_doc_fingerprint(request, doc_id):
     
     # === TEKSHIRUV MUVAFFAQIYATLI (Frontend orqali tasdiqlandi) ===
 
-    # QR kod ma'lumotlari
-    full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
-    signed_at = datetime.now()
-    
-    qr_data = (
-        f"QO'SHIMCHA HUJJAT IMZOLANGAN\n"
-        f"F.I.O: {full_name}\n"
-        f"Lavozim: {user.position or '-'}\n"
-        f"Hujjat nomi: {doc.name}\n"
-        f"Imzolangan: {signed_at.strftime('%d.%m.%Y %H:%M:%S')}\n"
-        f"ID: {user.id}"
-    )
-    
-    # QR kod generatsiya (Overlay seal)
-    qr_img = generate_qr_seal(qr_data, is_director=False)
-    
-    # Imzoni saqlash
-    doc.is_signed = True
-    doc.signed_at = signed_at
-    
-    # QR kodni ImageField ga saqlash
-    qr_filename = f"qr_add_doc_{doc.id}_{user.username}_{signed_at.strftime('%Y%m%d%H%M%S')}.png"
-    qr_save_buffer = BytesIO()
-    qr_img.save(qr_save_buffer, format='PNG')
-    qr_save_buffer.seek(0)
-    doc.qr_code.save(qr_filename, File(qr_save_buffer), save=False)
-    
-    doc.save()
-    
-    # === Hujjatga xodim QR kodini (ostiga) bosish ===
-    if doc.file:
-        try:
-            is_pdf = doc.file.name.lower().endswith('.pdf')
-            is_word = doc.file.name.lower().endswith(('.doc', '.docx'))
-            
-            final_buffer = None
-            if is_pdf:
-                final_buffer = stamp_pdf_with_qrs(doc.file, doc.qr_code.path)
-                stamped_filename = f"stamped_doc_{doc.id}_employee.pdf"
-            elif is_word:
-                final_buffer = stamp_word_with_qrs(doc.file, doc.qr_code.path)
-                stamped_filename = f"stamped_doc_{doc.id}_employee.docx"
+    order = Order.objects.filter(additional_docs=doc).first()
+    if order:
+        pending_docs = order.additional_docs.filter(signer=user, is_signed=False)
+    else:
+        pending_docs = [doc]
+        
+    for d in pending_docs:
+        # QR kod ma'lumotlari
+        full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
+        signed_at = datetime.now()
+        
+        qr_data = (
+            f"QO'SHIMCHA HUJJAT IMZOLANGAN\n"
+            f"F.I.O: {full_name}\n"
+            f"Lavozim: {user.position or '-'}\n"
+            f"Hujjat nomi: {d.name}\n"
+            f"Imzolangan: {signed_at.strftime('%d.%m.%Y %H:%M:%S')}\n"
+            f"ID: {user.id}"
+        )
+        
+        # QR kod generatsiya (Overlay seal)
+        qr_img = generate_qr_seal(qr_data, is_director=False)
+        
+        # Imzoni saqlash
+        d.is_signed = True
+        d.signed_at = signed_at
+        
+        # QR kodni ImageField ga saqlash
+        qr_filename = f"qr_add_doc_{d.id}_{user.username}_{signed_at.strftime('%Y%m%d%H%M%S')}.png"
+        qr_save_buffer = BytesIO()
+        qr_img.save(qr_save_buffer, format='PNG')
+        qr_save_buffer.seek(0)
+        d.qr_code.save(qr_filename, File(qr_save_buffer), save=False)
+        
+        d.save()
+        
+        # === Hujjatga xodim QR kodini (ostiga) bosish ===
+        if d.file:
+            try:
+                is_pdf = d.file.name.lower().endswith('.pdf')
+                is_word = d.file.name.lower().endswith(('.doc', '.docx'))
                 
-            if final_buffer:
-                doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
-                doc.save()
-        except Exception as e:
-            print(f"Error generating stamped additional doc (employee only) {doc.id}: {e}")
+                final_buffer = None
+                if is_pdf:
+                    final_buffer = stamp_pdf_with_qrs(d.file, d.qr_code.path)
+                    stamped_filename = f"stamped_doc_{d.id}_employee.pdf"
+                elif is_word:
+                    final_buffer = stamp_word_with_qrs(d.file, d.qr_code.path)
+                    stamped_filename = f"stamped_doc_{d.id}_employee.docx"
+                    
+                if final_buffer:
+                    d.stamped_file.save(stamped_filename, File(final_buffer), save=False)
+                    d.save()
+            except Exception as e:
+                print(f"Error generating stamped additional doc (employee only) {d.id}: {e}")
     
     # Javob
     response_data = {
@@ -781,10 +829,7 @@ def upload_stamped_pdf(request, order_id):
         # Download QR kodi yaratish
         download_url = request.build_absolute_uri(f"/documents/download-stamped/{order.id}/")
         
-        qr = qrcode.QRCode(version=1, box_size=5, border=1)
-        qr.add_data(download_url)
-        qr.make(fit=True)
-        qr_img = qr.make_image(fill='black', back_color='white')
+        qr_img = generate_qr_seal(download_url, is_director=True)
         
         fd, qr_path = tempfile.mkstemp(suffix='.png')
         os.close(fd)
@@ -1019,10 +1064,9 @@ def download_pdf(request, order_id):
             return FileResponse(buffer, as_attachment=True, filename=filename)
         
         elif file_path.lower().endswith('.pdf'):
-            with open(file_path, 'rb') as f:
-                buffer = BytesIO(f.read())
+            final_buffer = _add_qr_overlay(request, order, file_path, temp_files)
             filename = f"hujjat_{order.number}.pdf".replace("/", "_")
-            return FileResponse(buffer, as_attachment=True, filename=filename)
+            return FileResponse(final_buffer, as_attachment=True, filename=filename)
         
         else:
             with open(file_path, 'rb') as f:
@@ -1192,10 +1236,7 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
     if order.document_type == 'application' and order.director_approved:
         try:
             download_url = request.build_absolute_uri(f"/documents/download-pdf/{order.id}/")
-            qr = qrcode.QRCode(version=1, box_size=6, border=1)
-            qr.add_data(download_url)
-            qr.make(fit=True)
-            img = qr.make_image(fill='black', back_color='white')
+            img = generate_qr_seal(download_url, is_director=True)
 
             fd, qr_path = tempfile.mkstemp(suffix='.png')
             os.close(fd)
@@ -1247,10 +1288,7 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             p_qr = cell_qr.paragraphs[0]
             p_qr.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-            qr = qrcode.QRCode(version=1, box_size=7, border=1)
-            qr.add_data(verify_url)
-            qr.make(fit=True)
-            img = qr.make_image(fill='black', back_color='white')
+            img = generate_qr_seal(verify_url, is_director=False)
 
             fd, qr_img_path = tempfile.mkstemp(suffix='.png')
             os.close(fd)
@@ -2168,119 +2206,29 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
     
     doc_obj = docx.Document(temp_word)
 
-    # --- Build a 2-column top table: left = Director QR, right = existing header paragraphs ---
+    # --- Add Director QR to the Header to preserve layout ---
     if director_qr_paths and len(director_qr_paths) > 0 and os.path.exists(director_qr_paths[0]):
-        from docx.oxml.ns import qn
-        from docx.oxml import OxmlElement
-        import copy
-
-        # How many leading paragraphs belong to the "recipient / top-right" block 
-        # We'll move the first N right-aligned / centre paragraphs into the right cell.
-        # Strategy: take the FIRST non-empty paragraph group at top (up to 8 paras) into right cell.
-        TOP_PARA_LIMIT = 8
-        body = doc_obj.element.body
-
-        # Collect the first TOP_PARA_LIMIT body-level paragraphs
-        top_paras = []
-        for child in list(body):
-            if child.tag.endswith('}p'):
-                top_paras.append(child)
-                if len(top_paras) >= TOP_PARA_LIMIT:
-                    break
-            else:
-                break  # stop at first non-paragraph (e.g., a table)
-
-        # Create a 1x2 table via raw XML so we have full control
-        tbl = OxmlElement('w:tbl')
-        # tblPr
-        tblPr = OxmlElement('w:tblPr')
-        tblStyle = OxmlElement('w:tblStyle')
-        tblStyle.set(qn('w:val'), 'TableNormal')
-        tblPr.append(tblStyle)
-        tblBorders = OxmlElement('w:tblBorders')
-        for side in ('top','left','bottom','right','insideH','insideV'):
-            el = OxmlElement(f'w:{side}')
-            el.set(qn('w:val'), 'none')
-            tblBorders.append(el)
-        tblPr.append(tblBorders)
-        # Width
-        tblW = OxmlElement('w:tblW')
-        tblW.set(qn('w:w'), '9360')  # ~16.5 cm in twips (1 inch=1440)
-        tblW.set(qn('w:type'), 'dxa')
-        tblPr.append(tblW)
-        tbl.append(tblPr)
-
-        # tblGrid
-        tblGrid = OxmlElement('w:tblGrid')
-        for w in ('2016', '7344'):  # ~3.5 cm left, ~12.8 cm right
-            gridCol = OxmlElement('w:gridCol')
-            gridCol.set(qn('w:w'), w)
-            tblGrid.append(gridCol)
-        tbl.append(tblGrid)
-
-        # Row
-        tr = OxmlElement('w:tr')
-
-        # Left cell — QR image + director name
-        tcL = OxmlElement('w:tc')
-        tcPrL = OxmlElement('w:tcPr')
-        tcWL = OxmlElement('w:tcW')
-        tcWL.set(qn('w:w'), '2016'); tcWL.set(qn('w:type'), 'dxa')
-        tcPrL.append(tcWL)
-        vAlignL = OxmlElement('w:vAlign')
-        vAlignL.set(qn('w:val'), 'top')
-        tcPrL.append(vAlignL)
-        tcL.append(tcPrL)
-
-        # Build a placeholder paragraph for the left cell (we'll write into it via python-docx later)
-        p_placeholder = OxmlElement('w:p')
-        p_placeholder.set(qn('w:rsidR'), '00000000')  # dummy rsid
-        tcL.append(p_placeholder)
-        tr.append(tcL)
-
-        # Right cell — existing top paragraphs
-        tcR = OxmlElement('w:tc')
-        tcPrR = OxmlElement('w:tcPr')
-        tcWR = OxmlElement('w:tcW')
-        tcWR.set(qn('w:w'), '7344'); tcWR.set(qn('w:type'), 'dxa')
-        tcPrR.append(tcWR)
-        vAlignR = OxmlElement('w:vAlign')
-        vAlignR.set(qn('w:val'), 'top')
-        tcPrR.append(vAlignR)
-        tcR.append(tcPrR)
-
-        # Move original header paragraphs into the right cell (deep-copy preserves formatting)
-        for orig_p in top_paras:
-            tcR.append(copy.deepcopy(orig_p))
-
-        tr.append(tcR)
-        tbl.append(tr)
-
-        # Insert the new table before the first paragraph / at body start
-        first_child = body[0] if len(body) else None
-        if first_child is not None:
-            body.insert(0, tbl)
-        else:
-            body.append(tbl)
-
-        # Remove the original top paragraphs from the body (they now live inside the table)
-        for orig_p in top_paras:
-            if orig_p in list(body):
-                body.remove(orig_p)
-
-        # Now write the QR image + label into the left cell via python-docx paragraph API
-        # Find the placeholder paragraph in the left cell
-        from docx.text.paragraph import Paragraph as DocxParagraph
-        left_cell_para = DocxParagraph(p_placeholder, doc_obj)
-        left_cell_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        r_qr = left_cell_para.add_run()
-        r_qr.add_picture(director_qr_paths[0], width=Inches(1.4))
-        r_qr.add_break()
-        r_maq = left_cell_para.add_run("Maqulladim")
-        r_maq.bold = True
-
-        # Add director name below
+        from docx.shared import Inches, Pt
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        
         try:
+            section = doc_obj.sections[0]
+            header = section.header
+            header.is_linked_to_previous = False
+            
+            if not header.paragraphs:
+                hp = header.add_paragraph()
+            else:
+                hp = header.paragraphs[0]
+                
+            hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            
+            run = hp.add_run()
+            run.add_picture(director_qr_paths[0], width=Inches(1.2))
+            
+            run_maq = hp.add_run("\nMaqulladim: ")
+            run_maq.bold = True
+            
             from users.models import CustomUser
             director = CustomUser.objects.filter(role='director').first()
             if director:
@@ -2288,9 +2236,10 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
                 mn = (getattr(director, 'middle_name', '') or '')
                 mi = mn[0].upper() + '.' if mn else ''
                 director_name = f"{fn}{mi} {director.last_name}"
-                left_cell_para.add_run(f"\n{director_name}").font.size = Pt(9)
+                hp.add_run(f"{director_name}").font.size = Pt(9)
+                
         except Exception as e:
-            print(f"Error adding director name to DOCX stamp: {e}")
+            print(f"Error adding director QR to header in DOCX stamp: {e}")
 
     # Append employee info next to one QR
     employee_data = employee_info_list if employee_info_list else []
@@ -2429,10 +2378,7 @@ def api_director_approve(request, order_id):
         
     qr_data = "\n".join(qr_data_lines)
     
-    qr = qrcode.QRCode(version=1, box_size=10, border=5)
-    qr.add_data(qr_data)
-    qr.make(fit=True)
-    img = qr.make_image(fill='black', back_color='white')
+    img = generate_qr_seal(qr_data, is_director=True)
     
     buffer = BytesIO()
     img.save(buffer, format='PNG')
@@ -2470,10 +2416,7 @@ def api_director_approve(request, order_id):
             
             # Qo'shimcha hujjat uchun yuklab olish URL-i asosida alohida QR yasash
             download_url = request.build_absolute_uri(f"/documents/download-additional-doc/{doc.id}/")
-            qr_add = qrcode.QRCode(version=1, box_size=5, border=1)
-            qr_add.add_data(download_url)
-            qr_add.make(fit=True)
-            img_add = qr_add.make_image(fill='black', back_color='white')
+            img_add = generate_qr_seal(download_url, is_director=True)
             
             fd, main_add_qr_path = tempfile.mkstemp(suffix='.png')
             os.close(fd)
