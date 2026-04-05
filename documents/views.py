@@ -732,12 +732,12 @@ def sign_additional_doc_fingerprint(request, doc_id):
         pending_docs = order.additional_docs.filter(signer=user, is_signed=False)
     else:
         pending_docs = [doc]
-        
+
     for d in pending_docs:
         # QR kod ma'lumotlari
         full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
         signed_at = datetime.now()
-        
+
         qr_data = (
             f"QO'SHIMCHA HUJJAT IMZOLANGAN\n"
             f"F.I.O: {full_name}\n"
@@ -746,50 +746,177 @@ def sign_additional_doc_fingerprint(request, doc_id):
             f"Imzolangan: {signed_at.strftime('%d.%m.%Y %H:%M:%S')}\n"
             f"ID: {user.id}"
         )
-        
-        # QR kod generatsiya (Overlay seal)
+
+        # QR kod generatsiya
         qr_img = generate_qr_seal(qr_data, is_director=False)
-        
+
         # Imzoni saqlash
         d.is_signed = True
         d.signed_at = signed_at
-        
+
         # QR kodni ImageField ga saqlash
         qr_filename = f"qr_add_doc_{d.id}_{user.username}_{signed_at.strftime('%Y%m%d%H%M%S')}.png"
         qr_save_buffer = BytesIO()
         qr_img.save(qr_save_buffer, format='PNG')
         qr_save_buffer.seek(0)
         d.qr_code.save(qr_filename, File(qr_save_buffer), save=False)
-        
+
         d.save()
-        
-        # === Hujjatga xodim QR kodini (ostiga) bosish ===
-        if d.file:
+
+        # === Hujjatga QR kodni bosish ===
+        # Direktor tasdiqlagan bo'lsa — to'liq QR stamped PDF (yuklab olish QR + xodim QR)
+        # Aks holda — faqat xodim QR ko'rsatiladi
+        orders_for_d = d.orders.all()
+        director_approved_order = orders_for_d.filter(director_approved=True).first()
+
+        if director_approved_order and d.file:
+            try:
+                _stamp_additional_doc_with_director_qr(request, d, director_approved_order)
+            except Exception as e:
+                print(f"Error generating full stamped additional doc {d.id}: {e}")
+        elif d.file:
+            # Direktor hali tasdiqlamagan — faqat xodim QR
             try:
                 is_pdf = d.file.name.lower().endswith('.pdf')
                 is_word = d.file.name.lower().endswith(('.doc', '.docx'))
-                
+
                 final_buffer = None
                 if is_pdf:
                     final_buffer = stamp_pdf_with_qrs(d.file, d.qr_code.path)
                     stamped_filename = f"stamped_doc_{d.id}_employee.pdf"
                 elif is_word:
-                    final_buffer = stamp_word_with_qrs(d.file, d.qr_code.path)
-                    stamped_filename = f"stamped_doc_{d.id}_employee.docx"
-                    
+                    # Word → PDF avval konvertatsiya
+                    import tempfile as _tempfile2
+                    temp_files_tmp2 = []
+                    try:
+                        fd_tmp2, tmp_word2 = _tempfile2.mkstemp(suffix='.docx')
+                        os.close(fd_tmp2)
+                        temp_files_tmp2.append(tmp_word2)
+                        d.file.open('rb')
+                        with open(tmp_word2, 'wb') as fw:
+                            fw.write(d.file.read())
+                        d.file.seek(0)
+                        pdf_tmp2 = _convert_docx_to_pdf(tmp_word2, temp_files_tmp2)
+                        with open(pdf_tmp2, 'rb') as f_pdf2:
+                            from io import BytesIO as _BytesIO2
+                            pdf_buf2 = _BytesIO2(f_pdf2.read())
+                        pdf_buf2.seek(0)
+                        final_buffer = stamp_pdf_with_qrs(pdf_buf2, d.qr_code.path)
+                        stamped_filename = f"stamped_doc_{d.id}_employee.pdf"
+                    finally:
+                        for tf in temp_files_tmp2:
+                            try:
+                                if os.path.exists(tf): os.remove(tf)
+                            except Exception: pass
+
                 if final_buffer:
                     d.stamped_file.save(stamped_filename, File(final_buffer), save=False)
                     d.save()
             except Exception as e:
                 print(f"Error generating stamped additional doc (employee only) {d.id}: {e}")
-    
+
     # Javob
     response_data = {
         'success': True,
         'message': 'Qo\'shimcha hujjat muvaffaqiyatli imzolandi!',
     }
-    
+
     return JsonResponse(response_data)
+
+def _stamp_additional_doc_with_director_qr(request, doc, order):
+    """
+    Helper: qo'shimcha hujjatni direktor QR kodi bilan pechat qilish.
+    Director approval paytida va xodim director tasdiqlashidan keyin imzolasa ham chaqiriladi.
+    Natija: doc.stamped_file → yuklab olinadigan QR-stamped PDF
+    """
+    import tempfile, os
+    from reportlab.lib.pagesizes import A4
+    from reportlab.pdfgen import canvas as rl_canvas
+    from PyPDF2 import PdfReader, PdfWriter
+    
+    if not doc.file:
+        return
+    
+    temp_files_doc = []
+    try:
+        is_pdf = doc.file.name.lower().endswith('.pdf')
+        is_word = doc.file.name.lower().endswith(('.doc', '.docx'))
+        
+        if not is_pdf and not is_word:
+            return
+        
+        # Yuklab olish URL asosida QR yaratish
+        download_url = request.build_absolute_uri(f"/documents/download-additional-doc/{doc.id}/")
+        import qrcode as _qrcode
+        qr_add = _qrcode.QRCode(version=1, box_size=5, border=1)
+        qr_add.add_data(download_url)
+        qr_add.make(fit=True)
+        img_add = qr_add.make_image(fill='black', back_color='white')
+        
+        fd, main_add_qr_path = tempfile.mkstemp(suffix='.png')
+        os.close(fd)
+        temp_files_doc.append(main_add_qr_path)
+        img_add.save(main_add_qr_path, format='PNG')
+        
+        employee_info = []
+        if doc.qr_code and doc.signer:
+            signer_user = doc.signer
+            full_name = f"{signer_user.last_name} {signer_user.first_name}"
+            if hasattr(signer_user, 'middle_name') and signer_user.middle_name:
+                full_name += f" {signer_user.middle_name}"
+            employee_info.append({
+                'qr_path': doc.qr_code.path if doc.qr_code else None,
+                'full_name': full_name,
+                'position': signer_user.position or '-',
+                'date': doc.signed_at.strftime('%d.%m.%Y %H:%M') if doc.signed_at else '-'
+            })
+        
+        final_buffer = None
+        
+        if is_word:
+            # Word → PDF avval konvertatsiya
+            fd2, tmp_word = tempfile.mkstemp(suffix='.docx')
+            os.close(fd2)
+            temp_files_doc.append(tmp_word)
+            doc.file.open('rb')
+            with open(tmp_word, 'wb') as fw:
+                fw.write(doc.file.read())
+            doc.file.seek(0)
+            pdf_path = _convert_docx_to_pdf(tmp_word, temp_files_doc)
+            with open(pdf_path, 'rb') as f_pdf:
+                pdf_buf = BytesIO(f_pdf.read())
+            pdf_buf.seek(0)
+            final_buffer = stamp_pdf_with_qrs(
+                original_file=pdf_buf,
+                employee_qr_path=doc.qr_code.path if doc.qr_code else None,
+                director_qr_paths=[main_add_qr_path],
+                employee_info_list=employee_info
+            )
+            stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
+        else:  # PDF
+            final_buffer = stamp_pdf_with_qrs(
+                original_file=doc.file,
+                employee_qr_path=doc.qr_code.path if doc.qr_code else None,
+                director_qr_paths=[main_add_qr_path],
+                employee_info_list=employee_info
+            )
+            stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
+        
+        if final_buffer:
+            doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)
+            doc.save()
+    except Exception as e:
+        print(f"_stamp_additional_doc_with_director_qr error for doc {doc.id}: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        for tf in temp_files_doc:
+            try:
+                if os.path.exists(tf):
+                    os.remove(tf)
+            except Exception:
+                pass
+
 
 @login_required
 def upload_stamped_pdf(request, order_id):
@@ -1314,9 +1441,15 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
                     mi = (middle_name + ' ' if middle_name else '')
                     fio = f"{last_name} {fi}{mi}".strip()
 
-                    line = f"{i}. {fio}       {position}"
-                    sig_run = p_text.add_run(line)
-                    sig_run.font.size = Pt(9.5)
+                    line_name = f"{i}. {fio}"
+                    line_pos = position
+                    # Ism va lavozim: ikkita alohida run, ora tab bilan (fixed ustun)
+                    run_name = p_text.add_run(line_name)
+                    run_name.font.size = Pt(9.5)
+                    run_tab = p_text.add_run("\t")
+                    run_tab.font.size = Pt(9.5)
+                    run_pos = p_text.add_run(line_pos)
+                    run_pos.font.size = Pt(9.5)
 
                     if i < signatures.count():
                         p_text.add_run("\n")
@@ -1998,6 +2131,10 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
             current_text_y -= 12.0
             c.setFont("Helvetica", 8)
             
+            # Ism ustuni kengligi (belgilangan): 180 pt
+            name_col_width = 180.0
+            pos_col_x = text_x + name_col_width
+            
             for i, sig in enumerate(signatures, 1):
                 user = sig.user
                 first_name = user.first_name
@@ -2005,11 +2142,10 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
                 middle_name = user.middle_name if hasattr(user, 'middle_name') else ''
                 position = user.position or '-'
                 
-                c.drawString(text_x, float(current_text_y), f"{safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}         {safe_str(position)}")
-                # current_text_y -= 10.0
-                # c.drawString(text_x + 10.0, float(current_text_y), f"Lavozim: {safe_str(position)}")
-                # current_text_y -= 10.0
-                # c.drawString(text_x + 10.0, float(current_text_y), f"Sana: {sig.signed_at.strftime('%d.%m.%Y %H:%M') if sig.signed_at else '-'}")
+                # Ism va familiya bir ustunda, lavozim ikkinchi ustunda (fixed X)
+                fio_str = f"{safe_str(last_name)} {safe_str(first_name)} {safe_str(middle_name)}".strip()
+                c.drawString(text_x, float(current_text_y), fio_str)
+                c.drawString(pos_col_x, float(current_text_y), safe_str(position))
                 current_text_y -= 15.0
         
         c.save()
@@ -2115,8 +2251,12 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         current_text_y -= 12.0
         c.setFont("Helvetica", 8)
         
+        # Belgilangan ustun kengligi: ism 180 pt, lavozim uning o'ng tomonida
+        name_col_width = 180.0
+        pos_col_x = text_x + name_col_width
         for emp in employee_data:
-            c.drawString(text_x, float(current_text_y), f"{safe_str(emp.get('full_name'))}       {safe_str(emp.get('position'))}")
+            c.drawString(text_x, float(current_text_y), safe_str(emp.get('full_name', '')))
+            c.drawString(pos_col_x, float(current_text_y), safe_str(emp.get('position', '')))
             current_text_y -= 15.0
         
     # Director / Main QR code (top left)
@@ -2328,10 +2468,14 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         for i, emp in enumerate(employee_data, 1):
             full_name = str(emp.get('full_name') or '')
             position = str(emp.get('position') or '—')
-            # date_str = str(emp.get('date') or '—')
             
-            line = f"{full_name}       {position}"
-            p_text.add_run(line).font.size = Pt(9.5)
+            # Ism va lavozim: tab bilan ajratilib fixed ustun ko'rinishi
+            run_n = p_text.add_run(full_name)
+            run_n.font.size = Pt(9.5)
+            run_t = p_text.add_run("\t")
+            run_t.font.size = Pt(9.5)
+            run_p = p_text.add_run(position)
+            run_p.font.size = Pt(9.5)
             
             if i < len(employee_data):
                 p_text.add_run("\n")
@@ -2439,7 +2583,7 @@ def api_director_approve(request, order_id):
                 })
                 
             if is_pdf:
-                # `doc.qr_code` is the employee's signature QR code, `main_add_qr_path` is the director/system QR for the document
+                # PDF: to'g'ridan-to'g'ri stamp
                 final_buffer = stamp_pdf_with_qrs(
                     original_file=doc.file, 
                     employee_qr_path=doc.qr_code.path if doc.qr_code else None, 
@@ -2448,13 +2592,26 @@ def api_director_approve(request, order_id):
                 )
                 stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
             elif is_word:
-                final_buffer = stamp_word_with_qrs(
-                    original_file=doc.file, 
+                # Word → avval PDF ga aylantirish, keyin QR stamp
+                import tempfile as _tempfile
+                fd_w, tmp_word = _tempfile.mkstemp(suffix='.docx')
+                os.close(fd_w)
+                temp_files_doc.append(tmp_word)
+                doc.file.open('rb')
+                with open(tmp_word, 'wb') as fw:
+                    fw.write(doc.file.read())
+                doc.file.seek(0)
+                pdf_converted = _convert_docx_to_pdf(tmp_word, temp_files_doc)
+                with open(pdf_converted, 'rb') as f_conv:
+                    pdf_conv_buf = BytesIO(f_conv.read())
+                pdf_conv_buf.seek(0)
+                final_buffer = stamp_pdf_with_qrs(
+                    original_file=pdf_conv_buf, 
                     employee_qr_path=doc.qr_code.path if doc.qr_code else None, 
                     director_qr_paths=[main_add_qr_path],
                     employee_info_list=employee_info
                 )
-                stamped_filename = f"stamped_doc_{doc.id}_{order.number}.docx"
+                stamped_filename = f"stamped_doc_{doc.id}_{order.number}.pdf"
                 
             if final_buffer:
                 doc.stamped_file.save(stamped_filename, File(final_buffer), save=False)

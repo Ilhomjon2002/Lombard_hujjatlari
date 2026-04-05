@@ -50,8 +50,8 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex gap-1 justify-content-end">
-                                        {% if item.order.additional_docs.all %}
-                                        {% for add_doc in item.order.additional_docs.all %}
+                                        {% if item.additional_docs_to_sign %}
+                                        {% for add_doc in item.additional_docs_to_sign %}
                                         {% if add_doc.stamped_file %}
                                         <a class="btn btn-sm btn-outline-success me-1 mb-1"
                                             href="{% url 'download_additional_doc' add_doc.id %}" target="_blank"
