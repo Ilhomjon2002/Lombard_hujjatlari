@@ -279,11 +279,20 @@ def document_detail(request, order_id):
 
     employees = CustomUser.objects.filter(role='employee')
     
+    visible_additional_docs = []
+    for doc in order.additional_docs.all():
+        if (request.user.role in ['admin', 'director'] or 
+            request.user == order.created_by or 
+            doc.signer == request.user or 
+            not doc.signer):
+            visible_additional_docs.append(doc)
+
     context = {
         'document': order,
         'signatures': signatures,
         'signature_status': signature_status,
         'employees': employees,
+        'visible_additional_docs': visible_additional_docs,
     }
     return render(request, 'documents/document_detail.html', context)
 
@@ -1395,21 +1404,23 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             # Hujjatdan keyin bitta ajratuvchi qator (yangi sahifaga o'tmasligi uchun ko'p bo'sh joy qo'shmaymiz)
             doc.add_paragraph()
 
-            # Jadval orqali yonma-yon joylashtirish (1 qator, 2 ustun)
-            table = doc.add_table(rows=1, cols=2)
+            # Jadval orqali yonma-yon joylashtirish
+            rows_count = max(1, signatures.count() if signatures.exists() else 1)
+            table = doc.add_table(rows=rows_count, cols=3)
             table.autofit = False
             
-            # Aniq o'lcham beramiz, shunda matn QR tagiga tushmaydi
             try:
                 table.columns[0].width = Inches(1.2)
-                table.columns[1].width = Inches(5.3)
+                table.columns[1].width = Inches(2.3)
+                table.columns[2].width = Inches(3.0)
             except Exception:
                 pass
             
             cell_qr = table.cell(0, 0)
-            cell_text = table.cell(0, 1)
+            if rows_count > 1:
+                cell_qr = cell_qr.merge(table.cell(rows_count - 1, 0))
+                
             cell_qr.width = Inches(1.2)
-            cell_text.width = Inches(5.3)
 
             # --- CHAP USTUN: QR KOD ---
             p_qr = cell_qr.paragraphs[0]
@@ -1426,11 +1437,9 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             run_qr.add_picture(qr_img_path, width=Inches(1.0))
 
             # --- O'NG USTUN: XODIMLAR MA'LUMOTLARI ---
-            p_text = cell_text.paragraphs[0]
-            p_text.alignment = WD_ALIGN_PARAGRAPH.LEFT
-
             if signatures.exists():
-                for i, sig in enumerate(signatures, 1):
+                for idx, sig in enumerate(signatures):
+                    i = idx + 1
                     user = sig.user
                     last_name   = user.last_name or ''
                     first_name  = user.first_name or ''
@@ -1443,17 +1452,24 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
                     line_name = f"{i}. {fio}"
                     line_pos = position
-                    # Ism va lavozim: ikkita alohida run, ora tab bilan (fixed ustun)
-                    run_name = p_text.add_run(line_name)
+                    
+                    cell_name = table.cell(idx, 1)
+                    cell_name.width = Inches(2.3)
+                    p_name = cell_name.paragraphs[0]
+                    p_name.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                    run_name = p_name.add_run(line_name)
                     run_name.font.size = Pt(9.5)
-                    run_tab = p_text.add_run("\t")
-                    run_tab.font.size = Pt(9.5)
-                    run_pos = p_text.add_run(line_pos)
+                    
+                    cell_pos = table.cell(idx, 2)
+                    cell_pos.width = Inches(3.0)
+                    p_pos = cell_pos.paragraphs[0]
+                    p_pos.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                    run_pos = p_pos.add_run(line_pos)
                     run_pos.font.size = Pt(9.5)
-
-                    if i < signatures.count():
-                        p_text.add_run("\n")
             else:
+                cell_name = table.cell(0, 1).merge(table.cell(0, 2))
+                cell_name.width = Inches(5.3)
+                p_text = cell_name.paragraphs[0]
                 no_sig = p_text.add_run("Imzolar mavjud emas")
                 no_sig.font.color.rgb = RGBColor(140, 140, 140)
 
@@ -2442,19 +2458,22 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
         # doc_obj.add_paragraph("--- Elektron Imzolar (Xodimlar) ---")
         
         # We can implement 'next to' using a simple table in Word
-        table = doc_obj.add_table(rows=1, cols=2)
+        rows_count = max(1, len(employee_data) if employee_data else 1)
+        table = doc_obj.add_table(rows=rows_count, cols=3)
         table.autofit = False
         
         try:
             table.columns[0].width = Inches(1.2)
-            table.columns[1].width = Inches(5.3)
+            table.columns[1].width = Inches(2.3)
+            table.columns[2].width = Inches(3.0)
         except Exception:
             pass
             
         cell_qr = table.cell(0, 0)
-        cell_text = table.cell(0, 1)
+        if rows_count > 1:
+            cell_qr = cell_qr.merge(table.cell(rows_count - 1, 0))
+            
         cell_qr.width = Inches(1.2)
-        cell_text.width = Inches(5.3)
         
         if bottom_qr_path and os.path.exists(bottom_qr_path):
             p_img = cell_qr.paragraphs[0]
@@ -2462,23 +2481,30 @@ def stamp_word_with_qrs(original_file, employee_qr_path, director_qr_paths=None,
             r_img = p_img.add_run()
             r_img.add_picture(bottom_qr_path, width=Inches(1.0))
             
-        p_text = cell_text.paragraphs[0]
-        p_text.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        
-        for i, emp in enumerate(employee_data, 1):
-            full_name = str(emp.get('full_name') or '')
-            position = str(emp.get('position') or '—')
-            
-            # Ism va lavozim: tab bilan ajratilib fixed ustun ko'rinishi
-            run_n = p_text.add_run(full_name)
-            run_n.font.size = Pt(9.5)
-            run_t = p_text.add_run("\t")
-            run_t.font.size = Pt(9.5)
-            run_p = p_text.add_run(position)
-            run_p.font.size = Pt(9.5)
-            
-            if i < len(employee_data):
-                p_text.add_run("\n")
+        if employee_data:
+            for idx, emp in enumerate(employee_data):
+                full_name = str(emp.get('full_name') or '')
+                position = str(emp.get('position') or '—')
+                
+                i = idx + 1
+                line_name = f"{i}. {full_name}" if len(employee_data) > 1 else full_name
+                
+                cell_name = table.cell(idx, 1)
+                cell_name.width = Inches(2.3)
+                p_name = cell_name.paragraphs[0]
+                p_name.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                run_n = p_name.add_run(line_name)
+                run_n.font.size = Pt(9.5)
+                
+                cell_pos = table.cell(idx, 2)
+                cell_pos.width = Inches(3.0)
+                p_pos = cell_pos.paragraphs[0]
+                p_pos.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                run_p = p_pos.add_run(position)
+                run_p.font.size = Pt(9.5)
+        else:
+            cell_text = table.cell(0, 1).merge(table.cell(0, 2))
+            cell_text.width = Inches(5.3)
         
     final_buffer = BytesIO()
     doc_obj.save(final_buffer)
