@@ -61,6 +61,41 @@
             </div>
             {% endfor %}
 
+            {% if additional_docs %}
+            <h5 class="fw-bold mb-3 mt-4">
+                <i class="bi bi-paperclip me-2"></i>Qo'shimcha Hujjatlar
+            </h5>
+            {% for doc in additional_docs %}
+            <div class="d-flex align-items-start mb-3 p-3 rounded {% if doc.is_signed %}bg-success bg-opacity-10 border border-success{% elif doc.signer %}bg-light{% else %}bg-secondary bg-opacity-10{% endif %}">
+                <div class="me-3 mt-1">
+                    {% if doc.is_signed %}
+                    <i class="fas fa-check-circle text-success fs-4"></i>
+                    {% elif doc.signer %}
+                    <i class="fas fa-clock text-warning fs-4"></i>
+                    {% else %}
+                    <i class="fas fa-info-circle text-secondary fs-4"></i>
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">{{ doc.name }}</div>
+                    {% if doc.signer %}
+                    <small class="text-muted">Imzolovchi: {{ doc.signer.last_name }} {{ doc.signer.first_name }} {{ doc.signer.middle_name|default:'' }}</small><br>
+                        {% if doc.is_signed %}
+                        <small class="text-success fw-semibold">
+                            <i class="fas fa-calendar-check me-1"></i>
+                            {{ doc.signed_at|date:"d.m.Y H:i:s" }}
+                        </small>
+                        {% else %}
+                        <small class="text-warning">Kutilmoqda...</small>
+                        {% endif %}
+                    {% else %}
+                    <small class="text-muted">Imzo talab qilinmaydi (Umumiy hujjat)</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
             {% if order.director_approved %}
             <div class="mt-4 p-3 bg-success bg-opacity-10 border border-success rounded text-center">
                 <i class="fas fa-award text-success fs-3"></i>

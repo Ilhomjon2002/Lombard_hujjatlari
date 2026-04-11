@@ -42,14 +42,14 @@
 
             {% if document.director_approved and document.document_type != 'application' %}
             <!-- Pechatli PDF yuklash/yuklab olish -->
+            <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadStampedModal">
+                <i class="bi bi-upload me-1"></i>Pechatli PDF yuklash
+            </button>
             {% if document.stamped_file %}
             <a href="{% url 'download_stamped_pdf' document.id %}" class="btn btn-success btn-sm">
                 <i class="bi bi-file-earmark-check me-1"></i>Pechatli PDF
             </a>
             {% endif %}
-            <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadStampedModal">
-                <i class="bi bi-upload me-1"></i>Pechatli PDF yuklash
-            </button>
             {% endif %}
         </div>
     </div>

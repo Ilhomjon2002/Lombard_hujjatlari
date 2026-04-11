@@ -743,18 +743,20 @@ def sign_additional_doc_fingerprint(request, doc_id):
         pending_docs = [doc]
 
     for d in pending_docs:
-        # QR kod ma'lumotlari
-        full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
+        # QR kod ma'lumotlari - Asosiy hujjat kabi verification link
         signed_at = datetime.now()
-
-        qr_data = (
-            f"QO'SHIMCHA HUJJAT IMZOLANGAN\n"
-            f"F.I.O: {full_name}\n"
-            f"Lavozim: {user.position or '-'}\n"
-            f"Hujjat nomi: {d.name}\n"
-            f"Imzolangan: {signed_at.strftime('%d.%m.%Y %H:%M:%S')}\n"
-            f"ID: {user.id}"
-        )
+        order = d.orders.first()
+        if order:
+            verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
+            qr_data = verify_url
+        else:
+            full_name = f"{user.last_name} {user.first_name} {user.middle_name}".strip()
+            qr_data = (
+                f"QO'SHIMCHA HUJJAT IMZOLANGAN\n"
+                f"F.I.O: {full_name}\n"
+                f"Hujjat nomi: {d.name}\n"
+                f"Imzolangan: {signed_at.strftime('%d.%m.%Y %H:%M:%S')}"
+            )
 
         # QR kod generatsiya
         qr_img = generate_qr_seal(qr_data, is_director=False)
@@ -1151,12 +1153,14 @@ def verify_document(request, order_id):
     signatures = order.signatures.all().order_by('order_number')
     signed_count = signatures.filter(signed=True).count()
     total_count = signatures.count()
+    additional_docs = order.additional_docs.all()
     
     return render(request, 'documents/verify_document.html', {
         'order': order,
         'signatures': signatures,
         'signed_count': signed_count,
         'total_count': total_count,
+        'additional_docs': additional_docs,
     })
 
 
@@ -2132,20 +2136,22 @@ def _add_qr_overlay(request, order, pdf_path, temp_files):
         # Draw employee info next to the bottom QR
         text_x = left_x + bottom_qr_size + 15.0
         current_text_y = bottom_y + bottom_qr_size - 10.0
-        c.setFont("Helvetica", 8)
+        font_regular = "Arial" if _font_registered else "Helvetica"
+        font_bold = "Arial" if _font_registered else "Helvetica-Bold"
+        c.setFont(font_regular, 8)
         
         def safe_str(s):
-            return str(s or '').encode('latin-1', 'replace').decode('latin-1')
+            return str(s or '')
             
         # if order.director_approved and order.director_approved_at:
         #     c.drawString(text_x, float(current_text_y), f"Direktor tasdiqladi: {order.director_approved_at.strftime('%d.%m.%Y %H:%M')}")
         #     current_text_y -= 15.0
             
         if signatures.exists():
-            c.setFont("Helvetica-Bold", 8)
+            c.setFont(font_bold, 8)
             c.drawString(text_x, float(current_text_y), "Elektron imzolar (Xodimlar):")
             current_text_y -= 12.0
-            c.setFont("Helvetica", 8)
+            c.setFont(font_regular, 8)
             
             # Ism ustuni kengligi (belgilangan): 180 pt
             name_col_width = 180.0
@@ -2260,12 +2266,15 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
     current_text_y = y_pos_emp + qr_size - 10.0
     
     def safe_str(s):
-        return str(s or '').encode('latin-1', 'replace').decode('latin-1')
+        return str(s or '')
         
+    font_regular = "Arial" if _font_registered else "Helvetica"
+    font_bold = "Arial" if _font_registered else "Helvetica-Bold"
+    
     if employee_data:
-        c.setFont("Helvetica-Bold", 8)
+        c.setFont(font_bold, 8)
         current_text_y -= 12.0
-        c.setFont("Helvetica", 8)
+        c.setFont(font_regular, 8)
         
         # Belgilangan ustun kengligi: ism 180 pt, lavozim uning o'ng tomonida
         name_col_width = 180.0
