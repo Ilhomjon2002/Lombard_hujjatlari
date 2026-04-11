@@ -49,7 +49,7 @@ class AdditionalDocumentTemplate(models.Model):
 
 class AdditionalDocument(models.Model):
     name = models.CharField(max_length=255, verbose_name="Hujjat nomi")
-    file = models.FileField(upload_to='additional_docs/%Y/%m/', null=True, blank=True, verbose_name="Fayl")
+    file = models.FileField(upload_to='additional_docs/%Y/%m/', max_length=500, null=True, blank=True, verbose_name="Fayl")
     branch = models.ForeignKey(
         'users.Branch',
         on_delete=models.CASCADE,
@@ -71,8 +71,8 @@ class AdditionalDocument(models.Model):
     )
     is_signed = models.BooleanField(default=False, verbose_name="Imzolandi")
     signed_at = models.DateTimeField(null=True, blank=True, verbose_name="Imzolangan vaqt")
-    qr_code = models.ImageField(upload_to='additional_docs/qr/%Y/%m/', null=True, blank=True, verbose_name="QR kod")
-    stamped_file = models.FileField(upload_to='additional_docs/stamped/%Y/%m/', null=True, blank=True, verbose_name="Pechatli PDF")
+    qr_code = models.ImageField(upload_to='additional_docs/qr/%Y/%m/', max_length=500, null=True, blank=True, verbose_name="QR kod")
+    stamped_file = models.FileField(upload_to='additional_docs/stamped/%Y/%m/', max_length=500, null=True, blank=True, verbose_name="Pechatli PDF")
     
     class Meta:
         verbose_name = "Qo'shimcha hujjat"
@@ -145,6 +145,7 @@ class Order(models.Model):
     
     file = models.FileField(
         upload_to='orders/files/%Y/%m/',
+        max_length=500,
         null=True,
         blank=True,
         verbose_name="Ilova qilingan fayl (PDF va boshq.)"
@@ -165,8 +166,8 @@ class Order(models.Model):
     # Yangi maydonlar: Direktor tasdig'i va umumiy QR kod
     director_approved = models.BooleanField(default=False, verbose_name="Direktor tasdiqladi")
     director_approved_at = models.DateTimeField(null=True, blank=True, verbose_name="Direktor tasdiqlagan vaqt")
-    final_qr_code = models.ImageField(upload_to='orders/final_qr/%Y/%m/', null=True, blank=True, verbose_name="Umumiy QR kod")
-    stamped_file = models.FileField(upload_to='orders/stamped/%Y/%m/', null=True, blank=True, verbose_name="Pechatli PDF")
+    final_qr_code = models.ImageField(upload_to='orders/final_qr/%Y/%m/', max_length=500, null=True, blank=True, verbose_name="Umumiy QR kod")
+    stamped_file = models.FileField(upload_to='orders/stamped/%Y/%m/', max_length=500, null=True, blank=True, verbose_name="Pechatli PDF")
 
     additional_docs = models.ManyToManyField(
         'AdditionalDocument', 
@@ -270,8 +271,8 @@ class OrderSignature(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='signatures')
     user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='order_signatures')
     order_number = models.PositiveIntegerField(verbose_name='Imzo tartibi')
-    signature_image = models.ImageField(upload_to='order_signatures/%Y/%m/%d/', null=True, blank=True)
-    qr_code = models.ImageField(upload_to='qr_codes/%Y/%m/%d/', null=True, blank=True)
+    signature_image = models.ImageField(upload_to='order_signatures/%Y/%m/%d/', max_length=500, null=True, blank=True)
+    qr_code = models.ImageField(upload_to='qr_codes/%Y/%m/%d/', max_length=500, null=True, blank=True)
     signed = models.BooleanField(default=False, verbose_name='Imzolandi')
     signed_at = models.DateTimeField(null=True, blank=True, verbose_name='Imzolangan vaqt')
     # comment = models.TextField(blank=True, verbose_name='Izoh')
