@@ -14,7 +14,7 @@
         <div>
             <h2 class="mb-1">
                 <i class="bi bi-people-fill text-primary me-2"></i>
-                {{ branch.name }} filialidagi xodimlar
+                {{ branch.name }} xodimlar
             </h2>
             <p class="text-muted mb-0">
                 Jami: <strong>{{ employees.count }}</strong> nafar xodim
@@ -189,7 +189,7 @@
     {% else %}
     <div class="alert alert-info text-center py-5">
         <i class="bi bi-people fs-1 d-block mb-3"></i>
-        Hozircha {{ branch.name }} filialida xodimlar mavjud emas.
+        Hozircha {{ branch.name }}da xodimlar mavjud emas.
         {% if request.user.role == 'admin' %}
         <br><br>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">

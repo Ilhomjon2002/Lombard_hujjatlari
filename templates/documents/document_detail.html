@@ -30,25 +30,27 @@
             </a>
             {% endif %}
 
-            <a href="{% url 'download_pdf' document.id %}" class="btn btn-outline-danger btn-sm" id="pdf-download-btn"
-                onclick="startPdfDownload(event, this)">
+            <a href="{% url 'download_pdf' document.id %}" target="_blank" class="btn btn-outline-danger btn-sm" id="pdf-download-btn">
                 <i class="bi bi-file-pdf me-1"></i>
                 <span class="btn-text">PDF yuklab olish</span>
-                <span class="spinner-border spinner-border-sm d-none ms-1" role="status" id="pdf-spinner"></span>
             </a>
-            <a href="{% url 'download_docx' document.id %}" class="btn btn-outline-primary btn-sm">
+            {% if request.user.role != 'employee' %}
+            <a href="{% url 'download_docx' document.id %}" target="_blank" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-file-earmark-word me-1"></i>DOCX yuklab olish
             </a>
+            {% endif %}
 
             {% if document.director_approved and document.document_type != 'application' %}
+            {% if request.user.role != 'employee' %}
             <!-- Pechatli PDF yuklash/yuklab olish -->
             <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadStampedModal">
                 <i class="bi bi-upload me-1"></i>Pechatli PDF yuklash
             </button>
             {% if document.stamped_file %}
-            <a href="{% url 'download_stamped_pdf' document.id %}" class="btn btn-success btn-sm">
+            <a href="{% url 'download_stamped_pdf' document.id %}" target="_blank" class="btn btn-success btn-sm">
                 <i class="bi bi-file-earmark-check me-1"></i>Pechatli PDF
             </a>
+            {% endif %}
             {% endif %}
             {% endif %}
         </div>
@@ -456,61 +458,6 @@
 {% load static %}
 <script src="{% static 'js/fingerprint-scanner.js' %}"></script>
 <script>
-    function startPdfDownload(event, btn) {
-        event.preventDefault();
-        const url = btn.href;
-        const spinner = btn.querySelector('#pdf-spinner');
-        const btnText = btn.querySelector('.btn-text');
-
-        // Loading holati
-        spinner.classList.remove('d-none');
-        btnText.textContent = 'Yuklanmoqda...';
-        btn.classList.add('disabled');
-        btn.style.pointerEvents = 'none';
-
-        // Loading overlay
-        const overlay = document.createElement('div');
-        overlay.id = 'pdf-loading-overlay';
-        overlay.innerHTML = `
-        <div style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9999;
-            display:flex;align-items:center;justify-content:center;">
-            <div style="background:#fff;border-radius:16px;padding:40px 50px;text-align:center;
-                box-shadow:0 10px 40px rgba(0,0,0,0.2);">
-                <div class="spinner-border text-danger mb-3" style="width:3rem;height:3rem;" role="status"></div>
-                <h5 class="mb-1">PDF tayyorlanmoqda...</h5>
-                <p class="text-muted mb-0">Iltimos kuting, bu bir necha soniya davom etadi</p>
-            </div>
-        </div>`;
-        document.body.appendChild(overlay);
-
-        // Fetch orqali yuklab olish
-        fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('PDF yaratishda xatolik');
-                return response.blob();
-            })
-            .then(blob => {
-                // PDF faylni yuklab olish
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'document.pdf';
-                a.click();
-                URL.revokeObjectURL(a.href);
-            })
-            .catch(error => {
-                alert('PDF yaratishda xatolik: ' + error.message);
-            })
-            .finally(() => {
-                // Holatni qaytarish
-                spinner.classList.add('d-none');
-                btnText.textContent = 'PDF yuklab olish';
-                btn.classList.remove('disabled');
-                btn.style.pointerEvents = '';
-                const ov = document.getElementById('pdf-loading-overlay');
-                if (ov) ov.remove();
-            });
-    }
-
     $(document).ready(function () {
         let currentAddDocId = null;
 
