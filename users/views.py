@@ -108,17 +108,18 @@ def dashboard(request):
     
     elif user.role == 'director':
         # Director dashboard
-        all_orders = Order.objects.all().select_related('branch', 'created_by').order_by('-created_at')
+        director_branches = user.branch.all()
+        all_orders = Order.objects.filter(branch__in=director_branches).select_related('branch', 'created_by').order_by('-created_at')
         
-        pending_count = Order.objects.filter(status__in=['pending', 'partial']).count()
-        completed_count = Order.objects.filter(status='completed').count()
-        total_count = Order.objects.count()
+        pending_count = Order.objects.filter(branch__in=director_branches, status__in=['pending', 'partial']).count()
+        completed_count = Order.objects.filter(branch__in=director_branches, status='completed').count()
+        total_count = Order.objects.filter(branch__in=director_branches).count()
         
         # Director o'zi imzolashi kerak bo'lgan hujjatlar
         pending_orders_qs = Order.objects.filter(
             Q(signatures__user=user, signatures__signed=False) |
             Q(additional_docs__signer=user, additional_docs__is_signed=False)
-        ).filter(status__in=['pending', 'partial']).distinct().select_related('branch').order_by('-created_at')
+        ).filter(branch__in=director_branches, status__in=['pending', 'partial']).distinct().select_related('branch').order_by('-created_at')
 
         my_pending = []
         for order in pending_orders_qs:

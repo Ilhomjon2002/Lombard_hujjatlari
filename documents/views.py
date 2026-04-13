@@ -51,6 +51,10 @@ def branch_documents(request, branch_id):
     if request.user.role not in ['admin', 'director']:
         messages.error(request, "Ruxsat yo'q")
         return redirect('dashboard')
+        
+    if request.user.role == 'director' and not request.user.branch.filter(id=branch_id).exists():
+        messages.error(request, "Faqat o'zingizga biriktirilgan filial hujjatlarini ko'rishingiz mumkin")
+        return redirect('dashboard')
 
     branch = get_object_or_404(Branch, id=branch_id)
 
@@ -255,7 +259,7 @@ def document_detail(request, order_id):
 
     can_view = (
         request.user.role == 'admin' or
-        request.user.role == 'director' or
+        (request.user.role == 'director' and request.user.branch.filter(id=order.branch_id).exists()) or
         request.user == order.created_by or
         order.signatures.filter(user=request.user).exists()
     )
@@ -1405,8 +1409,11 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
         if order.director_approved:
             verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
 
-            # Hujjatdan keyin bitta ajratuvchi qator (yangi sahifaga o'tmasligi uchun ko'p bo'sh joy qo'shmaymiz)
-            doc.add_paragraph()
+            # Hujjatdan keyin bitta ajratuvchi qator (kichik bo'sh joy)
+            p_sep = doc.add_paragraph()
+            p_sep.paragraph_format.space_before = Pt(0)
+            p_sep.paragraph_format.space_after = Pt(2)
+            p_sep.paragraph_format.keep_with_next = False
 
             # Jadval orqali yonma-yon joylashtirish
             rows_count = max(1, signatures.count() if signatures.exists() else 1)
@@ -1421,9 +1428,10 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
                 pass
             
             cell_qr = table.cell(0, 0)
-            if rows_count > 1:
-                cell_qr = cell_qr.merge(table.cell(rows_count - 1, 0))
-                
+            # cell_qr ni birlashtirish (merge) olib tashlandi.
+            # Sababi: vertikal merge bo'lgan kataklarni Word sahifalarga bo'la olmaydi
+            # va shuning uchun butun jadvalni keyingi sahifaga ko'chirib yuboradi.
+            
             cell_qr.width = Inches(1.2)
 
             # --- CHAP USTUN: QR KOD ---
@@ -2207,6 +2215,10 @@ def director_approve_page(request, order_id):
     if request.user.role != 'director':
         messages.error(request, "Faqat direktor tasdiqlashi mumkin.")
         return redirect('dashboard')
+        
+    if not request.user.branch.filter(id=order.branch_id).exists():
+        messages.error(request, "Faqat o'zingizga biriktirilgan filial hujjatlarini tasdiqlay olasiz.")
+        return redirect('dashboard')
     
     if not order.is_fully_signed():
         messages.error(request, "Barcha xodimlar imzolab bo'lmagan.")
@@ -2533,6 +2545,9 @@ def api_director_approve(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     if request.user.role != 'director':
         return JsonResponse({'error': "Ruxsat yo'q"}, status=403)
+        
+    if not request.user.branch.filter(id=order.branch_id).exists():
+        return JsonResponse({'error': "O'z filialingizga tegishli bo'lmagan hujjatni tasdiqlay olmaysiz"}, status=403)
         
     if not order.is_fully_signed():
         return JsonResponse({'error': "Barcha xodimlar imzolamagan"}, status=400)
