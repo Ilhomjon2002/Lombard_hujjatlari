@@ -1404,7 +1404,7 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
 
     # === 2. PASTKI QISM: Tasdiqlash QR + imzolovchilar ro'yxati ===
     try:
-        signatures = order.signatures.filter(signed=True).order_by('order_number')
+        signatures = order.signatures.filter(signed=True).order_by('order_number', 'id')
 
         if order.director_approved:
             verify_url = request.build_absolute_uri(f"/documents/verify/{order.id}/")
@@ -1415,40 +1415,41 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
             p_sep.paragraph_format.space_after = Pt(2)
             p_sep.paragraph_format.keep_with_next = False
 
-            # Jadval orqali yonma-yon joylashtirish
-            rows_count = max(1, signatures.count() if signatures.exists() else 1)
-            table = doc.add_table(rows=rows_count, cols=3)
+            # Jadval orqali yonma-yon joylashtirish - ENDI FAQAT BITTA QATOR (1 row, 2 columns)
+            # Bu Word sahifa almashishida eng barqaror usul.
+            table = doc.add_table(rows=1, cols=2)
             table.autofit = False
             
-            try:
-                table.columns[0].width = Inches(1.2)
-                table.columns[1].width = Inches(2.3)
-                table.columns[2].width = Inches(3.0)
-            except Exception:
-                pass
+            # Ustun kengliklarini sozlash
+            table.columns[0].width = Inches(1.1)
+            table.columns[1].width = Inches(5.4)
             
-            cell_qr = table.cell(0, 0)
-            # cell_qr ni birlashtirish (merge) olib tashlandi.
-            # Sababi: vertikal merge bo'lgan kataklarni Word sahifalarga bo'la olmaydi
-            # va shuning uchun butun jadvalni keyingi sahifaga ko'chirib yuboradi.
-            
-            cell_qr.width = Inches(1.2)
-
             # --- CHAP USTUN: QR KOD ---
+            cell_qr = table.cell(0, 0)
             p_qr = cell_qr.paragraphs[0]
             p_qr.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p_qr.paragraph_format.space_after = Pt(0)
 
             img = generate_qr_seal(verify_url, is_director=False)
-
             fd, qr_img_path = tempfile.mkstemp(suffix='.png')
             os.close(fd)
             temp_files.append(qr_img_path)
             img.save(qr_img_path, format='PNG')
 
             run_qr = p_qr.add_run()
-            run_qr.add_picture(qr_img_path, width=Inches(1.0))
+            run_qr.add_picture(qr_img_path, width=Inches(0.9))
 
             # --- O'NG USTUN: XODIMLAR MA'LUMOTLARI ---
+            cell_info = table.cell(0, 1)
+            # Katak ichidagi padding/spacing'ni kamaytiramiz
+            cell_info.vertical_alignment = 1 # CENTER (0-top, 1-center, 2-bottom ammo docx da enum ishlatgan ma'qul)
+            # Aslida cell_info.vertical_alignment = WD_ALIGN_VERTICAL.CENTER bo'lishi kerak, 
+            # ammo docx.enum.table import qilish kerak. 1 - bu center.
+            
+            p_info = cell_info.paragraphs[0]
+            p_info.paragraph_format.space_before = Pt(0)
+            p_info.paragraph_format.line_spacing = 1.15
+
             if signatures.exists():
                 for idx, sig in enumerate(signatures):
                     i = idx + 1
@@ -1462,27 +1463,14 @@ def _embed_qr_in_docx(request, order, docx_path, temp_files):
                     mi = (middle_name + ' ' if middle_name else '')
                     fio = f"{last_name} {fi}{mi}".strip()
 
-                    line_name = f"{i}. {fio}"
-                    line_pos = position
+                    # Barcha xodimlarni bitta katakka list shaklida yozamiz
+                    if idx > 0:
+                        p_info.add_run('\n')
                     
-                    cell_name = table.cell(idx, 1)
-                    cell_name.width = Inches(2.3)
-                    p_name = cell_name.paragraphs[0]
-                    p_name.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                    run_name = p_name.add_run(line_name)
-                    run_name.font.size = Pt(9.5)
-                    
-                    cell_pos = table.cell(idx, 2)
-                    cell_pos.width = Inches(3.0)
-                    p_pos = cell_pos.paragraphs[0]
-                    p_pos.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                    run_pos = p_pos.add_run(line_pos)
-                    run_pos.font.size = Pt(9.5)
+                    run_line = p_info.add_run(f"{i}. {fio} — {position}")
+                    run_line.font.size = Pt(9.5)
             else:
-                cell_name = table.cell(0, 1).merge(table.cell(0, 2))
-                cell_name.width = Inches(5.3)
-                p_text = cell_name.paragraphs[0]
-                no_sig = p_text.add_run("Imzolar mavjud emas")
+                no_sig = p_info.add_run("Imzolar mavjud emas")
                 no_sig.font.color.rgb = RGBColor(140, 140, 140)
 
     except Exception as e:
