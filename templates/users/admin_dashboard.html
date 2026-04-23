@@ -5,104 +5,108 @@
 
 {% block extra_css %}
 <style>
-    .stat-card-link {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        height: 100%;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-        cursor: pointer;
+    .stat-card {
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
     }
-
-    .stat-card-link:hover {
-        transform: translateY(-3px);
-        color: inherit;
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 100px;
+        height: 100px;
+        background: currentColor;
+        opacity: 0.05;
+        border-radius: 50%;
+        z-index: -1;
     }
-
-    .stat-card-link:hover .card {
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
-        border-color: var(--primary-color) !important;
+    .stat-value {
+        font-family: 'Outfit', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        margin: 8px 0 4px;
+        color: var(--text-main);
     }
-
-    .stat-card-link .card {
-        transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    .stat-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-
-    .stat-card-link.active-card .card {
-        border-color: var(--primary-color) !important;
-        border-width: 2px;
-    }
-
-    .detail-panel {
-        max-height: 45vh;
-        overflow-y: auto;
+    .stat-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 12px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row g-2 mb-2">
-    <!-- Stats Cards -->
+<div class="row g-4 mb-4">
     <div class="col-md-3">
-        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelAll" aria-expanded="false">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
-                    <i class="fas fa-file-alt text-secondary mb-1" style="font-size: 22px;"></i>
-                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ document_total }}</h2>
-                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Jami
-                        Buyruqlar</p>
+        <div class="card h-100 border-0 cursor-pointer" data-bs-toggle="collapse" data-bs-target="#panelAll">
+            <div class="stat-card text-primary">
+                <div class="stat-icon-box bg-primary-soft">
+                    <i class="fas fa-file-alt"></i>
                 </div>
+                <div class="stat-label">Jami Buyruqlar</div>
+                <div class="stat-value">{{ document_total }}</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelPending" aria-expanded="false">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
-                    <i class="fas fa-clock text-warning mb-1" style="font-size: 22px;"></i>
-                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ document_pending }}</h2>
-                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
-                        Kutilayotgan</p>
+        <div class="card h-100 border-0 cursor-pointer" data-bs-toggle="collapse" data-bs-target="#panelPending">
+            <div class="stat-card text-warning">
+                <div class="stat-icon-box" style="background-color: #fef3c7;">
+                    <i class="fas fa-clock"></i>
                 </div>
+                <div class="stat-label">Kutilayotgan</div>
+                <div class="stat-value">{{ document_pending }}</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelSigned" aria-expanded="false">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
-                    <i class="fas fa-check-circle text-success mb-1" style="font-size: 22px;"></i>
-                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ document_signed }}</h2>
-                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
-                        Imzolangan</p>
+        <div class="card h-100 border-0 cursor-pointer" data-bs-toggle="collapse" data-bs-target="#panelSigned">
+            <div class="stat-card text-success">
+                <div class="stat-icon-box" style="background-color: #dcfce7;">
+                    <i class="fas fa-check-circle"></i>
                 </div>
+                <div class="stat-label">Imzolangan</div>
+                <div class="stat-value">{{ document_signed }}</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card-link" data-bs-toggle="collapse" data-bs-target="#panelBranches" aria-expanded="false">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column justify-content-center align-items-center py-3">
-                    <i class="fas fa-building text-primary mb-1" style="font-size: 22px;"></i>
-                    <h2 class="display-6 fw-bold mb-0 text-dark">{{ branches.count }}</h2>
-                    <p class="text-muted mb-0 small text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
-                        Lombardlar</p>
+        <div class="card h-100 border-0 cursor-pointer" data-bs-toggle="collapse" data-bs-target="#panelBranches">
+            <div class="stat-card text-info">
+                <div class="stat-icon-box" style="background-color: #e0f2fe;">
+                    <i class="fas fa-building"></i>
                 </div>
+                <div class="stat-label">Lombardlar</div>
+                <div class="stat-value">{{ branches.count }}</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Expandable Detail Panels -->
 <div id="detailPanels">
-
-    <!-- All Orders Panel -->
     <div class="collapse" id="panelAll" data-bs-parent="#detailPanels">
-        <div class="card shadow-sm border-0 mb-2">
-            <div class="card-header bg-white py-2">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-file-alt text-secondary me-2"></i>Barcha Buyruqlar ({{ document_total }})</h6>
+        <div class="card border-0 mb-4 overflow-hidden">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list text-primary me-2"></i>Barcha Buyruqlar
+                </h5>
             </div>
-            <div class="card-body p-0 detail-panel">
+            <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover table-sm mb-0">
                         <thead class="table-light">

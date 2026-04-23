@@ -1,18 +1,37 @@
-{% extends 'base.html' %}
-
-{% block title %}Ishchi Bosh sahifasi - HAT{% endblock %}
-{% block header_title %}Ishchi Bosh sahifasi{% endblock %}
+{% block extra_css %}
+<style>
+    .notification-item {
+        transition: var(--transition);
+        border-left: 3px solid transparent;
+    }
+    .notification-item.unread {
+        background-color: var(--primary-soft);
+        border-left-color: var(--primary);
+    }
+    .notification-item:hover {
+        background-color: #f8fafc;
+    }
+    .list-group-item {
+        padding: 16px 20px;
+        border-color: #f1f5f9;
+        border-radius: 0 !important;
+    }
+    .list-group-item:first-child { border-top: none; }
+    .list-group-item:last-child { border-bottom: none; }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row g-4">
     <!-- Pending Signatures -->
-    <div class="col-md-8 mb-4 mb-md-0">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
-                <h5 class="mb-0 fw-bold text-primary"><i class="fas fa-file-signature me-2"></i>Imzolash Kerak Bo'lgan
-                    Buyruqlar</h5>
+    <div class="col-lg-8">
+        <div class="card h-100 border-0">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-file-signature text-primary me-2"></i>Imzolash Kerak Bo'lgan Buyruqlar
+                </h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if pending_items %}
                 <div class="table-responsive px-2 pb-2">
                     <table class="table table-hover align-middle">

@@ -7,63 +7,44 @@
 
 {% block content %}
 
-<div class="container-fluid py-4">
-
-    <!-- Asosiy sarlavha -->
-    <div class="mb-4">
-        <h2 class="mb-1">{{ branch.name }} hujjatlari</h2>
-        <p class="text-muted mb-0">Jami: {{ documents.count }} ta hujjat (filtrlangan: {{ documents|length }})</p>
+{% block content %}
+<div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+        <h2 class="mb-1">{{ branch.name }}</h2>
+        <div class="text-muted">
+            <i class="fas fa-file-alt me-1"></i> {{ documents.count }} ta hujjat
+        </div>
     </div>
+    
+    <div class="dropdown">
+        <button class="btn btn-primary d-flex align-items-center gap-2" type="button" id="newDocumentDropdown" data-bs-toggle="dropdown">
+            <i class="fas fa-plus"></i> Yangi hujjat
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2" style="border-radius: 12px;">
+            <li><a class="dropdown-item rounded-2 py-2" href="{% url 'create_order' %}?type=internal">
+                <i class="fas fa-exchange-alt me-2 text-success"></i> Ichki / Chiqim (I/CH)
+            </a></li>
+            <li><a class="dropdown-item rounded-2 py-2" href="{% url 'create_order' %}?type=external">
+                <i class="fas fa-external-link-alt me-2 text-info"></i> SH/T (Shartnoma/Talab)
+            </a></li>
+        </ul>
+    </div>
+</div>
 
-    <!-- Tabs (Menyu) -->
-    <ul class="nav nav-tabs nav-fill mb-4 flex-nowrap" id="branchTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a class="nav-link {% if active_tab == 'documents' or not active_tab %}active{% endif %}"
-                href="{% url 'branch_documents' branch.id %}?tab=documents" role="tab">
-                <i class="fa fa-file-earmark-text me-1"></i> Hujjatlar
+<div class="card border-0 mb-4">
+    <div class="card-body p-0">
+        <div class="d-flex border-bottom px-4">
+            <a class="py-3 me-4 text-decoration-none border-bottom border-2 {% if active_tab == 'documents' or not active_tab %}border-primary text-primary fw-bold{% else %}border-transparent text-muted{% endif %}"
+               href="{% url 'branch_documents' branch.id %}?tab=documents">
+                <i class="fas fa-file-alt me-2"></i>Hujjatlar
             </a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link {% if active_tab == 'employees' %}active{% endif %}"
-                href="{% url 'branch_employees' branch.id %}?tab=employees" role="tab">
-                <i class="fa fa-people me-1"></i> Ishchilar
+            <a class="py-3 text-decoration-none border-bottom border-2 {% if active_tab == 'employees' %}border-primary text-primary fw-bold{% else %}border-transparent text-muted{% endif %}"
+               href="{% url 'branch_employees' branch.id %}?tab=employees">
+                <i class="fas fa-users me-2"></i>Ishchilar
             </a>
-        </li>
-        <!-- <li class="nav-item" role="presentation">
-            <a class="nav-link disabled" href="#" tabindex="-1">
-                <i class="bi bi-graph-up me-1"></i> Statistika
-            </a>
-        </li> -->
-        <li class="nav-item ms-auto">
-            <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center gap-2" type="button"
-                    id="newDocumentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-plus-lg"></i>
-                    Yangi hujjat
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="newDocumentDropdown">
-                    <li>
-                        <a class="dropdown-item" href="{% url 'create_order' %}?type=internal">
-                            <i class="fa fa-arrow-left-right me-2 text-success"></i> Ichki / Chiqim (I/CH)
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{% url 'create_order' %}?type=external">
-                            <i class="fa fa-arrow-right-square me-2 text-info"></i> SH/T (Shartnoma/Talab)
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-muted" href="#">
-                            <i class="fa fa-file-earmark-plus me-2"></i> Boshqa tur...
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-    </ul>
+        </div>
+    </div>
+</div>
 
     <!-- Hujjatlar bo'limi (faqat documents tab faol bo'lganda ko'rinadi) -->
     {% if active_tab == 'documents' or not active_tab %}
