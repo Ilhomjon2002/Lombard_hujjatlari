@@ -44,7 +44,9 @@
                 </a></li>
                 <li><a class="dropdown-item rounded-3 py-2 d-flex align-items-center justify-content-between" href="{% url 'notifications' %}">
                     <span><i class="fas fa-bell me-2 text-warning"></i>Bildirishnomalar</span>
-                    <span class="badge bg-danger rounded-pill" style="font-size: 10px;">{{ user.notifications.filter.read=False.count }}</span>
+                    {% if user.unread_notifications_count > 0 %}
+                    <span class="badge bg-danger rounded-pill" style="font-size: 10px;">{{ user.unread_notifications_count }}</span>
+                    {% endif %}
                 </a></li>
                 <li><hr class="dropdown-divider my-2"></li>
                 <li><a class="dropdown-item rounded-3 py-2 text-danger" href="{% url 'logout' %}">

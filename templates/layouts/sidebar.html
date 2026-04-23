@@ -39,11 +39,9 @@
                 <a href="{% url 'notifications' %}" class="nav-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
                     <i class="fas fa-bell"></i>
                     <span>Bildirishnomalar</span>
-                    {% with unread_count=user.notifications.filter.read=False.count %}
-                        {% if unread_count > 0 %}
-                            <span class="ms-auto badge bg-danger rounded-pill" style="font-size: 10px;">{{ unread_count }}</span>
-                        {% endif %}
-                    {% endwith %}
+                    {% if user.unread_notifications_count > 0 %}
+                        <span class="ms-auto badge bg-danger rounded-pill" style="font-size: 10px;">{{ user.unread_notifications_count }}</span>
+                    {% endif %}
                 </a>
             {% endif %}
 

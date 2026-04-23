@@ -62,6 +62,10 @@ class CustomUser(AbstractUser):
         parts = [self.last_name, self.first_name, self.middle_name]
         return ' '.join(p for p in parts if p)
 
+    @property
+    def unread_notifications_count(self):
+        return self.notifications.filter(read=False).count()
+
 
 class FingerprintCredential(models.Model):
     """Store WebAuthn credential data for fingerprint authentication"""
