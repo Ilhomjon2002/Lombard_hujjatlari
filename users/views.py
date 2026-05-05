@@ -989,8 +989,7 @@ def import_employees_excel(request):
                 branch_name_display = '—'
                 if org_name:
                     branch, created = Branch.objects.get_or_create(
-                        name=org_name,
-                        defaults={'address': '', 'phone': ''}
+                        name=org_name
                     )
                     user.branch.add(branch)
                     branch_name_display = branch.name

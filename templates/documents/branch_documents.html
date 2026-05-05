@@ -166,53 +166,6 @@
                                         <i class="fa fa-trash"></i>
                                     </button>
 
-
-                                    <div class="modal fade" id="deleteModal{{ doc.id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title text-danger">
-                                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                                        Buyruqni o'chirish
-                                                    </h5>
-                                                    <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"></button>
-                                                </div>
-
-                                                <div class="modal-body text-center">
-
-                                                    <p class="mb-3">
-                                                        <strong>{{ doc.number }} - {{ doc.title }}</strong>
-                                                    </p>
-
-                                                    <p class="text-muted">
-                                                        Ushbu harakatni ortga qaytarib bo'lmaydi.
-                                                        Barcha tegishli hujjatlar va imzolar ham o‘chirilishi mumkin.
-                                                    </p>
-
-                                                </div>
-
-                                                <div class="modal-footer justify-content-center">
-
-                                                    <button class="btn btn-light border" data-bs-dismiss="modal">
-                                                        Bekor qilish
-                                                    </button>
-
-                                                    <form method="POST" action="{% url 'delete_order' doc.id %}">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="btn btn-danger">
-                                                            <i class="fa fa-trash me-1"></i>
-                                                            Ha, o'chirilsin
-                                                        </button>
-                                                    </form>
-
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     {% endif %}
                                 </td>
                             </tr>
@@ -250,6 +203,47 @@
         {% endif %}
 
     </div>
+
+    <!-- Modals -->
+    {% for doc in documents %}
+    {% if request.user == doc.created_by or request.user.role == 'admin' %}
+    <div class="modal fade" id="deleteModal{{ doc.id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Buyruqni o'chirish
+                    </h5>
+                    <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-3">
+                        <strong>{{ doc.number }} - {{ doc.title }}</strong>
+                    </p>
+                    <p class="text-muted">
+                        Ushbu harakatni ortga qaytarib bo'lmaydi.
+                        Barcha tegishli hujjatlar va imzolar ham o‘chirilishi mumkin.
+                    </p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button class="btn btn-light border" data-bs-dismiss="modal">
+                        Bekor qilish
+                    </button>
+                    <form method="POST" action="{% url 'delete_order' doc.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash me-1"></i>
+                            Ha, o'chirilsin
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
 
     {% endblock %}
 

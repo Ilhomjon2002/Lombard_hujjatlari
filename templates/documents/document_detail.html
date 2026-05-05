@@ -339,25 +339,7 @@
                                 <img src="{{ sig.qr_code.url }}" alt="QR Code"
                                     style="width: 50px; height: 50px; border-radius: 4px;">
                             </a>
-                            <!-- QR Modal -->
-                            <div class="modal fade" id="qrModal{{ sig.id }}" tabindex="-1">
-                                <div class="modal-dialog modal-sm modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h6 class="modal-title">{{ sig.user.get_full_name_with_middle }}</h6>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body text-center">
-                                            <img src="{{ sig.qr_code.url }}" alt="QR Code" class="img-fluid">
-                                            <hr>
-                                            <small class="text-muted">
-                                                <strong>Lavozim:</strong> {{ sig.user.position|default:"—" }}<br>
-                                                <strong>Vaqt:</strong> {{ sig.signed_at|date:"d.m.Y H:i:s" }}
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
                             {% else %}
                             <i class="bi bi-dash-circle text-muted"></i>
                             {% endif %}
@@ -402,6 +384,30 @@
         </div>
     </div>
 </div>
+
+<!-- QR Modallar -->
+{% for sig in signatures %}
+{% if sig.qr_code %}
+<div class="modal fade" id="qrModal{{ sig.id }}" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">{{ sig.user.get_full_name_with_middle }}</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="{{ sig.qr_code.url }}" alt="QR Code" class="img-fluid">
+                <hr>
+                <small class="text-muted">
+                    <strong>Lavozim:</strong> {{ sig.user.position|default:"—" }}<br>
+                    <strong>Vaqt:</strong> {{ sig.signed_at|date:"d.m.Y H:i:s" }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
 
 <!-- Add Doc Imzolash Modal -->
 <div class="modal fade" id="signAddDocModal" tabindex="-1">
