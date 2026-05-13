@@ -198,7 +198,7 @@
 
                             {% if doc.signer == request.user and not doc.is_signed %}
                             <button type="button" class="btn btn-primary btn-sm ms-2 sign-add-doc-btn"
-                                data-doc-id="{{ doc.id }}" data-doc-name="{{ doc.name }}">
+                                data-doc-id="{{ doc.id }}" data-doc-name="{{ doc.name }}" data-bs-toggle="modal" data-bs-target="#signAddDocModal">
                                 <i class="bi bi-fingerprint"></i> Imzolash
                             </button>
                             {% endif %}
@@ -221,7 +221,7 @@
 
                             {% if doc.signer == request.user and not doc.is_signed and doc.file %}
                             <button type="button" class="btn btn-primary btn-sm ms-2 sign-add-doc-btn"
-                                data-doc-id="{{ doc.id }}" data-doc-name="{{ doc.name }}">
+                                data-doc-id="{{ doc.id }}" data-doc-name="{{ doc.name }}" data-bs-toggle="modal" data-bs-target="#signAddDocModal">
                                 <i class="bi bi-fingerprint"></i> Imzolash
                             </button>
                             {% elif doc.signer == request.user and not doc.is_signed and not doc.file %}
@@ -473,7 +473,6 @@
             $('#signAddDocNameDisplay').text(docName);
             $('#signAddDocStatusMessage').hide();
             $('#confirmSignAddDocBtn').show().prop('disabled', false).html('<i class="bi bi-fingerprint me-1"></i> Agent orqali imzolash (QR kod)');
-            $('#signAddDocModal').modal('show');
         });
 
         $('#confirmSignAddDocBtn').click(async function () {

@@ -2256,7 +2256,7 @@ def stamp_pdf_with_qrs(original_file, employee_qr_path, director_qr_paths=None, 
         bottom_qr_path = employee_data[0]['qr_path']
         
     x_pos_emp = float(margin)
-    y_pos_emp = float(margin)
+    y_pos_emp = float(margin) + 141.75  # 5 sm yuqoriga chiqarildi
     
     if bottom_qr_path and os.path.exists(bottom_qr_path):
         c.drawImage(bottom_qr_path, x_pos_emp, y_pos_emp, width=qr_size, height=qr_size)
