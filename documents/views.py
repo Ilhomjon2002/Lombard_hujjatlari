@@ -1199,13 +1199,20 @@ def download_pdf(request, order_id):
             docx_with_qr = _embed_qr_in_docx(request, order, file_path, temp_files)
             
             # STEP 2: LibreOffice orqali PDF ga aylantirish
-            pdf_path = _convert_docx_to_pdf(docx_with_qr, temp_files)
-            
-            with open(pdf_path, 'rb') as f:
-                buffer = BytesIO(f.read())
-            
-            filename = f"hujjat_{order.number}.pdf".replace("/", "_")
-            return FileResponse(buffer, filename=filename)
+            try:
+                pdf_path = _convert_docx_to_pdf(docx_with_qr, temp_files)
+                
+                with open(pdf_path, 'rb') as f:
+                    buffer = BytesIO(f.read())
+                
+                filename = f"hujjat_{order.number}.pdf".replace("/", "_")
+                return FileResponse(buffer, filename=filename, content_type='application/pdf')
+            except Exception as conv_err:
+                print(f"PDF conversion failed, falling back to DOCX: {conv_err}")
+                with open(docx_with_qr, 'rb') as f:
+                    buffer = BytesIO(f.read())
+                filename = f"hujjat_{order.number}.docx".replace("/", "_")
+                return FileResponse(buffer, filename=filename, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         
         elif file_path.lower().endswith('.pdf'):
             final_buffer = _add_qr_overlay(request, order, file_path, temp_files)
