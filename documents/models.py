@@ -297,6 +297,7 @@ class OrderSignature(models.Model):
             img = qr.make_image(fill='black', back_color='white')
             buffer = BytesIO()
             img.save(buffer, format='PNG')
+            buffer.seek(0)
             self.qr_code.save(f"qr_{self.pk}.png", File(buffer), save=False)
         
         super().save(*args, **kwargs)

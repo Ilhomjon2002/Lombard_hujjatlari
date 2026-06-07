@@ -1059,7 +1059,7 @@ def download_stamped_pdf(request, order_id):
         buffer = BytesIO(f.read())
         
     filename = f"pechatli_{order.number}.pdf".replace("/", "_")
-    return FileResponse(buffer, filename=filename)
+    return FileResponse(buffer, as_attachment=True, filename=filename)
 
 def download_additional_document(request, doc_id):
     """Qo'shimcha hujjatning elektron nusxasini (Pechatli PDF/Word) yuklab olish."""
@@ -1080,7 +1080,7 @@ def download_additional_document(request, doc_id):
     
     ext = os.path.splitext(file_path)[1]
     filename = f"hujjat_elektron_{doc.id}{ext}"
-    return FileResponse(buffer, filename=filename)
+    return FileResponse(buffer, as_attachment=True, filename=filename)
 
 
 @login_required
@@ -1206,25 +1206,25 @@ def download_pdf(request, order_id):
                     buffer = BytesIO(f.read())
                 
                 filename = f"hujjat_{order.number}.pdf".replace("/", "_")
-                return FileResponse(buffer, filename=filename, content_type='application/pdf')
+                return FileResponse(buffer, as_attachment=True, filename=filename, content_type='application/pdf')
             except Exception as conv_err:
                 print(f"PDF conversion failed, falling back to DOCX: {conv_err}")
                 with open(docx_with_qr, 'rb') as f:
                     buffer = BytesIO(f.read())
                 filename = f"hujjat_{order.number}.docx".replace("/", "_")
-                return FileResponse(buffer, filename=filename, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+                return FileResponse(buffer, as_attachment=True, filename=filename, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         
         elif file_path.lower().endswith('.pdf'):
             final_buffer = _add_qr_overlay(request, order, file_path, temp_files)
             filename = f"hujjat_{order.number}.pdf".replace("/", "_")
-            return FileResponse(final_buffer, filename=filename)
+            return FileResponse(final_buffer, as_attachment=True, filename=filename)
         
         else:
             with open(file_path, 'rb') as f:
                 buffer = BytesIO(f.read())
             ext = os.path.splitext(file_path)[1]
             filename = f"hujjat_{order.number}{ext}".replace("/", "_")
-            return FileResponse(buffer, filename=filename)
+            return FileResponse(buffer, as_attachment=True, filename=filename)
         
     except Exception as e:
         print(f"download_pdf error: {e}")
@@ -1280,7 +1280,7 @@ def download_docx(request, order_id):
     if ext not in ['.docx']:
         with open(file_path, 'rb') as f:
             buffer = BytesIO(f.read())
-        return FileResponse(buffer, filename=filename)
+        return FileResponse(buffer, as_attachment=True, filename=filename)
     
     # DOCX nusxasiga QR kodlar joylash (PDF bilan bir xil)
     temp_files = []
@@ -1290,7 +1290,7 @@ def download_docx(request, order_id):
         with open(temp_docx, 'rb') as f:
             buffer = BytesIO(f.read())
         
-        return FileResponse(buffer, filename=filename)
+        return FileResponse(buffer, as_attachment=True, filename=filename)
         
     except Exception as e:
         print(f"download_docx error: {e}")
@@ -1299,7 +1299,7 @@ def download_docx(request, order_id):
         # Xato bo'lsa asl faylni yuborish
         with open(file_path, 'rb') as f:
             buffer = BytesIO(f.read())
-        return FileResponse(buffer, filename=filename)
+        return FileResponse(buffer, as_attachment=True, filename=filename)
     finally:
         for tmp in temp_files:
             try:
@@ -2571,6 +2571,7 @@ def api_director_approve(request, order_id):
     
     buffer = BytesIO()
     img.save(buffer, format='PNG')
+    buffer.seek(0)
     order.final_qr_code.save(f"final_qr_{order.id}.png", File(buffer), save=False)
     order.save()
     
